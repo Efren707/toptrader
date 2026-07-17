@@ -5,7 +5,7 @@
 
 ## Current focus
 
-**Phase 5 in progress.** Four guide outlines done: end-user guide, developer setup guide, contribution/workflow guide, and README structure (`docs/guides/`). Demo/showcase readiness is partially planned — seeding mechanism (Flyway seed migration) and demo account content (3 holdings, mixed gain/loss, matching transactions) decided in `docs/guides/demo-showcase-readiness-outline.md`, but screenshots/GIF, the live demo link, and the actual seed migration SQL are **blocked until the app is built and deployed**. ⚠️ **Come back to `docs/guides/demo-showcase-readiness-outline.md` once deployed to prod** to finish those. Next step: wrap up Phase 5 (this is its last item) and move to Phase 6 — MVP Scope Freeze & Execution Handoff.
+**Phase 6 in progress.** MVP feature build order decided (ADR 0020 — 4 dependency-ordered groups: Auth & Account Foundation → Market Data Integration → Trading Core → Portfolio & Reporting). Backlog consolidated into GitHub Issues: 9 issues (one per MVP user story, US-1..US-9), each assigned to a matching new milestone (#8-#11). Next step: final go/no-go review before writing application code — Phase 6's last item. (Phase 5's demo/showcase readiness item is still open and blocked until deploy — see `docs/guides/demo-showcase-readiness-outline.md`.)
 
 ## Working agreement
 
@@ -66,8 +66,8 @@ Each spike produces a recommendation + trade-offs for review, then an ADR.
 - [x] README structure finalized (as outline; `README.md` itself unchanged until deploy) — `docs/guides/readme-structure-outline.md`
 - [ ] Demo/showcase readiness — mechanism + content decided, **rest blocked until deployed**, see `docs/guides/demo-showcase-readiness-outline.md`
 
-## Phase 6 — MVP Scope Freeze & Execution Handoff — ⏳ Not started
+## Phase 6 — MVP Scope Freeze & Execution Handoff — 🔄 In progress
 
-- [ ] Consolidate into GitHub Issues backlog
-- [ ] Confirm feature build order
+- [x] Confirm feature build order — ADR 0020 (4 groups: Auth & Account Foundation → Market Data Integration → Trading Core → Portfolio & Reporting)
+- [x] Consolidate into GitHub Issues backlog — 9 issues (US-1..US-9), milestones [#8](https://github.com/Efren707/toptrader/milestone/8)-[#11](https://github.com/Efren707/toptrader/milestone/11)
 - [ ] Final go/no-go before writing application code
