@@ -5,7 +5,7 @@
 
 ## Current focus
 
-**Phase 4 in progress.** Local/prod environments defined: `docs/architecture/environments.md` consolidates the local vs. prod matrix (profiles, DB, secrets, URLs, logging, health checks), and ADR 0015 resolves the open question from ADR 0006 on how runtime secrets reach EC2 (instance IAM role, scoped to `/toptrader/prod/*`, pulled during the SSH deploy step). Pipeline stages now decided too: ADR 0016 — Spotless (backend lint), ESLint+Prettier (frontend lint), `dorny/paths-filter` in a single always-triggering workflow (monorepo job gating), and the required test stage runs unit + integration tests (including ADR 0007's IDOR tests) against a Postgres service container. Merge/deploy gates decided: ADR 0017 — no required PR review (solo dev), continuous deployment on merge to `main` (no manual approval step), and the deploy job smoke-tests `/actuator/health` post-restart, failing the CI run if the new version doesn't come up healthy. Secrets/config management decided: ADR 0018 — GitHub native secret scanning + push protection plus `gitleaks` in CI, and a unified `/toptrader/prod/*` SSM path for every prod config value (secret or not); full inventory table in `docs/architecture/environments.md`. Next step: **post-MVP feature release strategy** (Phase 4's last checklist item).
+**Phase 4 complete.** Environments defined (`docs/architecture/environments.md`, ADR 0015), pipeline stages decided (ADR 0016 — Spotless, ESLint+Prettier, `dorny/paths-filter`, integration/IDOR tests in the required gate), merge/deploy gates decided (ADR 0017 — no required PR review, continuous deployment, post-deploy health smoke test), secrets/config management decided (ADR 0018 — GitHub native scanning + gitleaks, unified `/toptrader/prod/*` SSM path), and post-MVP release strategy decided (ADR 0019 — no feature flags, semver git tags per milestone, expand/contract migrations for schema changes touching live data). Next step: kick off **Phase 5 — User-Facing Documentation Planning**, starting with the end-user guide outline.
 
 ## Working agreement
 
@@ -50,13 +50,13 @@ Each spike produces a recommendation + trade-offs for review, then an ADR.
 - [x] Frontend architecture (Angular structure, state management) — `docs/architecture/frontend-architecture.md`, ADR 0013
 - [x] Deployment/infra architecture doc — `docs/architecture/deployment-architecture.md`, ADR 0014
 
-## Phase 4 — CI/CD & Environment Strategy — 🔄 In progress
+## Phase 4 — CI/CD & Environment Strategy — ✅ Done
 
 - [x] Environments defined (local/prod) — `docs/architecture/environments.md`, ADR 0015
 - [x] Pipeline stages (lint → test → build → deploy) — ADR 0016
 - [x] Merge/deploy test gates — ADR 0017
 - [x] Secrets/config management per environment — ADR 0018, `docs/architecture/environments.md`
-- [ ] Post-MVP feature release strategy
+- [x] Post-MVP feature release strategy — ADR 0019
 
 ## Phase 5 — User-Facing Documentation Planning — ⏳ Not started
 
