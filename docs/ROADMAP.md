@@ -5,7 +5,7 @@
 
 ## Current focus
 
-**Phase 2, in progress.** Market data API research done — Finnhub selected (ADR 0003). Auth strategy done — server-side sessions, Argon2id, DB-tracked lockout (ADR 0004). AWS deployment shape done — EC2 + CloudFront, RDS, S3+CloudFront, Route 53 (ADR 0005). CI/CD pipeline design done — monorepo, SSH deploy, OIDC, SSM secrets (ADR 0006). Security baseline done — OWASP Top 10 mitigations, CORS/CSRF, Dependabot, Actuator lockdown (ADR 0007). Next step: **observability basics** research spike — see Phase 2 below.
+**Phase 2, in progress.** Market data (ADR 0003, Finnhub), auth strategy (ADR 0004, sessions/Argon2id/lockout), AWS deployment shape (ADR 0005, EC2+CloudFront/RDS/S3+CloudFront/Route 53), CI/CD pipeline (ADR 0006, GitHub Actions/SSH deploy/OIDC/SSM secrets), security baseline (ADR 0007, OWASP Top 10/CORS/CSRF/Dependabot), and observability basics (ADR 0008, local logs+CloudWatch/systemd health checks/SNS alerting) are all decided. Next step: **local dev environment tooling** research spike (Docker Compose for Postgres, local env var/secrets setup) — see Phase 2 below.
 
 ## Working agreement
 
@@ -37,7 +37,7 @@ Each spike produces a recommendation + trade-offs for review, then an ADR.
 - [x] AWS deployment shape (EC2 vs. ECS/Fargate vs. Beanstalk vs. App Runner; RDS; frontend hosting; budget alerts / free-tier guardrails; custom domain for session cookie sharing) — **EC2 t4g.micro + CloudFront (backend), RDS db.t4g.micro, S3+CloudFront (frontend), Route 53 domain, see ADR 0005.** App Runner ruled out (deprecated April 2026). Chosen over ECS Fargate to avoid its mandatory ~$16+/mo ALB cost.
 - [x] CI/CD pipeline design (GitHub Actions stages, deploy triggers to the EC2/S3 targets from ADR 0005) — **monorepo, lint→test→build→deploy, SSH/SCP to EC2, OIDC to S3/CloudFront, GitHub secrets + SSM Parameter Store, see ADR 0006.** $0 added AWS cost.
 - [x] Security baseline (OWASP Top 10 applied, secrets management, CORS) — **access control pattern + IDOR tests, CORS/CSRF config, Dependabot, Actuator locked to /health only, see ADR 0007.**
-- [ ] Observability basics (logging, CloudWatch, health checks) — **up next**
+- [x] Observability basics (logging, CloudWatch, health checks) — **local logs + CloudWatch agent, systemd health-check timer + auto-restart, default free EC2 metrics, CloudWatch Alarm + SNS email, see ADR 0008.** $0 added AWS cost.
 - [ ] Local dev environment tooling (Docker Compose for Postgres, local env var/secrets setup)
 
 ## Phase 3 — Technical & Architecture Documentation — ⏳ Not started
