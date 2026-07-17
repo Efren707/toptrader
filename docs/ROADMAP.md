@@ -5,7 +5,7 @@
 
 ## Current focus
 
-**Phase 2 complete.** Market data (ADR 0003, Finnhub), auth strategy (ADR 0004, sessions/Argon2id/lockout), AWS deployment shape (ADR 0005, EC2+CloudFront/RDS/S3+CloudFront/Route 53), CI/CD pipeline (ADR 0006, GitHub Actions/SSH deploy/OIDC/SSM secrets), security baseline (ADR 0007, OWASP Top 10/CORS/CSRF/Dependabot), observability basics (ADR 0008, local logs+CloudWatch/systemd health checks/SNS alerting), and local dev environment tooling (ADR 0009, Docker Compose for Postgres only, Spring profiles for secrets) are all decided. Next step: kick off **Phase 3 — Technical & Architecture Documentation**, starting with the system architecture diagram.
+**Phase 2 complete, Phase 3 underway.** System architecture diagram done (`docs/architecture/system-architecture.md`, Mermaid, container-level: browser → Route 53 → CloudFront/S3 frontend + CloudFront/EC2 backend → RDS + Finnhub, plus GitHub Actions deploy paths and SSM secrets pull). Next step: **data model / ERD**, including the Flyway vs. Liquibase schema migration tooling choice.
 
 ## Working agreement
 
@@ -40,9 +40,9 @@ Each spike produces a recommendation + trade-offs for review, then an ADR.
 - [x] Observability basics (logging, CloudWatch, health checks) — **local logs + CloudWatch agent, systemd health-check timer + auto-restart, default free EC2 metrics, CloudWatch Alarm + SNS email, see ADR 0008.** $0 added AWS cost.
 - [x] Local dev environment tooling (Docker Compose for Postgres, local env var/secrets setup) — **Docker Compose for Postgres only (no app Dockerfile), gitignored application-local.yml + committed .example template, see ADR 0009.**
 
-## Phase 3 — Technical & Architecture Documentation — ⏳ Not started
+## Phase 3 — Technical & Architecture Documentation — ⏳ In progress
 
-- [ ] System architecture diagram
+- [x] System architecture diagram — `docs/architecture/system-architecture.md`
 - [ ] Data model / ERD (including schema migration tooling — Flyway vs. Liquibase)
 - [ ] API design/contract (OpenAPI)
 - [ ] Security architecture doc
