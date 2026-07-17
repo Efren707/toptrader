@@ -5,7 +5,7 @@
 
 ## Current focus
 
-**Phase 2 complete, Phase 3 underway.** Done so far: system architecture diagram, data model/ERD (ADR 0010), schema migration tooling (Flyway, ADR 0011), API contract (ADR 0012), security architecture doc (consolidates prior ADRs, no new ADR needed), and frontend architecture (`frontend-architecture.md`, ADR 0013 — standalone components, signals-based state, Tailwind CSS, Jest). Next step: **deployment/infra architecture doc** (last item in Phase 3).
+**Phase 3 complete.** All architecture docs done: system architecture, data model/ERD (ADR 0010), schema migration tooling (Flyway, ADR 0011), API contract (ADR 0012), security architecture, frontend architecture (ADR 0013), and deployment/infra architecture (ADR 0014 — default VPC, CloudFront-only EC2 exposure, HTTP origin protocol, $15/$25 budget thresholds). Next step: kick off **Phase 4 — CI/CD & Environment Strategy**, starting with defining local/prod environments.
 
 ## Working agreement
 
@@ -40,7 +40,7 @@ Each spike produces a recommendation + trade-offs for review, then an ADR.
 - [x] Observability basics (logging, CloudWatch, health checks) — **local logs + CloudWatch agent, systemd health-check timer + auto-restart, default free EC2 metrics, CloudWatch Alarm + SNS email, see ADR 0008.** $0 added AWS cost.
 - [x] Local dev environment tooling (Docker Compose for Postgres, local env var/secrets setup) — **Docker Compose for Postgres only (no app Dockerfile), gitignored application-local.yml + committed .example template, see ADR 0009.**
 
-## Phase 3 — Technical & Architecture Documentation — ⏳ In progress
+## Phase 3 — Technical & Architecture Documentation — ✅ Done
 
 - [x] System architecture diagram — `docs/architecture/system-architecture.md`
 - [x] Data model / ERD — `docs/architecture/data-model.md`
@@ -48,7 +48,7 @@ Each spike produces a recommendation + trade-offs for review, then an ADR.
 - [x] API design/contract (OpenAPI) — `docs/architecture/openapi.yaml`, `api-contract.md`, ADR 0012
 - [x] Security architecture doc — `docs/architecture/security-architecture.md`
 - [x] Frontend architecture (Angular structure, state management) — `docs/architecture/frontend-architecture.md`, ADR 0013
-- [ ] Deployment/infra architecture doc
+- [x] Deployment/infra architecture doc — `docs/architecture/deployment-architecture.md`, ADR 0014
 
 ## Phase 4 — CI/CD & Environment Strategy — ⏳ Not started
 
