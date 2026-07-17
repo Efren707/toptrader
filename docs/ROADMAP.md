@@ -5,7 +5,7 @@
 
 ## Current focus
 
-**Phase 2 complete, Phase 3 underway.** System architecture diagram done (`docs/architecture/system-architecture.md`). Data model / ERD done (`docs/architecture/data-model.md` — users/holdings/transactions, Mermaid ERD; key decisions recorded in ADR 0010: balances stored transactionally, bigint PKs, username as display-only handle, $500 as app-level constant, avatar selection noted as post-MVP). Schema migration tooling decided: **Flyway**, plain SQL migrations (ADR 0011). API contract done (`docs/architecture/openapi.yaml` + `api-contract.md` — 9 endpoints covering all MVP stories; key decisions in ADR 0012: server-fetched trade pricing, auto-login on register, combined portfolio+P&L endpoint, RFC 7807 errors). Next step: **security architecture doc**.
+**Phase 2 complete, Phase 3 underway.** Done so far: system architecture diagram (`docs/architecture/system-architecture.md`), data model/ERD (`data-model.md`, ADR 0010), schema migration tooling (Flyway, ADR 0011), API contract (`openapi.yaml` + `api-contract.md`, ADR 0012), and security architecture doc (`security-architecture.md` — consolidates ADR 0004/0006/0007/0009/0010/0012, adds security headers via CloudFront + Bean Validation as implementation-level baseline, no new ADR needed). Next step: **frontend architecture (Angular structure, state management)**.
 
 ## Working agreement
 
@@ -46,7 +46,7 @@ Each spike produces a recommendation + trade-offs for review, then an ADR.
 - [x] Data model / ERD — `docs/architecture/data-model.md`
 - [x] Schema migration tooling — **Flyway**, see ADR 0011
 - [x] API design/contract (OpenAPI) — `docs/architecture/openapi.yaml`, `api-contract.md`, ADR 0012
-- [ ] Security architecture doc
+- [x] Security architecture doc — `docs/architecture/security-architecture.md`
 - [ ] Frontend architecture (Angular structure, state management)
 - [ ] Deployment/infra architecture doc
 
