@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: toptrader-postgres
+    environment:
+      POSTGRES_DB: toptrader
+      POSTGRES_USER: toptrader
+      POSTGRES_PASSWORD: toptrader
+    ports:
+      - "5432:5432"
+    volumes:
+      - toptrader-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  toptrader-postgres-data:

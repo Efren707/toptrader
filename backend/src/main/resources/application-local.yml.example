@@ -1,0 +1,32 @@
+# Copy this file to application-local.yml (gitignored) and fill in your own values.
+# Activate with the "local" Spring profile, e.g.:
+#   ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/toptrader
+    username: toptrader
+    password: toptrader
+  jpa:
+    show-sql: true
+
+server:
+  error:
+    include-stacktrace: always
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+# Not yet consumed by application code (added ahead of the auth/market-data
+# features per ADR 0009's local secrets plan) - get a free key at
+# https://finnhub.io/register
+toptrader:
+  finnhub:
+    api-key: YOUR_FINNHUB_API_KEY
+  session-signing-secret: YOUR_LOCAL_SESSION_SIGNING_SECRET
