@@ -5,7 +5,7 @@
 
 ## Current focus
 
-**Phase 2 complete, Phase 3 underway.** System architecture diagram done (`docs/architecture/system-architecture.md`, Mermaid, container-level: browser → Route 53 → CloudFront/S3 frontend + CloudFront/EC2 backend → RDS + Finnhub, plus GitHub Actions deploy paths and SSM secrets pull). Next step: **data model / ERD**, including the Flyway vs. Liquibase schema migration tooling choice.
+**Phase 2 complete, Phase 3 underway.** System architecture diagram done (`docs/architecture/system-architecture.md`). Data model / ERD done (`docs/architecture/data-model.md` — users/holdings/transactions, Mermaid ERD; key decisions recorded in ADR 0010: balances stored transactionally, bigint PKs, username as display-only handle, $500 as app-level constant, avatar selection noted as post-MVP). Next step: **schema migration tooling — Flyway vs. Liquibase**.
 
 ## Working agreement
 
@@ -43,7 +43,8 @@ Each spike produces a recommendation + trade-offs for review, then an ADR.
 ## Phase 3 — Technical & Architecture Documentation — ⏳ In progress
 
 - [x] System architecture diagram — `docs/architecture/system-architecture.md`
-- [ ] Data model / ERD (including schema migration tooling — Flyway vs. Liquibase)
+- [x] Data model / ERD — `docs/architecture/data-model.md`
+- [ ] Schema migration tooling — Flyway vs. Liquibase
 - [ ] API design/contract (OpenAPI)
 - [ ] Security architecture doc
 - [ ] Frontend architecture (Angular structure, state management)

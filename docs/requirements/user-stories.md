@@ -52,3 +52,4 @@ In addition to leaderboard / price caching / rate-limiting from [vision.md](./vi
 
 - **Deposit additional virtual cash** — let a user add more virtual cash to their account after the initial $500, so the sim isn't a one-shot bankroll.
 - **Fractional share support** — allow buying/selling partial shares, so the $500 starting balance remains meaningfully usable across higher-priced stocks.
+- **Avatar selection** — let a user pick a profile avatar from a set of preset characters, so accounts feel more personalized (surfaced during Phase 3 data-model design; see `docs/architecture/data-model.md`).
