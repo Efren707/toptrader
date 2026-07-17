@@ -18,6 +18,7 @@
 
 - All monetary and share-quantity calculations use exact decimal types (e.g. Java `BigDecimal`, Postgres `numeric`) — floating-point types are not used for cash, prices, or holdings, to avoid rounding errors.
 - Every buy/sell is recorded as an immutable transaction record; portfolio/cash balances are derived from (or kept consistent with) that transaction history, not just a mutable running total.
+- Concurrent buy/sell requests against the same account are made safe via database-level locking or transaction isolation (mechanism decided in Phase 3) — no lost updates or overspending from race conditions.
 
 ## Performance
 
@@ -28,6 +29,7 @@
 
 - No formal uptime SLA. Cold starts, brief downtime during deploys, or scale-to-zero behavior (if the chosen AWS hosting shape supports it, per the Phase 2 hosting spike) are acceptable trade-offs for cost control.
 - Deploys should not require manual downtime coordination — the CI/CD pipeline (Phase 4) should support redeploying without data loss.
+- AWS spend is kept within a defined budget/free-tier cap where practical, with budget alerts configured (mechanism decided in the Phase 2 hosting spike).
 
 ## Accessibility
 

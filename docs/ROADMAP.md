@@ -32,17 +32,18 @@ See [CLAUDE.md](../CLAUDE.md) at repo root: one step at a time, always check in 
 
 Each spike produces a recommendation + trade-offs for review, then an ADR.
 
-- [ ] Market data API research (real-time vs. delayed, rate limits, ToS) — **up next**
+- [ ] Market data API research (real-time vs. delayed, rate limits, ToS, and market-hours/stale-price behavior — what quote/buy/sell should do when the market is closed) — **up next**
 - [ ] Auth strategy (session vs. JWT vs. OAuth2, password hashing)
-- [ ] AWS deployment shape (EC2 vs. ECS/Fargate vs. Beanstalk vs. App Runner; RDS; frontend hosting)
+- [ ] AWS deployment shape (EC2 vs. ECS/Fargate vs. Beanstalk vs. App Runner; RDS; frontend hosting; budget alerts / free-tier guardrails)
 - [ ] CI/CD pipeline design (GitHub Actions stages, containerization, deploy triggers)
 - [ ] Security baseline (OWASP Top 10 applied, secrets management, CORS)
 - [ ] Observability basics (logging, CloudWatch, health checks)
+- [ ] Local dev environment tooling (Docker Compose for Postgres, local env var/secrets setup)
 
 ## Phase 3 — Technical & Architecture Documentation — ⏳ Not started
 
 - [ ] System architecture diagram
-- [ ] Data model / ERD
+- [ ] Data model / ERD (including schema migration tooling — Flyway vs. Liquibase)
 - [ ] API design/contract (OpenAPI)
 - [ ] Security architecture doc
 - [ ] Frontend architecture (Angular structure, state management)
@@ -62,6 +63,7 @@ Each spike produces a recommendation + trade-offs for review, then an ADR.
 - [ ] Developer setup guide outline
 - [ ] Contribution/workflow guide outline
 - [ ] README structure finalized
+- [ ] Demo/showcase readiness (seeded demo account so reviewers see a populated portfolio, README screenshots/GIF, live demo link callout)
 
 ## Phase 6 — MVP Scope Freeze & Execution Handoff — ⏳ Not started
 
