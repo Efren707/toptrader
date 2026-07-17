@@ -5,7 +5,7 @@
 
 ## Current focus
 
-**Phase 2, in progress.** Market data (ADR 0003, Finnhub), auth strategy (ADR 0004, sessions/Argon2id/lockout), AWS deployment shape (ADR 0005, EC2+CloudFront/RDS/S3+CloudFront/Route 53), CI/CD pipeline (ADR 0006, GitHub Actions/SSH deploy/OIDC/SSM secrets), security baseline (ADR 0007, OWASP Top 10/CORS/CSRF/Dependabot), and observability basics (ADR 0008, local logs+CloudWatch/systemd health checks/SNS alerting) are all decided. Next step: **local dev environment tooling** research spike (Docker Compose for Postgres, local env var/secrets setup) — see Phase 2 below.
+**Phase 2 complete.** Market data (ADR 0003, Finnhub), auth strategy (ADR 0004, sessions/Argon2id/lockout), AWS deployment shape (ADR 0005, EC2+CloudFront/RDS/S3+CloudFront/Route 53), CI/CD pipeline (ADR 0006, GitHub Actions/SSH deploy/OIDC/SSM secrets), security baseline (ADR 0007, OWASP Top 10/CORS/CSRF/Dependabot), observability basics (ADR 0008, local logs+CloudWatch/systemd health checks/SNS alerting), and local dev environment tooling (ADR 0009, Docker Compose for Postgres only, Spring profiles for secrets) are all decided. Next step: kick off **Phase 3 — Technical & Architecture Documentation**, starting with the system architecture diagram.
 
 ## Working agreement
 
@@ -28,7 +28,7 @@ See [CLAUDE.md](../CLAUDE.md) at repo root: one step at a time, always check in 
 - [x] `docs/requirements/nfr.md` — security, financial data integrity, performance, availability, accessibility, browser support, maintainability
 - [x] `docs/requirements/acceptance-criteria.md` — testable criteria per story (8-char min password, explicit trade confirmation step)
 
-## Phase 2 — Research Spikes — ⏳ In progress
+## Phase 2 — Research Spikes — ✅ Done
 
 Each spike produces a recommendation + trade-offs for review, then an ADR.
 
@@ -38,7 +38,7 @@ Each spike produces a recommendation + trade-offs for review, then an ADR.
 - [x] CI/CD pipeline design (GitHub Actions stages, deploy triggers to the EC2/S3 targets from ADR 0005) — **monorepo, lint→test→build→deploy, SSH/SCP to EC2, OIDC to S3/CloudFront, GitHub secrets + SSM Parameter Store, see ADR 0006.** $0 added AWS cost.
 - [x] Security baseline (OWASP Top 10 applied, secrets management, CORS) — **access control pattern + IDOR tests, CORS/CSRF config, Dependabot, Actuator locked to /health only, see ADR 0007.**
 - [x] Observability basics (logging, CloudWatch, health checks) — **local logs + CloudWatch agent, systemd health-check timer + auto-restart, default free EC2 metrics, CloudWatch Alarm + SNS email, see ADR 0008.** $0 added AWS cost.
-- [ ] Local dev environment tooling (Docker Compose for Postgres, local env var/secrets setup)
+- [x] Local dev environment tooling (Docker Compose for Postgres, local env var/secrets setup) — **Docker Compose for Postgres only (no app Dockerfile), gitignored application-local.yml + committed .example template, see ADR 0009.**
 
 ## Phase 3 — Technical & Architecture Documentation — ⏳ Not started
 
