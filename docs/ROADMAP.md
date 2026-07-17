@@ -1,7 +1,7 @@
 # Planning Roadmap & Status
 
 > Last updated: 2026-07-16
-> This file tracks *where we are*. For *why* decisions were made, see `docs/adr/`. For requirements detail, see `docs/requirements/`.
+> This file tracks *where we are*. For *why* decisions were made, see `docs/adr/`. For requirements detail, see `docs/requirements/`. Each phase below also has a matching [GitHub Milestone](https://github.com/Efren707/toptrader/milestones) for visual progress tracking.
 
 ## Current focus
 

@@ -6,6 +6,11 @@ Stock trading simulator (virtual cash, buy/sell at real/delayed prices). Stack: 
 
 Current phase, completed work, and next steps live in **[docs/ROADMAP.md](./docs/ROADMAP.md)** — read that first in any new session to pick up where things left off. Don't rely on conversation memory alone; the roadmap file is the source of truth.
 
+## Session workflow
+
+- **Start of session:** read `CLAUDE.md` (this file) and `docs/ROADMAP.md`'s "Current focus" line before doing anything else.
+- **End of session:** update `docs/ROADMAP.md` (checkboxes + "Current focus") to reflect what actually happened, and commit/push it — even if mid-task. The next session should never need to be re-briefed verbally.
+
 ## How to work on this project
 
 - **One step at a time.** Do not build ahead or auto-complete multiple features/phases in one go.
@@ -19,7 +24,8 @@ Current phase, completed work, and next steps live in **[docs/ROADMAP.md](./docs
 
 - Public GitHub repo (`Efren707/toptrader`), MIT licensed.
 - Trunk-based development: `main` is always deployable; work happens on short-lived `feature/*` or `fix/*` branches merged via PR (see ADR 0002).
-- Task tracking via GitHub Issues + Projects.
+- Task tracking via GitHub Issues + Projects, with Milestones mapped to roadmap phases (and later, MVP build-order features).
+- Commit messages use Conventional Commit prefixes: `feat:`, `fix:`, `docs:`, `chore:`, `research:` (for spike-related commits), `refactor:`, `test:`. Adopted going forward from 2026-07-16 — earlier commits predate this and were left as-is.
 
 ## Key docs
 
