@@ -5,7 +5,21 @@
 
 ## Current focus
 
-**Planning complete — GO for implementation.** All 6 planning phases done. Final go/no-go review (2026-07-17) closed the last two open items from earlier phases: market-open/closed status (ADR 0021 — hardcoded NYSE hours + static holiday list) and the `transactions.side` column type (`data-model.md` — `varchar` + check constraint), plus a full NFR-by-NFR audit that found and closed two documentation gaps (browser/responsive support, backend test framework — both in `frontend-architecture.md`/ADR 0016). GitHub milestones for Phases 0-6 are now closed; only the 4 build-order milestones (`docs/adr/0020-mvp-feature-build-order.md`) remain open. **Next step: start implementation** with the Auth & Account Foundation milestone, beginning with [issue #1 (US-1: Register)](https://github.com/Efren707/toptrader/issues/1). (Phase 5's demo/showcase readiness item is still open and intentionally blocked until deploy — see `docs/guides/demo-showcase-readiness-outline.md`.)
+**Implementation started — project scaffolding, tooling, local dev DB, and CI are in place.** Planning (Phases 0-6) closed out 2026-07-17 with a final go/no-go review; see the "Implementation kickoff" section below for what's been built since. **Next step:** start on [issue #1 (US-1: Register)](https://github.com/Efren707/toptrader/issues/1), the first story in the Auth & Account Foundation milestone. (Phase 5's demo/showcase readiness item is still open and intentionally blocked until deploy — see `docs/guides/demo-showcase-readiness-outline.md`.)
+
+## Implementation kickoff — Auth & Account Foundation (Milestone #8, in progress)
+
+Groundwork completed ahead of US-1, per ADR 0020's build order:
+
+- [x] Backend skeleton — Spring Boot 4.1.0, Java 21, Maven, `com.toptrader.backend` (Spring Boot 3.x is no longer offered by start.spring.io; 4.1.0 was the current stable GA at implementation time)
+- [x] Frontend skeleton — Angular CLI 22, standalone components, routing
+- [x] Backend tooling — Spotless (`google-java-format`) per ADR 0016
+- [x] Frontend tooling — ESLint (`@angular-eslint/schematics`) + Prettier + `eslint-config-prettier`, Tailwind CSS v4
+- [x] Frontend test runner — **Vitest**, not Jest as `frontend-architecture.md` originally specified; Angular CLI 22 now ships Vitest as its own built-in default (doc updated to match)
+- [x] Local Postgres — Docker Compose, Postgres 17 (also the version future RDS will match), `application-local.yml.example` template per ADR 0009
+- [x] CI — GitHub Actions PR quality gate (`dorny/paths-filter` → lint/test/build per stack), per ADR 0016; deploy-to-AWS stage intentionally deferred until EC2/RDS/S3/CloudFront/OIDC infra exists (ADR 0006)
+- [x] Branch protection on `main` — `backend-ci`/`frontend-ci` required status checks, strict, admins included (matches ADR 0002's PR-based trunk workflow — direct pushes to `main` are no longer possible, including for this assistant)
+- [ ] US-1 (Register) — not started
 
 ## Working agreement
 
