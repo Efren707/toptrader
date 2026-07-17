@@ -5,7 +5,7 @@
 
 ## Current focus
 
-**Phase 2 complete, Phase 3 underway.** System architecture diagram done (`docs/architecture/system-architecture.md`). Data model / ERD done (`docs/architecture/data-model.md` — users/holdings/transactions, Mermaid ERD; key decisions recorded in ADR 0010: balances stored transactionally, bigint PKs, username as display-only handle, $500 as app-level constant, avatar selection noted as post-MVP). Next step: **schema migration tooling — Flyway vs. Liquibase**.
+**Phase 2 complete, Phase 3 underway.** System architecture diagram done (`docs/architecture/system-architecture.md`). Data model / ERD done (`docs/architecture/data-model.md` — users/holdings/transactions, Mermaid ERD; key decisions recorded in ADR 0010: balances stored transactionally, bigint PKs, username as display-only handle, $500 as app-level constant, avatar selection noted as post-MVP). Schema migration tooling decided: **Flyway**, plain SQL migrations (ADR 0011). Next step: **API design/contract (OpenAPI)**.
 
 ## Working agreement
 
@@ -44,7 +44,7 @@ Each spike produces a recommendation + trade-offs for review, then an ADR.
 
 - [x] System architecture diagram — `docs/architecture/system-architecture.md`
 - [x] Data model / ERD — `docs/architecture/data-model.md`
-- [ ] Schema migration tooling — Flyway vs. Liquibase
+- [x] Schema migration tooling — **Flyway**, see ADR 0011
 - [ ] API design/contract (OpenAPI)
 - [ ] Security architecture doc
 - [ ] Frontend architecture (Angular structure, state management)
