@@ -58,7 +58,7 @@ Angular CLI's default `browserslist` config (current + previous major version of
 
 ## Testing
 
-**Jest** — Angular's original default runner (Karma) is deprecated by the Angular team; Jest is the commonly-adopted replacement. The exact Angular CLI version's default test setup should be verified against the actual CLI version at implementation time, since tooling defaults may have shifted further by then.
+**Vitest**, via Angular CLI's built-in `@angular/build:unit-test` builder — superseded the original Jest plan (this doc previously called for Jest as "the commonly-adopted Karma replacement," but flagged verifying against the actual CLI version at implementation time; Angular CLI 22 now ships Vitest as its own native default builder, so no third-party test runner integration is needed at all).
 
 ## Carried forward from prior ADRs
 
