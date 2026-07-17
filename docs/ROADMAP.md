@@ -5,7 +5,7 @@
 
 ## Current focus
 
-**Phase 2, in progress.** Market data API research done — Finnhub selected (ADR 0003). Auth strategy done — server-side sessions, Argon2id, DB-tracked lockout (ADR 0004). Next step: **AWS deployment shape** research spike — see Phase 2 below.
+**Phase 2, in progress.** Market data API research done — Finnhub selected (ADR 0003). Auth strategy done — server-side sessions, Argon2id, DB-tracked lockout (ADR 0004). AWS deployment shape done — EC2 + CloudFront, RDS, S3+CloudFront, Route 53 (ADR 0005). Next step: **CI/CD pipeline design** research spike — see Phase 2 below.
 
 ## Working agreement
 
@@ -34,8 +34,8 @@ Each spike produces a recommendation + trade-offs for review, then an ADR.
 
 - [x] Market data API research (real-time vs. delayed, rate limits, ToS, and market-hours/stale-price behavior) — **Finnhub selected, see ADR 0003.** Finnhub has no market-status field, so market-open/closed still needs to be computed from a trading calendar — carried forward as an open item.
 - [x] Auth strategy (session vs. JWT vs. OAuth2, password hashing) — **server-side sessions + Argon2id + DB-tracked lockout, see ADR 0004.** Carries forward a requirement into the AWS spike: plan for a custom domain (frontend/backend on subdomains of it) for clean cross-origin session cookies.
-- [ ] AWS deployment shape (EC2 vs. ECS/Fargate vs. Beanstalk vs. App Runner; RDS; frontend hosting; budget alerts / free-tier guardrails; custom domain for session cookie sharing) — **up next**
-- [ ] CI/CD pipeline design (GitHub Actions stages, containerization, deploy triggers)
+- [x] AWS deployment shape (EC2 vs. ECS/Fargate vs. Beanstalk vs. App Runner; RDS; frontend hosting; budget alerts / free-tier guardrails; custom domain for session cookie sharing) — **EC2 t4g.micro + CloudFront (backend), RDS db.t4g.micro, S3+CloudFront (frontend), Route 53 domain, see ADR 0005.** App Runner ruled out (deprecated April 2026). Chosen over ECS Fargate to avoid its mandatory ~$16+/mo ALB cost.
+- [ ] CI/CD pipeline design (GitHub Actions stages, deploy triggers to the EC2/S3 targets from ADR 0005) — **up next**
 - [ ] Security baseline (OWASP Top 10 applied, secrets management, CORS)
 - [ ] Observability basics (logging, CloudWatch, health checks)
 - [ ] Local dev environment tooling (Docker Compose for Postgres, local env var/secrets setup)
