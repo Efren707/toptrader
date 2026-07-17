@@ -5,7 +5,7 @@
 
 ## Current focus
 
-**Phase 4 complete.** Environments defined (`docs/architecture/environments.md`, ADR 0015), pipeline stages decided (ADR 0016 — Spotless, ESLint+Prettier, `dorny/paths-filter`, integration/IDOR tests in the required gate), merge/deploy gates decided (ADR 0017 — no required PR review, continuous deployment, post-deploy health smoke test), secrets/config management decided (ADR 0018 — GitHub native scanning + gitleaks, unified `/toptrader/prod/*` SSM path), and post-MVP release strategy decided (ADR 0019 — no feature flags, semver git tags per milestone, expand/contract migrations for schema changes touching live data). Next step: kick off **Phase 5 — User-Facing Documentation Planning**, starting with the end-user guide outline.
+**Phase 5 in progress.** Four guide outlines done: end-user guide, developer setup guide, contribution/workflow guide, and README structure (`docs/guides/`). Demo/showcase readiness is partially planned — seeding mechanism (Flyway seed migration) and demo account content (3 holdings, mixed gain/loss, matching transactions) decided in `docs/guides/demo-showcase-readiness-outline.md`, but screenshots/GIF, the live demo link, and the actual seed migration SQL are **blocked until the app is built and deployed**. ⚠️ **Come back to `docs/guides/demo-showcase-readiness-outline.md` once deployed to prod** to finish those. Next step: wrap up Phase 5 (this is its last item) and move to Phase 6 — MVP Scope Freeze & Execution Handoff.
 
 ## Working agreement
 
@@ -58,13 +58,13 @@ Each spike produces a recommendation + trade-offs for review, then an ADR.
 - [x] Secrets/config management per environment — ADR 0018, `docs/architecture/environments.md`
 - [x] Post-MVP feature release strategy — ADR 0019
 
-## Phase 5 — User-Facing Documentation Planning — ⏳ Not started
+## Phase 5 — User-Facing Documentation Planning — 🔄 In progress
 
-- [ ] End-user guide outline
-- [ ] Developer setup guide outline
-- [ ] Contribution/workflow guide outline
-- [ ] README structure finalized
-- [ ] Demo/showcase readiness (seeded demo account so reviewers see a populated portfolio, README screenshots/GIF, live demo link callout)
+- [x] End-user guide outline — `docs/guides/end-user-guide-outline.md`
+- [x] Developer setup guide outline — `docs/guides/developer-setup-guide-outline.md`
+- [x] Contribution/workflow guide outline — `docs/guides/contribution-workflow-guide-outline.md`
+- [x] README structure finalized (as outline; `README.md` itself unchanged until deploy) — `docs/guides/readme-structure-outline.md`
+- [ ] Demo/showcase readiness — mechanism + content decided, **rest blocked until deployed**, see `docs/guides/demo-showcase-readiness-outline.md`
 
 ## Phase 6 — MVP Scope Freeze & Execution Handoff — ⏳ Not started
 
