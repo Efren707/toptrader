@@ -52,6 +52,10 @@ A functional `errorInterceptor` unwraps the RFC 7807 `ProblemDetail` body (ADR 0
 
 **Tailwind CSS** — utility-first, full design control, smaller runtime footprint than a component library. Trade-off accepted: since Tailwind ships no pre-built components, interactive widgets (the buy/sell confirm dialog in particular, per US-5/US-6's explicit confirmation step) must be hand-built with correct keyboard navigation and focus trapping to meet the accessibility NFR — flagged here as a concrete implementation task for whoever builds `shared/confirm-dialog`, not a gap to discover later.
 
+## Browser support & responsive layout
+
+Angular CLI's default `browserslist` config (current + previous major version of Chrome, Firefox, Edge, Safari) is used as-is — matches `nfr.md`'s "modern evergreen browsers" target with no custom tuning needed. Layout is responsive via Tailwind's breakpoint utilities (`sm:`/`md:`/`lg:`), targeting both desktop and mobile web viewports per `nfr.md` — no separate mobile app or mobile-specific routes.
+
 ## Testing
 
 **Jest** — Angular's original default runner (Karma) is deprecated by the Angular team; Jest is the commonly-adopted replacement. The exact Angular CLI version's default test setup should be verified against the actual CLI version at implementation time, since tooling defaults may have shifted further by then.

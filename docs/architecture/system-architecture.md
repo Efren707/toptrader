@@ -58,7 +58,7 @@ flowchart TB
 - **Session state**: lives only in the single EC2 instance's memory/DB-tracked lockout table (ADR 0004) — no shared session store, which is only safe because ADR 0005 deliberately keeps backend compute to one instance (no horizontal scaling).
 - **Runtime secrets**: DB password, Finnhub API key, and session-signing secret live in SSM Parameter Store and are pulled onto EC2 at deploy/boot time — never baked into the jar or committed (ADR 0006, ADR 0009).
 - **Deploy path**: GitHub Actions runs lint → test → build on every PR (required check), then on merge to `main` deploys the frontend via OIDC-assumed role (`s3 sync` + CloudFront invalidation) and the backend via SCP + SSH `systemctl restart` — no blue/green, so a bad deploy causes a brief interruption (accepted trade-off, ADR 0005/0006).
-- **Market data**: EC2 calls Finnhub directly from the backend (not proxied through the frontend); Finnhub has no market-status field, so open/closed state is computed from a trading calendar in the app (open item carried from ADR 0003).
+- **Market data**: EC2 calls Finnhub directly from the backend (not proxied through the frontend); Finnhub has no market-status field, so open/closed state is computed from a hardcoded NYSE-hours + static holiday list in the app (ADR 0021).
 
 ## Out of scope for this diagram
 

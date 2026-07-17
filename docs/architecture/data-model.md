@@ -63,7 +63,7 @@ There is deliberately no `stocks`/`quotes` table — ticker is a plain string on
 - **Bigint auto-increment primary keys**, not UUIDs. Authorization is already enforced server-side on every request (NFR), so there's no reliance on IDs being non-guessable; bigint keeps joins/indexes simple and small.
 - **$500 starting cash is an app-level constant**, not a stored `starting_cash` column — it's the same for every MVP user (no deposit feature yet) and doubles as the P&L baseline in US-9. Revisit when the post-MVP "deposit additional cash" story lands, since P&L will then need to track net deposits rather than a fixed constant.
 - **`username` is a display-only handle**, unique and required at registration, but login remains email+password only — no change needed to ADR 0004's auth flow or the US-2 acceptance criteria.
-- **`side` column representation** (Postgres native enum vs. `varchar` + check constraint) is left open, to be settled alongside the Flyway vs. Liquibase migration-tooling decision.
+- **`side` column is `varchar` + a check constraint** (`side IN ('BUY', 'SELL')`), not a Postgres native enum. Adding a value to a native enum type has historically carried transaction restrictions that don't mix well with Flyway's plain-SQL, forward-only migrations (ADR 0011); a check constraint is trivially altered in a normal migration if a third side value were ever needed.
 
 ## Carried forward / not yet built
 

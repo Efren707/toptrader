@@ -30,7 +30,7 @@ ADR 0006 decided the pipeline shape (lint → test → build, required on PRs; d
 - **Backend lint**: Spotless (`google-java-format`), enforced via `spotless:check` in CI, `spotless:apply` for local auto-fix.
 - **Frontend lint**: ESLint (Angular ESLint schematic) + Prettier, with `eslint-config-prettier` to avoid rule conflicts.
 - **Monorepo path filtering**: single GitHub Actions workflow, always triggered; `dorny/paths-filter` job gates which of the backend/frontend lint+test+build jobs run, keeping branch protection's required check reliably reporting on every PR.
-- **Test stage**: full backend suite (unit + integration, including IDOR tests) against a Postgres `services:` container matching the local/RDS major version. No coverage threshold enforced.
+- **Test stage**: full backend suite (unit + integration, including IDOR tests) against a Postgres `services:` container matching the local/RDS major version. Written with **JUnit 5 + Spring Boot Test** (`spring-boot-starter-test`, Spring Boot's bundled default — no alternative weighed, same reasoning as Jest for the frontend). No coverage threshold enforced.
 - **Stage order stays as ADR 0006 set it**: lint → test → build, required via branch protection on PRs; deploy only on merge to `main`.
 
 ## Consequences
