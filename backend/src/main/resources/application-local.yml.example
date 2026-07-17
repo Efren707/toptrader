@@ -13,6 +13,10 @@ spring:
 server:
   error:
     include-stacktrace: always
+  servlet:
+    session:
+      cookie:
+        secure: false
 
 management:
   endpoints:
