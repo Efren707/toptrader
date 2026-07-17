@@ -5,7 +5,7 @@
 
 ## Current focus
 
-**Phase 2, not yet started.** Next step: kick off the first research spike — **market data API research** (compare Alpha Vantage, Finnhub, Twelve Data, IEX Cloud, Polygon.io) — see Phase 2 below.
+**Phase 2, in progress.** Market data API research done — Finnhub selected (ADR 0003). Next step: **auth strategy** research spike (session vs. JWT vs. OAuth2, password hashing) — see Phase 2 below.
 
 ## Working agreement
 
@@ -28,12 +28,12 @@ See [CLAUDE.md](../CLAUDE.md) at repo root: one step at a time, always check in 
 - [x] `docs/requirements/nfr.md` — security, financial data integrity, performance, availability, accessibility, browser support, maintainability
 - [x] `docs/requirements/acceptance-criteria.md` — testable criteria per story (8-char min password, explicit trade confirmation step)
 
-## Phase 2 — Research Spikes — ⏳ Not started
+## Phase 2 — Research Spikes — ⏳ In progress
 
 Each spike produces a recommendation + trade-offs for review, then an ADR.
 
-- [ ] Market data API research (real-time vs. delayed, rate limits, ToS, and market-hours/stale-price behavior — what quote/buy/sell should do when the market is closed) — **up next**
-- [ ] Auth strategy (session vs. JWT vs. OAuth2, password hashing)
+- [x] Market data API research (real-time vs. delayed, rate limits, ToS, and market-hours/stale-price behavior) — **Finnhub selected, see ADR 0003.** Finnhub has no market-status field, so market-open/closed still needs to be computed from a trading calendar — carried forward as an open item.
+- [ ] Auth strategy (session vs. JWT vs. OAuth2, password hashing) — **up next**
 - [ ] AWS deployment shape (EC2 vs. ECS/Fargate vs. Beanstalk vs. App Runner; RDS; frontend hosting; budget alerts / free-tier guardrails)
 - [ ] CI/CD pipeline design (GitHub Actions stages, containerization, deploy triggers)
 - [ ] Security baseline (OWASP Top 10 applied, secrets management, CORS)
