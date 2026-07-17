@@ -5,7 +5,7 @@
 
 ## Current focus
 
-**Phase 4 in progress.** Local/prod environments defined: `docs/architecture/environments.md` consolidates the local vs. prod matrix (profiles, DB, secrets, URLs, logging, health checks), and ADR 0015 resolves the open question from ADR 0006 on how runtime secrets reach EC2 (instance IAM role, scoped to `/toptrader/prod/*`, pulled during the SSH deploy step). Pipeline stages now decided too: ADR 0016 — Spotless (backend lint), ESLint+Prettier (frontend lint), `dorny/paths-filter` in a single always-triggering workflow (monorepo job gating), and the required test stage runs unit + integration tests (including ADR 0007's IDOR tests) against a Postgres service container. Next step: **merge/deploy test gates** (Phase 4's third checklist item — what exactly blocks a merge/deploy beyond the lint+test status check already set in ADR 0006).
+**Phase 4 in progress.** Local/prod environments defined: `docs/architecture/environments.md` consolidates the local vs. prod matrix (profiles, DB, secrets, URLs, logging, health checks), and ADR 0015 resolves the open question from ADR 0006 on how runtime secrets reach EC2 (instance IAM role, scoped to `/toptrader/prod/*`, pulled during the SSH deploy step). Pipeline stages now decided too: ADR 0016 — Spotless (backend lint), ESLint+Prettier (frontend lint), `dorny/paths-filter` in a single always-triggering workflow (monorepo job gating), and the required test stage runs unit + integration tests (including ADR 0007's IDOR tests) against a Postgres service container. Merge/deploy gates decided: ADR 0017 — no required PR review (solo dev), continuous deployment on merge to `main` (no manual approval step), and the deploy job smoke-tests `/actuator/health` post-restart, failing the CI run if the new version doesn't come up healthy. Secrets/config management decided: ADR 0018 — GitHub native secret scanning + push protection plus `gitleaks` in CI, and a unified `/toptrader/prod/*` SSM path for every prod config value (secret or not); full inventory table in `docs/architecture/environments.md`. Next step: **post-MVP feature release strategy** (Phase 4's last checklist item).
 
 ## Working agreement
 
@@ -54,8 +54,8 @@ Each spike produces a recommendation + trade-offs for review, then an ADR.
 
 - [x] Environments defined (local/prod) — `docs/architecture/environments.md`, ADR 0015
 - [x] Pipeline stages (lint → test → build → deploy) — ADR 0016
-- [ ] Merge/deploy test gates
-- [ ] Secrets/config management per environment
+- [x] Merge/deploy test gates — ADR 0017
+- [x] Secrets/config management per environment — ADR 0018, `docs/architecture/environments.md`
 - [ ] Post-MVP feature release strategy
 
 ## Phase 5 — User-Facing Documentation Planning — ⏳ Not started
