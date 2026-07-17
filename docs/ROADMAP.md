@@ -5,7 +5,7 @@
 
 ## Current focus
 
-**Phase 4 in progress.** Local/prod environments defined: `docs/architecture/environments.md` consolidates the local vs. prod matrix (profiles, DB, secrets, URLs, logging, health checks), and ADR 0015 resolves the open question from ADR 0006 on how runtime secrets reach EC2 (instance IAM role, scoped to `/toptrader/prod/*`, pulled during the SSH deploy step). Next step: **pipeline stages (lint → test → build → deploy)**, including the monorepo `paths:` filtering flagged as unresolved in ADR 0006.
+**Phase 4 in progress.** Local/prod environments defined: `docs/architecture/environments.md` consolidates the local vs. prod matrix (profiles, DB, secrets, URLs, logging, health checks), and ADR 0015 resolves the open question from ADR 0006 on how runtime secrets reach EC2 (instance IAM role, scoped to `/toptrader/prod/*`, pulled during the SSH deploy step). Pipeline stages now decided too: ADR 0016 — Spotless (backend lint), ESLint+Prettier (frontend lint), `dorny/paths-filter` in a single always-triggering workflow (monorepo job gating), and the required test stage runs unit + integration tests (including ADR 0007's IDOR tests) against a Postgres service container. Next step: **merge/deploy test gates** (Phase 4's third checklist item — what exactly blocks a merge/deploy beyond the lint+test status check already set in ADR 0006).
 
 ## Working agreement
 
@@ -53,7 +53,7 @@ Each spike produces a recommendation + trade-offs for review, then an ADR.
 ## Phase 4 — CI/CD & Environment Strategy — 🔄 In progress
 
 - [x] Environments defined (local/prod) — `docs/architecture/environments.md`, ADR 0015
-- [ ] Pipeline stages (lint → test → build → deploy)
+- [x] Pipeline stages (lint → test → build → deploy) — ADR 0016
 - [ ] Merge/deploy test gates
 - [ ] Secrets/config management per environment
 - [ ] Post-MVP feature release strategy
