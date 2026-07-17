@@ -1,11 +1,11 @@
 # Planning Roadmap & Status
 
-> Last updated: 2026-07-16
+> Last updated: 2026-07-17
 > This file tracks *where we are*. For *why* decisions were made, see `docs/adr/`. For requirements detail, see `docs/requirements/`. Each phase below also has a matching [GitHub Milestone](https://github.com/Efren707/toptrader/milestones) for visual progress tracking.
 
 ## Current focus
 
-**Phase 3 complete.** All architecture docs done: system architecture, data model/ERD (ADR 0010), schema migration tooling (Flyway, ADR 0011), API contract (ADR 0012), security architecture, frontend architecture (ADR 0013), and deployment/infra architecture (ADR 0014 — default VPC, CloudFront-only EC2 exposure, HTTP origin protocol, $15/$25 budget thresholds). Next step: kick off **Phase 4 — CI/CD & Environment Strategy**, starting with defining local/prod environments.
+**Phase 4 in progress.** Local/prod environments defined: `docs/architecture/environments.md` consolidates the local vs. prod matrix (profiles, DB, secrets, URLs, logging, health checks), and ADR 0015 resolves the open question from ADR 0006 on how runtime secrets reach EC2 (instance IAM role, scoped to `/toptrader/prod/*`, pulled during the SSH deploy step). Next step: **pipeline stages (lint → test → build → deploy)**, including the monorepo `paths:` filtering flagged as unresolved in ADR 0006.
 
 ## Working agreement
 
@@ -50,9 +50,9 @@ Each spike produces a recommendation + trade-offs for review, then an ADR.
 - [x] Frontend architecture (Angular structure, state management) — `docs/architecture/frontend-architecture.md`, ADR 0013
 - [x] Deployment/infra architecture doc — `docs/architecture/deployment-architecture.md`, ADR 0014
 
-## Phase 4 — CI/CD & Environment Strategy — ⏳ Not started
+## Phase 4 — CI/CD & Environment Strategy — 🔄 In progress
 
-- [ ] Environments defined (local/prod)
+- [x] Environments defined (local/prod) — `docs/architecture/environments.md`, ADR 0015
 - [ ] Pipeline stages (lint → test → build → deploy)
 - [ ] Merge/deploy test gates
 - [ ] Secrets/config management per environment

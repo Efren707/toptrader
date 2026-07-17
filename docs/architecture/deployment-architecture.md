@@ -1,6 +1,6 @@
 # Deployment & Infrastructure Architecture
 
-> Infra-level detail behind the topology shown in [system-architecture.md](./system-architecture.md). Consolidates ADR 0005 (AWS shape), ADR 0006 (CI/CD), ADR 0008 (observability), and ADR 0009 (local dev), and fills the remaining infra-design gaps (network layout, security groups, IAM roles, budget thresholds) in ADR 0014. Environment-specific config strategy (local vs. prod profiles, per-environment secrets wiring) is Phase 4, not this doc.
+> Infra-level detail behind the topology shown in [system-architecture.md](./system-architecture.md). Consolidates ADR 0005 (AWS shape), ADR 0006 (CI/CD), ADR 0008 (observability), and ADR 0009 (local dev), and fills the remaining infra-design gaps (network layout, security groups, IAM roles, budget thresholds) in ADR 0014. Environment-specific config strategy (local vs. prod profiles, per-environment secrets wiring, ADR 0015) is consolidated in [environments.md](./environments.md), not this doc.
 
 ## Network layout
 
@@ -14,7 +14,7 @@
 - Security group:
   - App port (e.g. 8080): inbound only from AWS's managed **CloudFront origin-facing prefix list** — prevents bypassing CloudFront (and its TLS termination/security headers from `security-architecture.md`) by hitting the EC2 public IP directly.
   - SSH: non-default port, open to `0.0.0.0/0` (GitHub-hosted runners have no static IPs to allowlist) with fail2ban, per ADR 0006.
-- IAM instance role: `ssm:GetParameters` scoped to the app's specific SSM parameter path (pulls DB password, Finnhub key, session-signing secret at boot/deploy — ADR 0006, ADR 0009), plus the CloudWatch agent's standard `cloudwatch:PutMetricData` / `logs:*` permissions for ADR 0008.
+- IAM instance role: `ssm:GetParameters`/`GetParametersByPath` + `kms:Decrypt` (on `aws/ssm`), scoped to the `/toptrader/prod/*` parameter path prefix — pulls DB password, Finnhub key, session-signing secret during the SSH deploy step (ADR 0006, ADR 0015), plus the CloudWatch agent's standard `cloudwatch:PutMetricData` / `logs:*` permissions for ADR 0008.
 
 ## Database — RDS
 
