@@ -5,7 +5,7 @@
 
 ## Current focus
 
-**Phase 2 complete, Phase 3 underway.** Done so far: system architecture diagram (`docs/architecture/system-architecture.md`), data model/ERD (`data-model.md`, ADR 0010), schema migration tooling (Flyway, ADR 0011), API contract (`openapi.yaml` + `api-contract.md`, ADR 0012), and security architecture doc (`security-architecture.md` — consolidates ADR 0004/0006/0007/0009/0010/0012, adds security headers via CloudFront + Bean Validation as implementation-level baseline, no new ADR needed). Next step: **frontend architecture (Angular structure, state management)**.
+**Phase 2 complete, Phase 3 underway.** Done so far: system architecture diagram, data model/ERD (ADR 0010), schema migration tooling (Flyway, ADR 0011), API contract (ADR 0012), security architecture doc (consolidates prior ADRs, no new ADR needed), and frontend architecture (`frontend-architecture.md`, ADR 0013 — standalone components, signals-based state, Tailwind CSS, Jest). Next step: **deployment/infra architecture doc** (last item in Phase 3).
 
 ## Working agreement
 
@@ -47,7 +47,7 @@ Each spike produces a recommendation + trade-offs for review, then an ADR.
 - [x] Schema migration tooling — **Flyway**, see ADR 0011
 - [x] API design/contract (OpenAPI) — `docs/architecture/openapi.yaml`, `api-contract.md`, ADR 0012
 - [x] Security architecture doc — `docs/architecture/security-architecture.md`
-- [ ] Frontend architecture (Angular structure, state management)
+- [x] Frontend architecture (Angular structure, state management) — `docs/architecture/frontend-architecture.md`, ADR 0013
 - [ ] Deployment/infra architecture doc
 
 ## Phase 4 — CI/CD & Environment Strategy — ⏳ Not started
