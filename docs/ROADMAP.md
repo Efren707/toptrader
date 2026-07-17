@@ -5,7 +5,7 @@
 
 ## Current focus
 
-**Phase 2, in progress.** Market data API research done — Finnhub selected (ADR 0003). Auth strategy done — server-side sessions, Argon2id, DB-tracked lockout (ADR 0004). AWS deployment shape done — EC2 + CloudFront, RDS, S3+CloudFront, Route 53 (ADR 0005). CI/CD pipeline design done — monorepo, SSH deploy, OIDC, SSM secrets (ADR 0006). Next step: **security baseline** research spike — see Phase 2 below.
+**Phase 2, in progress.** Market data API research done — Finnhub selected (ADR 0003). Auth strategy done — server-side sessions, Argon2id, DB-tracked lockout (ADR 0004). AWS deployment shape done — EC2 + CloudFront, RDS, S3+CloudFront, Route 53 (ADR 0005). CI/CD pipeline design done — monorepo, SSH deploy, OIDC, SSM secrets (ADR 0006). Security baseline done — OWASP Top 10 mitigations, CORS/CSRF, Dependabot, Actuator lockdown (ADR 0007). Next step: **observability basics** research spike — see Phase 2 below.
 
 ## Working agreement
 
@@ -36,8 +36,8 @@ Each spike produces a recommendation + trade-offs for review, then an ADR.
 - [x] Auth strategy (session vs. JWT vs. OAuth2, password hashing) — **server-side sessions + Argon2id + DB-tracked lockout, see ADR 0004.** Carries forward a requirement into the AWS spike: plan for a custom domain (frontend/backend on subdomains of it) for clean cross-origin session cookies.
 - [x] AWS deployment shape (EC2 vs. ECS/Fargate vs. Beanstalk vs. App Runner; RDS; frontend hosting; budget alerts / free-tier guardrails; custom domain for session cookie sharing) — **EC2 t4g.micro + CloudFront (backend), RDS db.t4g.micro, S3+CloudFront (frontend), Route 53 domain, see ADR 0005.** App Runner ruled out (deprecated April 2026). Chosen over ECS Fargate to avoid its mandatory ~$16+/mo ALB cost.
 - [x] CI/CD pipeline design (GitHub Actions stages, deploy triggers to the EC2/S3 targets from ADR 0005) — **monorepo, lint→test→build→deploy, SSH/SCP to EC2, OIDC to S3/CloudFront, GitHub secrets + SSM Parameter Store, see ADR 0006.** $0 added AWS cost.
-- [ ] Security baseline (OWASP Top 10 applied, secrets management, CORS) — **up next**
-- [ ] Observability basics (logging, CloudWatch, health checks)
+- [x] Security baseline (OWASP Top 10 applied, secrets management, CORS) — **access control pattern + IDOR tests, CORS/CSRF config, Dependabot, Actuator locked to /health only, see ADR 0007.**
+- [ ] Observability basics (logging, CloudWatch, health checks) — **up next**
 - [ ] Local dev environment tooling (Docker Compose for Postgres, local env var/secrets setup)
 
 ## Phase 3 — Technical & Architecture Documentation — ⏳ Not started
