@@ -1,0 +1,76 @@
+<div class="page">
+  <div class="masthead">
+    <div class="wordmark">TOP<span>TRADER</span></div>
+  </div>
+
+  <div class="layout">
+    <app-card class="auth-panel">
+      @if (createdUser(); as user) {
+        <p class="eyebrow">Account created</p>
+        <h1>Welcome, {{ user.username }}</h1>
+        <p class="lede">
+          $500.00 in virtual cash is in your account. Trading screens are coming in the next build.
+        </p>
+      } @else {
+        <p class="eyebrow">Create account</p>
+        <h1>Start paper trading</h1>
+        <p class="lede">$500.00 in virtual cash, credited the moment you register.</p>
+
+        <form [formGroup]="form" (ngSubmit)="submit()">
+          @if (formError(); as message) {
+            <p class="form-error">{{ message }}</p>
+          }
+
+          <app-input
+            label="Email"
+            type="email"
+            formControlName="email"
+            [errorMessage]="errorFor('email')"
+          />
+          <app-input
+            label="Username"
+            formControlName="username"
+            [errorMessage]="errorFor('username')"
+          />
+          <app-input
+            label="Password"
+            type="password"
+            formControlName="password"
+            hint="Minimum 8 characters"
+            [errorMessage]="errorFor('password')"
+          />
+
+          <app-button type="submit" [fullWidth]="true" [disabled]="submitting()">
+            {{ submitting() ? 'Creating account…' : 'Create account' }}
+          </app-button>
+        </form>
+      }
+    </app-card>
+
+    <app-card class="pitch-panel">
+      <div class="panel-title">
+        <h2>Why TopTrader</h2>
+        <span class="panel-tag">NO REAL MONEY, EVER</span>
+      </div>
+      <p class="pitch-copy">
+        TopTrader is a full market simulator — real tickers, real prices, zero real-money risk.
+        Register and <strong>$500.00</strong> in virtual cash lands in your account immediately, no
+        funding and no waiting. Look up any ticker, buy and sell at the live quote, and watch your
+        portfolio and P&amp;L move with every trade.
+      </p>
+
+      <div class="script">
+        <div class="script-line"><span class="prompt">$</span>toptrader register</div>
+        <div class="script-line out">&gt; account created — $500.00 credited</div>
+        <div class="script-line"><span class="prompt">$</span>toptrader quote AAPL</div>
+        <div class="script-line out">&gt; 271.84</div>
+        <div class="script-line"><span class="prompt">$</span>toptrader buy AAPL 5</div>
+        <div class="script-line out">&gt; filled at 271.84 — 5 shares</div>
+      </div>
+
+      <p class="pitch-footnote">
+        Everything above is real market data. Nothing above is real money.
+      </p>
+    </app-card>
+  </div>
+</div>
