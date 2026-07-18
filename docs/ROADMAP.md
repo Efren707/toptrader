@@ -5,7 +5,7 @@
 
 ## Current focus
 
-**Implementation started — project scaffolding, tooling, local dev DB, and CI are in place.** Planning (Phases 0-6) closed out 2026-07-17 with a final go/no-go review; see the "Implementation kickoff" section below for what's been built since. **Next step:** start on [issue #1 (US-1: Register)](https://github.com/Efren707/toptrader/issues/1), the first story in the Auth & Account Foundation milestone. (Phase 5's demo/showcase readiness item is still open and intentionally blocked until deploy — see `docs/guides/demo-showcase-readiness-outline.md`.)
+**Implementing US-1 (Register).** Planning (Phases 0-6) closed out 2026-07-17 with a final go/no-go review; see the "Implementation kickoff" section below for what's been built since. Backend register flow (migration, entity, security config, DTOs, service, controller, tests) is complete and PR'd from `feature/us-1-register` — see [issue #1](https://github.com/Efren707/toptrader/issues/1). **Next step:** get that PR merged, then start on the frontend register form, and after that US-2 (Log in), the next story in the Auth & Account Foundation milestone. (Phase 5's demo/showcase readiness item is still open and intentionally blocked until deploy — see `docs/guides/demo-showcase-readiness-outline.md`.)
 
 ## Implementation kickoff — Auth & Account Foundation (Milestone #8, in progress)
 
@@ -19,7 +19,9 @@ Groundwork completed ahead of US-1, per ADR 0020's build order:
 - [x] Local Postgres — Docker Compose, Postgres 17 (also the version future RDS will match), `application-local.yml.example` template per ADR 0009
 - [x] CI — GitHub Actions PR quality gate (`dorny/paths-filter` → lint/test/build per stack), per ADR 0016; deploy-to-AWS stage intentionally deferred until EC2/RDS/S3/CloudFront/OIDC infra exists (ADR 0006)
 - [x] Branch protection on `main` — `backend-ci`/`frontend-ci` required status checks, strict, admins included (matches ADR 0002's PR-based trunk workflow — direct pushes to `main` are no longer possible, including for this assistant)
-- [ ] US-1 (Register) — not started
+- [x] US-1 (Register) backend — `POST /auth/register` per `openapi.yaml`: Flyway migration for `users`, `User`/`UserRepository`, `SecurityConfig` (Argon2id, session cookie, CORS, CSRF), `UserDetailsServiceImpl`/`UserPrincipal` (shared with future US-2 login), `RegistrationService` + `AuthController`, global RFC 7807 field-level validation errors, integration tests. Package-by-feature convention adopted (`user`, `auth`, `config`, `web`) — no Lombok (declined, see decision below). New **ADR 0022** written mid-implementation for a CSRF-bootstrap gap discovered by testing. PR open from `feature/us-1-register`.
+- [ ] US-1 (Register) frontend — not started
+- [ ] US-2 (Log in) — not started
 
 ## Working agreement
 
