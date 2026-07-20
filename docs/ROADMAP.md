@@ -1,11 +1,11 @@
 # Planning Roadmap & Status
 
-> Last updated: 2026-07-17
+> Last updated: 2026-07-19
 > This file tracks *where we are*. For *why* decisions were made, see `docs/adr/`. For requirements detail, see `docs/requirements/`. Each phase below also has a matching [GitHub Milestone](https://github.com/Efren707/toptrader/milestones) for visual progress tracking.
 
 ## Current focus
 
-**Implementing US-1 (Register).** Planning (Phases 0-6) closed out 2026-07-17 with a final go/no-go review; see the "Implementation kickoff" section below for what's been built since. Backend register flow merged (PR #11, closed [issue #1](https://github.com/Efren707/toptrader/issues/1)). Frontend register form is complete and PR'd from `feature/us-1-register-frontend`, along with the app's visual design system (**ADR 0024**: dark-only monochrome, IBM Plex, shared `Button`/`Input`/`Card` components). **Next step:** get that PR merged, then start on US-2 (Log in), the next story in the Auth & Account Foundation milestone. (Phase 5's demo/showcase readiness item is still open and intentionally blocked until deploy — see `docs/guides/demo-showcase-readiness-outline.md`.)
+**US-1 (Register) is done.** Backend register flow merged (PR #11, closed [issue #1](https://github.com/Efren707/toptrader/issues/1)). Frontend register form + the app's visual design system (**ADR 0024**: dark-only monochrome, IBM Plex, shared `Button`/`Input`/`Card` components) merged (PR #12, 2026-07-18). **Next step:** start US-2 (Log in), the next story in the Auth & Account Foundation milestone. Also starting 2026-07-19: the user is writing feature/bugfix implementation code themselves going forward, with Claude in a guide/review role rather than implementing directly — see `CLAUDE.md`'s "Coding collaboration mode." (Phase 5's demo/showcase readiness item is still open and intentionally blocked until deploy — see `docs/guides/demo-showcase-readiness-outline.md`.)
 
 ## Implementation kickoff — Auth & Account Foundation (Milestone #8, in progress)
 
@@ -21,7 +21,7 @@ Groundwork completed ahead of US-1, per ADR 0020's build order:
 - [x] Branch protection on `main` — `backend-ci`/`frontend-ci` required status checks, strict, admins included (matches ADR 0002's PR-based trunk workflow — direct pushes to `main` are no longer possible, including for this assistant)
 - [x] US-1 (Register) backend — `POST /auth/register` per `openapi.yaml`: Flyway migration for `users`, `User`/`UserRepository`, `SecurityConfig` (Argon2id, session cookie, CORS, CSRF), `UserDetailsServiceImpl`/`UserPrincipal` (shared with future US-2 login), `RegistrationService` + `AuthController`, global RFC 7807 field-level validation errors, integration tests. Package-by-feature convention adopted (`user`, `auth`, `config`, `web`) — no Lombok (**ADR 0023**). **ADR 0022** written mid-implementation for a CSRF-bootstrap gap discovered by testing. Merged via PR #11.
 - [x] Frontend visual design system — dark-only monochrome UI, IBM Plex Sans/Mono (self-hosted), shared `Button`/`Input`/`Card` components in `shared/ui/`, Tailwind v4 `@theme` tokens in `styles.css` — **ADR 0024**.
-- [x] US-1 (Register) frontend — `Register` component (`features/auth/register/`) using Reactive Forms + the shared UI components; `AuthService`, `credentialsInterceptor`/`errorInterceptor`, environment-based `apiUrl`. Verified end-to-end in-browser against the real backend: successful registration + auto-login, duplicate-email 409 banner, and client + server field-level validation errors all render correctly. PR open from `feature/us-1-register-frontend`.
+- [x] US-1 (Register) frontend — `Register` component (`features/auth/register/`) using Reactive Forms + the shared UI components; `AuthService`, `credentialsInterceptor`/`errorInterceptor`, environment-based `apiUrl`. Verified end-to-end in-browser against the real backend: successful registration + auto-login, duplicate-email 409 banner, and client + server field-level validation errors all render correctly. Merged via PR #12 (2026-07-18).
 - [ ] US-2 (Log in) — not started
 
 ## Working agreement
