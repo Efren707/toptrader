@@ -5,9 +5,9 @@
 
   <div class="layout">
     <app-card class="auth-panel">
-        <p class="eyebrow">Create account</p>
-        <h1>Start paper trading</h1>
-        <p class="lede">$500.00 in virtual cash, credited the moment you register.</p>
+        <p class="eyebrow">Log in</p>
+        <h1>Welcome back</h1>
+        <p class="lede">Log in to pick up where you left off.</p>
 
         <form [formGroup]="form" (ngSubmit)="submit()">
           @if (formError(); as message) {
@@ -21,11 +21,6 @@
             [errorMessage]="errorFor('email')"
           />
           <app-input
-            label="Username"
-            formControlName="username"
-            [errorMessage]="errorFor('username')"
-          />
-          <app-input
             label="Password"
             type="password"
             formControlName="password"
@@ -34,7 +29,7 @@
           />
 
           <app-button type="submit" [fullWidth]="true" [disabled]="submitting()">
-            {{ submitting() ? 'Creating account…' : 'Create account' }}
+            {{ submitting() ? 'Logging in…' : 'Log in' }}
           </app-button>
         </form>
     </app-card>

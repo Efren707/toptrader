@@ -7,22 +7,21 @@ import { Input } from '../../../shared/ui/input/input';
 import { Router } from '@angular/router';
 import { ApiError } from '../../../core/interceptors/error.interceptor';
 
-type RegisterField = 'email' | 'username' | 'password';
+type LoginField = 'email' | 'password';
 
 @Component({
-  selector: 'app-register',
+  selector: 'app-login',
   imports: [ReactiveFormsModule, Button, Card, Input],
-  templateUrl: './register.html',
-  styleUrl: './register.css',
+  templateUrl: './login.html',
+  styleUrl: './login.css',
 })
-export class Register {
+export class Login {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
   protected readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    username: ['', [Validators.required]],
     password: ['', [Validators.required, Validators.minLength(8)]],
   });
 
@@ -38,22 +37,19 @@ export class Register {
     this.formError.set(null);
     this.submitting.set(true);
 
-    this.authService.register(this.form.getRawValue()).subscribe({
+    this.authService.login(this.form.getRawValue()).subscribe({
       next: () => {
         this.router.navigate(['/dashboard']);
       },
       error: (error: ApiError) => {
         this.submitting.set(false);
-        if (Object.keys(error.fieldErrors).length > 0) {
-          this.applyFieldErrors(error.fieldErrors);
-        } else {
-          this.formError.set(error.detail);
-        }
+        this.formError.set(error.detail);
       },
     });
+    
   }
 
-  protected errorFor(field: RegisterField): string {
+  protected errorFor(field: LoginField): string {
     const control = this.form.get(field);
     if (!control || !control.touched || !control.errors) {
       return '';
@@ -73,9 +69,4 @@ export class Register {
     return '';
   }
 
-  private applyFieldErrors(fieldErrors: Record<string, string>): void {
-    for (const [field, message] of Object.entries(fieldErrors)) {
-      this.form.get(field)?.setErrors({ server: message });
-    }
-  }
 }
