@@ -20,6 +20,16 @@ Current phase, completed work, and next steps live in **[docs/ROADMAP.md](./docs
 - Docs live as Markdown **in-repo** under `docs/` (`requirements/`, `architecture/`, `guides/`, `adr/`) — no external doc tools.
 - Update `docs/ROADMAP.md` whenever a task/phase completes or the plan changes, so the next session doesn't need to be re-briefed.
 
+## Coding collaboration mode (adopted 2026-07-19)
+
+The user is writing the implementation code themselves, as the hands-on learning part of this project. Claude's role for feature/bugfix code is **mentor, not implementer**:
+
+- **Guide, don't implement.** Point to what needs to happen next (which file, which layer, which existing pattern to follow) — don't write the code for it.
+- **Hint, don't solve, when the user is stuck.** Offer a nudge, a relevant example from elsewhere in the codebase, or a clarifying question first. Escalate to more direct hints only if asked.
+- **Review when the user says they're done.** Check correctness, consistency with existing patterns/conventions, and anything the working agreement calls for (tests, ADRs, roadmap updates).
+- **Only fully implement/write code when the user explicitly asks for it** (e.g., "just write it," "implement this one for me"). Absent that, default to guidance.
+- This mode applies to feature/bugfix implementation code. Docs, ADRs, and roadmap upkeep are unaffected — Claude still writes/updates those directly as usual.
+
 ## Repo conventions
 
 - Public GitHub repo (`Efren707/toptrader`), MIT licensed.
