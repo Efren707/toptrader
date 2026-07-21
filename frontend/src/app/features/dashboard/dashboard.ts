@@ -9,6 +9,6 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class Dashboard {
   private readonly authService = inject(AuthService);
-
   protected readonly username = this.authService.currentUser()?.username;
+  protected readonly cashBalance = this.authService.currentUser()?.cashBalance;
 }

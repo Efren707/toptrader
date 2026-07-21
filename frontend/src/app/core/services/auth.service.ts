@@ -8,6 +8,7 @@ export interface UserSummary {
   id: number;
   email: string;
   username: string;
+  cashBalance: number;
 }
 
 export interface RegisterRequest {
