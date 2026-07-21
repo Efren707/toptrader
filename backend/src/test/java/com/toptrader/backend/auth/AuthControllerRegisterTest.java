@@ -43,6 +43,7 @@ class AuthControllerRegisterTest {
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.email").value("alice@example.com"))
             .andExpect(jsonPath("$.username").value("alice"))
+            .andExpect(jsonPath("$.cashBalance").value(500.00))
             .andReturn();
 
     User saved = userRepository.findByEmail("alice@example.com").orElseThrow();
