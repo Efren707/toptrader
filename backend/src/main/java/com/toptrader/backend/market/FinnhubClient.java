@@ -6,19 +6,25 @@ import org.springframework.web.client.RestClient;
 @Component
 public class FinnhubClient {
 
-    private final RestClient restClient;
-    public FinnhubClient(RestClient restClient) {
-        this.restClient = restClient;
-    }
+  private final RestClient restClient;
 
-    public FinnhubQuoteResponse fetchQuote(String ticker){
-        return restClient.get().uri("/quote?symbol={ticker}", ticker)
-                .retrieve().body(FinnhubQuoteResponse.class);
-    }
+  public FinnhubClient(RestClient restClient) {
+    this.restClient = restClient;
+  }
 
-    public FinnhubCompanyProfileResponse fetchProfile(String ticker){
-        return restClient.get().uri("/stock/profile2?symbol={ticker}", ticker)
-                .retrieve().body(FinnhubCompanyProfileResponse.class);
-    }
+  public FinnhubQuoteResponse fetchQuote(String ticker) {
+    return restClient
+        .get()
+        .uri("/quote?symbol={ticker}", ticker)
+        .retrieve()
+        .body(FinnhubQuoteResponse.class);
+  }
 
+  public FinnhubCompanyProfileResponse fetchProfile(String ticker) {
+    return restClient
+        .get()
+        .uri("/stock/profile2?symbol={ticker}", ticker)
+        .retrieve()
+        .body(FinnhubCompanyProfileResponse.class);
+  }
 }
