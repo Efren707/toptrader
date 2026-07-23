@@ -2,6 +2,7 @@ package com.toptrader.backend.market;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Locale;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -16,6 +17,7 @@ public class QuoteService {
   }
 
   public Quote getQuote(String ticker) {
+    ticker = ticker.toUpperCase(Locale.ROOT);
     FinnhubQuoteResponse quoteResponse;
     FinnhubCompanyProfileResponse profileResponse;
 
