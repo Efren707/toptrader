@@ -1,6 +1,94 @@
-<div>
+<div class="page">
+  <nav class="navbar">
+    <div class="wordmark">TOP<span>TRADER</span></div>
 
-  <p>Welcome, {{username}}</p>
-  <span>Balance: {{cashBalance}}</span>
-  
+    <form
+      #searchForm
+      class="search-form"
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+      autocomplete="off"
+    >
+      <div class="search-field">
+        <div class="search-input-wrap">
+          <svg
+            class="field-icon field-icon-leading"
+            viewBox="0 0 20 20"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <circle cx="8.5" cy="8.5" r="6" />
+            <line x1="13.2" y1="13.2" x2="18" y2="18" />
+          </svg>
+
+          <input
+            class="search-input"
+            [class.search-input-invalid]="errorFor('ticker')"
+            type="text"
+            placeholder="Search ticker (e.g. AAPL)"
+            formControlName="ticker"
+          />
+
+          @if (form.controls.ticker.value) {
+            <button
+              type="button"
+              class="field-icon field-icon-clear"
+              aria-label="Clear search"
+              (click)="clearTicker()"
+            >
+              <svg
+                viewBox="0 0 20 20"
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                aria-hidden="true"
+              >
+                <line x1="5" y1="5" x2="15" y2="15" />
+                <line x1="15" y1="5" x2="5" y2="15" />
+              </svg>
+            </button>
+          }
+        </div>
+
+        @if (errorFor('ticker'); as message) {
+          <p class="field-error">{{ message }}</p>
+        }
+
+        @if (submitting() || quote() || notFound()) {
+          <div class="search-results">
+            @if (submitting()) {
+              <p class="search-status">Searching…</p>
+            } @else if (quote(); as result) {
+              <ul class="results-list">
+                <li class="result-item">
+                  <span class="result-ticker">{{ result.ticker }}</span>
+                  <span class="result-name">{{ result.companyName }}</span>
+                  <span class="result-price">${{ result.price }}</span>
+                </li>
+              </ul>
+            } @else if (notFound()) {
+              <p class="search-empty">No stocks found</p>
+            }
+          </div>
+        }
+      </div>
+    </form>
+  </nav>
+
+  @if (formError(); as message) {
+    <p class="form-error">{{ message }}</p>
+  }
+
+  <main class="content">
+    <p>Welcome, {{ username }}</p>
+    <span>Balance: {{ cashBalance | currency }}</span>
+  </main>
 </div>
