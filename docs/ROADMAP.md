@@ -5,13 +5,9 @@
 
 ## Current focus
 
-**US-4 (Look up a stock quote) is done end-to-end, PR [#19](https://github.com/Efren707/toptrader/pull/19) open, awaiting merge.** Backend: Finnhub client wiring (ADR 0003, `MarketDataConfig`/`FinnhubTokenInterceptor`/`FinnhubClient`) plus `Quote` (DTO matching the `openapi.yaml` schema), `QuoteService` (normalizes ticker to uppercase before calling Finnhub, detects unknown tickers via price `== 0` or a missing profile name since Finnhub returns 200s rather than 404s for bad symbols, maps provider call failures to 502), and a thin `QuoteController` exposing `GET /quotes/{ticker}` behind the existing `anyRequest().authenticated()` rule. Frontend: quote lookup lives on the dashboard (not a standalone route, per US-5/6/7/8 not needing it elsewhere) — a navbar search box (`QuoteService.getQuote`, native input with left search icon + right clear icon, Enter-to-submit only, no visible button) with a results dropdown showing the matched ticker/company/price or a "No stocks found" state, closing and clearing on an outside click.
+**US-4 (Look up a stock quote) is done.** Backend: Finnhub client wiring (ADR 0003, `MarketDataConfig`/`FinnhubTokenInterceptor`/`FinnhubClient`) plus `Quote` (DTO matching the `openapi.yaml` schema), `QuoteService` (normalizes ticker to uppercase before calling Finnhub, detects unknown tickers via price `== 0` or a missing profile name since Finnhub returns 200s rather than 404s for bad symbols, maps provider call failures to 502), and a thin `QuoteController` exposing `GET /quotes/{ticker}` behind the existing `anyRequest().authenticated()` rule. Frontend: quote lookup lives on the dashboard (not a standalone route, per US-5/6/7/8 not needing it elsewhere) — a navbar search box (`QuoteService.getQuote`, native input with left search icon + right clear icon, Enter-to-submit only, no visible button) with a results dropdown showing the matched ticker/company/price or a "No stocks found" state, closing and clearing on an outside click. Merged via PR [#18](https://github.com/Efren707/toptrader/pull/18) (backend) and [#19](https://github.com/Efren707/toptrader/pull/19) (frontend + ticker-normalization fix), 2026-07-22/23. This closes out Milestone #9 (Market Data Integration).
 
-Test coverage: `QuoteControllerTest` (happy path, both not-found branches, both 502 branches, 401 when unauthenticated) with `FinnhubClient` mocked via `@MockitoBean`. Also fixed a pre-existing break: `MarketDataConfig`'s required `toptrader.finnhub.api-key` property had no test value, so every `@SpringBootTest` was failing context startup; added a dummy key to `src/test/resources/application.properties`. Full suite (15 tests), `spotless:check`, and `ng lint`/`ng build` all pass.
-
-A real Finnhub key is still needed for manual/local verification against the live API (drop it into the gitignored `application-local.yml`, per ADR 0009) and eventually for production — neither blocks this PR.
-
-**Next step:** merge PR #19 (closes issue [#4](https://github.com/Efren707/toptrader/issues/4)), mark Milestone #9 done, then move to the next story in Milestone #10 (Trading Core: US-5 Buy shares).
+**Next step:** start US-5 (Buy shares), the first story in the Trading Core build-order group (Milestone #10) — buys execute at the price `QuoteService` fetches at request time, never a client-supplied price (see `openapi.yaml`'s `/trades/buy` description). Mentor-mode coding collaboration continues per `CLAUDE.md`.
 
 ## Deferred until deploy
 
@@ -21,6 +17,7 @@ A real Finnhub key is still needed for manual/local verification against the liv
 
 - **Phases 0–6 (Planning)** — ✅ done. Vision/requirements, research spikes, architecture docs, CI/CD & environment strategy, user-facing doc outlines (except the deferred item above), MVP scope freeze, GO decision (2026-07-17). Full detail: [planning-history.md](./planning-history.md).
 - **Milestone #8 (Auth & Account Foundation)** — ✅ done. US-1 Register (PR [#11](https://github.com/Efren707/toptrader/pull/11) backend, [#12](https://github.com/Efren707/toptrader/pull/12) frontend), US-2 Log in (PR [#14](https://github.com/Efren707/toptrader/pull/14)), US-3 Starting cash balance (PR [#16](https://github.com/Efren707/toptrader/pull/16)). Full detail: [planning-history.md](./planning-history.md).
+- **Milestone #9 (Market Data Integration)** — ✅ done. US-4 Look up a stock quote (PR [#18](https://github.com/Efren707/toptrader/pull/18) backend, [#19](https://github.com/Efren707/toptrader/pull/19) frontend).
 
 ## Working agreement
 
