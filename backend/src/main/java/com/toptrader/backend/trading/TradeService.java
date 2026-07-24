@@ -63,10 +63,23 @@ public class TradeService {
         }
         this.holdingRepository.save(holding);
 
+        BigDecimal currentPrice = quote.price();
+        BigDecimal marketValue = currentPrice.multiply(BigDecimal.valueOf(holding.getQuantity()));
+        BigDecimal costBasisTotal = holding.getAverageCostBasis().multiply(BigDecimal.valueOf(holding.getQuantity()));
+        BigDecimal unrealizedGainLoss = marketValue.subtract(costBasisTotal);
+
+        HoldingResponse holdingResponse = new HoldingResponse(holding.getTicker(), holding.getQuantity(),
+                holding.getAverageCostBasis(), currentPrice, marketValue, unrealizedGainLoss);
+
         Transaction transaction = new Transaction(user, quote.ticker(), Transaction.Side.BUY, quantity, quote.price(), total);
         this.transactionRepository.save(transaction);
 
-        return new TradeResult(transaction, user.getCashBalance(), holding);
+        TransactionResponse transactionResponse =
+                new TransactionResponse(transaction.getId(), transaction.getTicker(), transaction.getSide(),
+                        transaction.getQuantity(), transaction.getPricePerShare(), transaction.getTotalAmount(),
+                        transaction.getExecutedAt());
+
+        return new TradeResult(transactionResponse, user.getCashBalance(), holdingResponse);
     }
 
 }

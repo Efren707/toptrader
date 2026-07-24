@@ -1,11 +1,9 @@
 package com.toptrader.backend.trading;
 
-import jakarta.validation.constraints.NotNull;
-
 import java.math.BigDecimal;
 
 public record TradeResult(
-        Transaction transaction,
+        TransactionResponse transaction,
         BigDecimal cashBalance,
-        Holding holding) {
+        HoldingResponse holding) {
 }

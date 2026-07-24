@@ -1,5 +1,6 @@
 package com.toptrader.backend.trading;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.toptrader.backend.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -69,6 +70,7 @@ public class Transaction {
         return id;
     }
 
+    @JsonIgnore
     public User getUser() {
         return user;
     }

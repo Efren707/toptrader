@@ -57,12 +57,12 @@ class TradeServiceTest {
     TradeResult result = tradeService.buyStock(USER_ID, new TradeRequest("AAPL", 5));
 
     assertThat(result.cashBalance()).isEqualByComparingTo("500.00");
-    assertThat(result.holding().getQuantity()).isEqualTo(5);
-    assertThat(result.holding().getAverageCostBasis()).isEqualByComparingTo("100.00");
-    assertThat(result.transaction().getSide()).isEqualTo(Transaction.Side.BUY);
-    assertThat(result.transaction().getQuantity()).isEqualTo(5);
-    assertThat(result.transaction().getPricePerShare()).isEqualByComparingTo("100.00");
-    assertThat(result.transaction().getTotalAmount()).isEqualByComparingTo("500.00");
+    assertThat(result.holding().quantity()).isEqualTo(5);
+    assertThat(result.holding().averageCostBasis()).isEqualByComparingTo("100.00");
+    assertThat(result.transaction().side()).isEqualTo(Transaction.Side.BUY);
+    assertThat(result.transaction().quantity()).isEqualTo(5);
+    assertThat(result.transaction().pricePerShare()).isEqualByComparingTo("100.00");
+    assertThat(result.transaction().totalAmount()).isEqualByComparingTo("500.00");
 
     verify(userRepository).save(user);
     verify(holdingRepository).save(any(Holding.class));
@@ -79,10 +79,11 @@ class TradeServiceTest {
 
     TradeResult result = tradeService.buyStock(USER_ID, new TradeRequest("AAPL", 10));
 
-    assertThat(result.holding()).isSameAs(existing);
     assertThat(existing.getQuantity()).isEqualTo(20);
     // (10 * 50.00 + 10 * 100.00) / 20 = 75.00
     assertThat(existing.getAverageCostBasis()).isEqualByComparingTo("75.00");
+    assertThat(result.holding().quantity()).isEqualTo(20);
+    assertThat(result.holding().averageCostBasis()).isEqualByComparingTo("75.00");
   }
 
   @Test
@@ -151,7 +152,7 @@ class TradeServiceTest {
 
     TradeResult result = tradeService.buyStock(USER_ID, new TradeRequest("AAPL", 3));
 
-    assertThat(result.transaction().getPricePerShare()).isEqualByComparingTo("210.50");
+    assertThat(result.transaction().pricePerShare()).isEqualByComparingTo("210.50");
     verify(quoteService, times(1)).getQuote("AAPL");
   }
 }
