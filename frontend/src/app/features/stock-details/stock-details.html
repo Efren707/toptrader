@@ -1,0 +1,18 @@
+<div class="page">
+  <a routerLink="/dashboard" class="back-link">← Back to dashboard</a>
+
+  @if (loading()) {
+    <p class="status">Loading…</p>
+  } @else if (notFound()) {
+    <p class="status">No stock found for "{{ ticker() }}".</p>
+  } @else if (quote(); as result) {
+    <app-card class="details-card">
+      <p class="eyebrow">{{ result.ticker }}</p>
+      <h1>{{ result.companyName }}</h1>
+      <p class="price">{{ result.price | currency }}</p>
+      <p class="as-of">As of {{ result.asOf | date: 'medium' }}</p>
+    </app-card>
+
+    <app-trade-form [ticker]="result.ticker" [price]="result.price"/>
+  }
+</div>

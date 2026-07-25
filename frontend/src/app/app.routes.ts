@@ -18,6 +18,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.Dashboard),
     canActivate: [authGuard]
   },
+  {
+    path: 'stocks/:ticker',
+    loadComponent: () => import('./features/stock-details/stock-details').then((m) => m.StockDetails),
+    canActivate: [authGuard]
+  },
   { path: '', pathMatch: 'full', redirectTo: 'login' },
   { path: '**', redirectTo: 'login' },
 ];
