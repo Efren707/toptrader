@@ -13,17 +13,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/trades")
 public class TradeController {
-    private final TradeService tradeService;
+  private final TradeService tradeService;
 
-    public TradeController(TradeService tradeService) {
-        this.tradeService = tradeService;
-    }
+  public TradeController(TradeService tradeService) {
+    this.tradeService = tradeService;
+  }
 
-    @PostMapping("/buy")
-    public ResponseEntity<TradeResult> buy(@AuthenticationPrincipal UserPrincipal principal, @Valid @RequestBody TradeRequest tradeRequest) {
-        TradeResult tradeResult = tradeService.buyStock(principal.getUser().getId(), tradeRequest);
-        return new ResponseEntity<>(tradeResult,HttpStatus.CREATED);
-    }
-
-
+  @PostMapping("/buy")
+  public ResponseEntity<TradeResult> buy(
+      @AuthenticationPrincipal UserPrincipal principal,
+      @Valid @RequestBody TradeRequest tradeRequest) {
+    TradeResult tradeResult = tradeService.buyStock(principal.getUser().getId(), tradeRequest);
+    return new ResponseEntity<>(tradeResult, HttpStatus.CREATED);
+  }
 }

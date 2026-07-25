@@ -105,8 +105,7 @@ class TradeServiceTest {
   @ParameterizedTest
   @ValueSource(ints = {0, -1, -100})
   void buyStock_rejectsNonPositiveQuantity_withoutFetchingQuote(int badQuantity) {
-    assertThatThrownBy(
-            () -> tradeService.buyStock(USER_ID, new TradeRequest("AAPL", badQuantity)))
+    assertThatThrownBy(() -> tradeService.buyStock(USER_ID, new TradeRequest("AAPL", badQuantity)))
         .isInstanceOf(ResponseStatusException.class);
 
     verifyNoInteractions(quoteService, userRepository, holdingRepository, transactionRepository);

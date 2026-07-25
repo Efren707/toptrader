@@ -15,8 +15,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   boolean existsByUsername(String username);
 
-  /** Locks the row for the life of the caller's transaction, so concurrent trades against the
-   * same user serialize instead of racing on cash_balance. */
+  /**
+   * Locks the row for the life of the caller's transaction, so concurrent trades against the same
+   * user serialize instead of racing on cash_balance.
+   */
   @Lock(LockModeType.PESSIMISTIC_WRITE)
   @Query("select u from User u where u.id = :id")
   Optional<User> findByIdForUpdate(@Param("id") Long id);
