@@ -4,6 +4,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Quote, QuoteService } from '../../core/services/quote.service';
 import { ApiError } from '../../core/interceptors/error.interceptor';
+import { Router } from '@angular/router';
 
 type SearchField = 'ticker';
 
@@ -19,6 +20,7 @@ export class Dashboard {
   private readonly authService = inject(AuthService);
   protected readonly username = this.authService.currentUser()?.username;
   protected readonly cashBalance = this.authService.currentUser()?.cashBalance;
+  private readonly router = inject(Router);
 
   protected readonly searchForm = viewChild<ElementRef<HTMLElement>>('searchForm');
 
@@ -89,5 +91,9 @@ export class Dashboard {
   protected clearTicker(): void {
     this.form.controls.ticker.reset('');
     this.submitted.set(false);
+  }
+
+  protected onQuoteClick(): void {
+    this.router.navigate([`/stocks/${this.quote()?.ticker}`]);
   }
 }

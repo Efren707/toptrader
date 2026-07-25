@@ -69,9 +69,11 @@
             } @else if (quote(); as result) {
               <ul class="results-list">
                 <li class="result-item">
-                  <span class="result-ticker">{{ result.ticker }}</span>
-                  <span class="result-name">{{ result.companyName }}</span>
-                  <span class="result-price">${{ result.price }}</span>
+                  <button (click)="onQuoteClick()">
+                    <span class="result-ticker">{{ result.ticker }}</span>
+                    <span class="result-name">{{ result.companyName }}</span>
+                    <span class="result-price">${{ result.price }}</span>
+                  </button>
                 </li>
               </ul>
             } @else if (notFound()) {

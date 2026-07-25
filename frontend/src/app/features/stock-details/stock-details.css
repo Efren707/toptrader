@@ -1,0 +1,61 @@
+.page {
+  max-width: 78rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.back-link {
+  display: inline-block;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+}
+
+.back-link:hover {
+  color: var(--color-text);
+}
+
+.status {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.status-error {
+  color: var(--color-danger);
+}
+
+.details-card {
+  max-width: 28rem;
+  padding: 2rem;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+  margin: 0 0 0.5rem;
+}
+
+.details-card h1 {
+  font-size: 1.375rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+  text-wrap: balance;
+}
+
+.price {
+  font-family: var(--font-mono);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 0.5rem;
+}
+
+.as-of {
+  font-size: 0.8125rem;
+  color: var(--color-text-faint);
+  margin: 0;
+}

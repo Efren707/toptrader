@@ -1,0 +1,47 @@
+<div class="page">
+
+  @if (formError(); as message) {
+    <p class="form-error">{{ message }}</p>
+  }
+
+  @if (result(); as trade) {
+    <app-card class="details-card">
+      <p class="eyebrow">Order filled</p>
+      <p class="summary">
+        Bought {{ trade.transaction.quantity }} {{ trade.transaction.ticker }}
+        @ {{ trade.transaction.pricePerShare | currency }}
+      </p>
+      <p class="as-of">New cash balance: {{ trade.cashBalance | currency }}</p>
+      <app-button [fullWidth]="true" (pressed)="tradeAgain()">Trade again</app-button>
+    </app-card>
+  } @else if (confirming()) {
+    <app-card class="details-card">
+      <p class="summary">
+        Buy {{ pendingQuantity() }} {{ ticker() }} @ {{ price() | currency }} — Confirm?
+      </p>
+
+      <div class="confirm-actions">
+        <app-button variant="secondary" [fullWidth]="true" [disabled]="submitting()" (pressed)="cancel()">
+          Cancel
+        </app-button>
+        <app-button [fullWidth]="true" [disabled]="submitting()" (pressed)="confirmTrade()">
+          {{ submitting() ? 'Confirming…' : 'Confirm' }}
+        </app-button>
+      </div>
+    </app-card>
+  } @else {
+    <app-card class="details-card">
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <app-input
+          label="Quantity"
+          type="text"
+          formControlName="quantity"
+          [errorMessage]="errorFor('quantity')"
+        />
+        <app-button type="submit" [fullWidth]="true">
+          Buy
+        </app-button>
+      </form>
+    </app-card>
+  }
+</div>
