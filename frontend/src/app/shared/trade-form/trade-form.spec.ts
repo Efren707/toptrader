@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { errorInterceptor } from '../../core/interceptors/error.interceptor';
-import { TradeResult } from '../../core/services/trade.service';
+import { TradeResult, TradeSide } from '../../core/services/trade.service';
 import { TradeForm } from './trade-form';
 
 describe('TradeForm', () => {
@@ -15,7 +15,7 @@ describe('TradeForm', () => {
     transaction: {
       id: 1,
       ticker: 'AAPL',
-      side: 'BUY',
+      side: TradeSide.BUY,
       quantity: 3,
       pricePerShare: 210.5,
       totalAmount: 631.5,
