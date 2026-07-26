@@ -8,7 +8,7 @@
     <app-card class="details-card">
       <p class="eyebrow">Order filled</p>
       <p class="summary">
-        Bought {{ trade.transaction.quantity }} {{ trade.transaction.ticker }}
+        {{ side() === TradeSide.BUY ? 'Bought' : 'Sold' }} {{ trade.transaction.quantity }} {{ trade.transaction.ticker }}
         @ {{ trade.transaction.pricePerShare | currency }}
       </p>
       <p class="as-of">New cash balance: {{ trade.cashBalance | currency }}</p>
@@ -17,7 +17,7 @@
   } @else if (confirming()) {
     <app-card class="details-card">
       <p class="summary">
-        Buy {{ pendingQuantity() }} {{ ticker() }} @ {{ price() | currency }} — Confirm?
+        {{ side() === TradeSide.BUY ? 'Buy' : 'Sell' }} {{ pendingQuantity() }} {{ ticker() }} @ {{ price() | currency }} — Confirm?
       </p>
 
       <div class="confirm-actions">
@@ -39,7 +39,7 @@
           [errorMessage]="errorFor('quantity')"
         />
         <app-button type="submit" [fullWidth]="true">
-          Buy
+          {{ side() === TradeSide.BUY ? 'Buy' : 'Sell' }}
         </app-button>
       </form>
     </app-card>

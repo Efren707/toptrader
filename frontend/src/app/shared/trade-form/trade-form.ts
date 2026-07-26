@@ -26,8 +26,9 @@ export class TradeForm {
 
   readonly ticker = input.required<string>();
   readonly price = input.required<number>();
-  side = input<TradeSide>('BUY')
+  readonly side = input.required<TradeSide>();
 
+  protected readonly TradeSide = TradeSide; 
   protected readonly submitting = signal(false);
   protected readonly confirming = signal(false);
   protected readonly formError = signal<string | null>(null);
@@ -49,6 +50,7 @@ export class TradeForm {
 
   protected confirmTrade(): void {
     const quantity = this.pendingQuantity();
+
     if (quantity === null) {
       return;
     }
@@ -61,18 +63,36 @@ export class TradeForm {
       quantity,
     };
 
-    this.tradeService.buyStock(request).subscribe({
-      next: (response: TradeResult) => {
-        this.submitting.set(false);
-        this.confirming.set(false);
-        this.result.set(response);
-        this.traded.emit(response);
-      },
-      error: (error: ApiError) => {
-        this.submitting.set(false);
-        this.formError.set(error.detail);
-      },
-    });
+    if(this.side() == TradeSide.BUY){
+      this.tradeService.buyStock(request).subscribe({
+        next: (response: TradeResult) => {
+          this.submitting.set(false);
+          this.confirming.set(false);
+          this.result.set(response);
+          this.traded.emit(response);
+        },
+        error: (error: ApiError) => {
+          this.submitting.set(false);
+          this.formError.set(error.detail);
+        },
+      });
+    }
+
+    if(this.side() == TradeSide.SELL){
+      this.tradeService.sellStock(request).subscribe({
+        next: (response: TradeResult) => {
+          this.submitting.set(false);
+          this.confirming.set(false);
+          this.result.set(response);
+          this.traded.emit(response);
+        },
+        error: (error: ApiError) => {
+          this.submitting.set(false);
+          this.formError.set(error.detail);
+        },
+      });
+    }
+    
   }
 
   protected cancel(): void {

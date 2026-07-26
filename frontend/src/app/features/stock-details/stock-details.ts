@@ -5,6 +5,7 @@ import { Quote, QuoteService } from '../../core/services/quote.service';
 import { ApiError } from '../../core/interceptors/error.interceptor';
 import { Card } from '../../shared/ui/card/card';
 import { TradeForm } from '../../shared/trade-form/trade-form';
+import { Holding, TradeService, TradeSide } from '../../core/services/trade.service';
 
 @Component({
   selector: 'app-stock-details',
@@ -13,19 +14,22 @@ import { TradeForm } from '../../shared/trade-form/trade-form';
   styleUrl: './stock-details.css',
 })
 export class StockDetails implements OnInit {
-  
-
   private readonly route = inject(ActivatedRoute);
   private readonly quoteService = inject(QuoteService);
+  private readonly tradeService = inject(TradeService);
 
   protected readonly quote = signal<Quote | null>(null);
+  protected readonly holding = signal<Holding | null>(null);
   protected readonly ticker = signal<string | null>(null);
   protected readonly loading = signal(true);
   protected readonly notFound = signal(false);
+  protected readonly buyStock = TradeSide.BUY;
+  protected readonly sellStock = TradeSide.SELL;
 
   ngOnInit(): void {
     this.ticker.set(this.route.snapshot.paramMap.get('ticker'));
     this.fetchQuoteData();
+    this.fetchHoldingData();
   }
 
   fetchQuoteData() {
@@ -38,6 +42,19 @@ export class StockDetails implements OnInit {
         this.loading.set(false);
         if (error.status === 404) {
           this.notFound.set(true);
+        }
+      },
+    });
+  }
+
+  fetchHoldingData() {
+    this.tradeService.getHoldings(this.ticker() ?? '').subscribe({
+      next: (holdings) => {
+        this.holding.set(holdings);
+      },
+      error: (error: ApiError) => {
+        if (error.status !== 404) {
+          throw error;
         }
       },
     });
