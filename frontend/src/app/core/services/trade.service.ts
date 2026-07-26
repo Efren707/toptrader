@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
-export type TradeSide = 'BUY' | 'SELL';
+export enum TradeSide { BUY = 'BUY', SELL = 'SELL' }
 
 export interface Transaction {
   id: number;
@@ -41,6 +41,14 @@ export class TradeService {
 
   buyStock(request: TradeRequest): Observable<TradeResult> {
     return this.http.post<TradeResult>(`${environment.apiUrl}/trades/buy`, request)
+  }
+
+  sellStock(request: TradeRequest): Observable<TradeResult> {
+    return this.http.post<TradeResult>(`${environment.apiUrl}/trades/sell`, request)
+  }
+
+  getHoldings(ticker: string): Observable<Holding> {
+    return this.http.get<Holding>(`${environment.apiUrl}/trades/holdings/${ticker}`)
   }
 
 }

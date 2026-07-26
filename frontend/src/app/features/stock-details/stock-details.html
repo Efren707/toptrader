@@ -13,6 +13,11 @@
       <p class="as-of">As of {{ result.asOf | date: 'medium' }}</p>
     </app-card>
 
-    <app-trade-form [ticker]="result.ticker" [price]="result.price"/>
+    <app-trade-form [ticker]="result.ticker" [price]="result.price" [side]="buyStock"/>
+
+    @if (holding()){
+      <app-trade-form [ticker]="result.ticker" [price]="result.price" [side]="sellStock"/>
+    }
+
   }
 </div>
