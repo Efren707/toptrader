@@ -45,6 +45,7 @@ describe('TradeForm', () => {
     component = fixture.componentInstance;
     fixture.componentRef.setInput('ticker', 'AAPL');
     fixture.componentRef.setInput('price', 210.5);
+    fixture.componentRef.setInput('side', TradeSide.BUY);
     httpTesting = TestBed.inject(HttpTestingController);
     fixture.detectChanges();
   });
