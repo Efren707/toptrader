@@ -7,7 +7,7 @@
 
 **US-8 (View transaction history) is implemented (backend + frontend), second story in Milestone #11 (Portfolio & Reporting).** Backend added `TradeService.getTransactions`/`GET /trades/transactions` (list, most recent first), reusing the existing `Transaction`/`TransactionResponse` plumbing already built for buy/sell and extracting a shared `toTransactionResponse` helper. Frontend gave transaction history its own routed page (`/transactions`) rather than folding it into the dashboard as previously expected — see [ADR 0029](./adr/0029-transaction-history-page-and-shared-navbar.md), which also covers extracting the dashboard's header into a shared `Navbar` component with an account-menu dropdown (the nav path to the new page). Logout was intentionally left out of that menu — `AuthService` has no `logout()` wired yet and it needs its own story. `docs/architecture/api-contract.md`/`frontend-architecture.md`/`openapi.yaml` and ADR 0028 updated to match.
 
-**Next step:** open a PR for this US-8 work and get it reviewed/merged, then US-9 (profit/loss), the last story in Milestone #11. A dedicated logout story (wiring `AuthService.logout()` + verifying `POST /auth/logout` behaves correctly for a SPA) is now on the backlog too, surfaced while building US-8's account menu.
+**Next step:** get PR [#27](https://github.com/Efren707/toptrader/pull/27) reviewed and merged, then US-9 (profit/loss), the last story in Milestone #11. A dedicated logout story (wiring `AuthService.logout()` + verifying `POST /auth/logout` behaves correctly for a SPA) is now on the backlog too, surfaced while building US-8's account menu.
 
 ## Deferred until deploy
 
