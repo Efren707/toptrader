@@ -1,0 +1,97 @@
+.page {
+  max-width: 78rem;
+  margin: 0 auto;
+  padding: 0 1.5rem 4rem;
+}
+
+.transactions-header {
+  margin-bottom: 2rem;
+}
+
+.welcome {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.status {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.status-error {
+  color: var(--color-danger);
+}
+
+.transactions-card {
+  padding: 0;
+}
+
+.transaction-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.transaction-item {
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.transaction-item:last-child {
+  border-bottom: none;
+}
+
+.transaction-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.transaction-row-primary {
+  font-size: 0.9375rem;
+  color: var(--color-text);
+}
+
+.transaction-summary {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.ticker {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.side {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.transaction-total {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.transaction-row-secondary {
+  margin-top: 0.25rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.transaction-detail,
+.executed-at {
+  font-family: var(--font-mono);
+}
+
+@media (max-width: 40rem) {
+  .transaction-item {
+    padding: 0.65rem 0.85rem;
+  }
+
+  .transaction-row {
+    flex-wrap: wrap;
+  }
+}

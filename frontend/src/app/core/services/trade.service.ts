@@ -55,4 +55,8 @@ export class TradeService {
     return this.http.get<Holding[]>(`${environment.apiUrl}/trades/holdings`)
   }
 
+  getTransactions(): Observable<Transaction[]> {
+    return this.http.get<Transaction[]>(`${environment.apiUrl}/trades/transactions`)
+  } 
+
 }
