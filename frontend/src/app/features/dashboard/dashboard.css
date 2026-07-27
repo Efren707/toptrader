@@ -171,8 +171,93 @@
 }
 
 /* ---------- page content ---------- */
-.content p {
-  margin: 0 0 0.25rem;
+.account-summary {
+  margin-bottom: 2rem;
+}
+
+.welcome {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 0.35rem;
+}
+
+.balance {
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+}
+
+.portfolio-value {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.cash-value {
+  font-size: 0.9375rem;
+}
+
+.status {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.status-error {
+  color: var(--color-danger);
+}
+
+.holdings-card {
+  padding: 0;
+  overflow-x: auto;
+}
+
+.holdings-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.holdings-table th,
+.holdings-table td {
+  text-align: right;
+  padding: 0.85rem 1.25rem;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.holdings-table th:first-child,
+.holdings-table td:first-child {
+  text-align: left;
+}
+
+.holdings-table th {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+  font-weight: 500;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.holdings-table td {
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+}
+
+.holdings-table tr:last-child td {
+  border-bottom: none;
+}
+
+.ticker {
+  font-weight: 600;
+}
+
+.positive {
+  color: var(--color-success);
+}
+
+.negative {
+  color: var(--color-danger);
 }
 
 @media (max-width: 40rem) {
@@ -183,5 +268,10 @@
   .search-form {
     max-width: none;
     width: 100%;
+  }
+
+  .holdings-table th,
+  .holdings-table td {
+    padding: 0.65rem 0.85rem;
   }
 }

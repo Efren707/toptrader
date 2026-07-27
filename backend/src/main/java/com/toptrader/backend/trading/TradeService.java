@@ -6,6 +6,8 @@ import com.toptrader.backend.user.User;
 import com.toptrader.backend.user.UserRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -73,20 +75,7 @@ public class TradeService {
     }
     this.holdingRepository.save(holding);
 
-    BigDecimal currentPrice = quote.price();
-    BigDecimal marketValue = currentPrice.multiply(BigDecimal.valueOf(holding.getQuantity()));
-    BigDecimal costBasisTotal =
-        holding.getAverageCostBasis().multiply(BigDecimal.valueOf(holding.getQuantity()));
-    BigDecimal unrealizedGainLoss = marketValue.subtract(costBasisTotal);
-
-    HoldingResponse holdingResponse =
-        new HoldingResponse(
-            holding.getTicker(),
-            holding.getQuantity(),
-            holding.getAverageCostBasis(),
-            currentPrice,
-            marketValue,
-            unrealizedGainLoss);
+    HoldingResponse holdingResponse = toHoldingResponse(holding, quote.price());
 
     Transaction transaction =
         new Transaction(user, quote.ticker(), Transaction.Side.BUY, quantity, quote.price(), total);
@@ -147,20 +136,7 @@ public class TradeService {
     user.setCashBalance(user.getCashBalance().add(total));
     this.userRepository.save(user);
 
-    BigDecimal currentPrice = quote.price();
-    BigDecimal marketValue = currentPrice.multiply(BigDecimal.valueOf(holding.getQuantity()));
-    BigDecimal costBasisTotal =
-        holding.getAverageCostBasis().multiply(BigDecimal.valueOf(holding.getQuantity()));
-    BigDecimal unrealizedGainLoss = marketValue.subtract(costBasisTotal);
-
-    HoldingResponse holdingResponse =
-        new HoldingResponse(
-            holding.getTicker(),
-            holding.getQuantity(),
-            holding.getAverageCostBasis(),
-            currentPrice,
-            marketValue,
-            unrealizedGainLoss);
+    HoldingResponse holdingResponse = toHoldingResponse(holding, quote.price());
 
     Transaction transaction =
         new Transaction(
@@ -194,21 +170,40 @@ public class TradeService {
       return Optional.empty();
     }
 
-    BigDecimal currentPrice = quote.price();
+    HoldingResponse holdingResponse = toHoldingResponse(holding, quote.price());
+
+    return Optional.of(holdingResponse);
+  }
+
+  public List<HoldingResponse> getHoldings(Long userId) {
+    User user =
+        this.userRepository
+            .findById(userId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+    List<Holding> holdings = this.holdingRepository.findByUser(user);
+    List<HoldingResponse> holdingResponses = new ArrayList<>();
+
+    for (Holding holding : holdings) {
+      Quote quote = this.quoteService.getQuote(holding.getTicker());
+      holdingResponses.add(toHoldingResponse(holding, quote.price()));
+    }
+
+    return holdingResponses;
+  }
+
+  private HoldingResponse toHoldingResponse(Holding holding, BigDecimal currentPrice) {
     BigDecimal marketValue = currentPrice.multiply(BigDecimal.valueOf(holding.getQuantity()));
     BigDecimal costBasisTotal =
         holding.getAverageCostBasis().multiply(BigDecimal.valueOf(holding.getQuantity()));
     BigDecimal unrealizedGainLoss = marketValue.subtract(costBasisTotal);
 
-    HoldingResponse holdingResponse =
-        new HoldingResponse(
-            holding.getTicker(),
-            holding.getQuantity(),
-            holding.getAverageCostBasis(),
-            currentPrice,
-            marketValue,
-            unrealizedGainLoss);
-
-    return Optional.of(holdingResponse);
+    return new HoldingResponse(
+        holding.getTicker(),
+        holding.getQuantity(),
+        holding.getAverageCostBasis(),
+        currentPrice,
+        marketValue,
+        unrealizedGainLoss);
   }
 }

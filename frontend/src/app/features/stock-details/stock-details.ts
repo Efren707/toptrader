@@ -48,9 +48,9 @@ export class StockDetails implements OnInit {
   }
 
   fetchHoldingData() {
-    this.tradeService.getHoldings(this.ticker() ?? '').subscribe({
-      next: (holdings) => {
-        this.holding.set(holdings);
+    this.tradeService.getHolding(this.ticker() ?? '').subscribe({
+      next: (holding) => {
+        this.holding.set(holding);
       },
       error: (error: ApiError) => {
         if (error.status !== 404) {
