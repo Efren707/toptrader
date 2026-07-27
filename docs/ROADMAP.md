@@ -1,13 +1,13 @@
 # Planning Roadmap & Status
 
-> Last updated: 2026-07-26 (US-7 merged; US-8 up next)
+> Last updated: 2026-07-27 (US-8 implemented, PR pending)
 > This file tracks *where we are* — a lean, current-state view. Full narrative detail for completed phases/milestones lives in [docs/planning-history.md](./planning-history.md). For *why* decisions were made, see `docs/adr/`. For requirements detail, see `docs/requirements/`. Each milestone below also has a matching [GitHub Milestone](https://github.com/Efren707/toptrader/milestones) for visual progress tracking.
 
 ## Current focus
 
-**US-7 (View portfolio) is done, first story in Milestone #11 (Portfolio & Reporting).** Backend added `TradeService.getHoldings`/`GET /trades/holdings` (list), reusing the market-value/unrealized-P&L calc factored into a shared `toHoldingResponse` helper. Frontend diverged from the original plan of a separate `/portfolio` page — see [ADR 0028](./adr/0028-portfolio-view-no-combined-endpoint.md): holdings display directly on the dashboard below the cash-balance summary instead, with a `computed()` total portfolio value (cash + sum of holdings' market value). `docs/architecture/api-contract.md`/`frontend-architecture.md`/`openapi.yaml` updated to match. Merged via PR [#25](https://github.com/Efren707/toptrader/pull/25), 2026-07-26.
+**US-8 (View transaction history) is implemented (backend + frontend), second story in Milestone #11 (Portfolio & Reporting).** Backend added `TradeService.getTransactions`/`GET /trades/transactions` (list, most recent first), reusing the existing `Transaction`/`TransactionResponse` plumbing already built for buy/sell and extracting a shared `toTransactionResponse` helper. Frontend gave transaction history its own routed page (`/transactions`) rather than folding it into the dashboard as previously expected — see [ADR 0029](./adr/0029-transaction-history-page-and-shared-navbar.md), which also covers extracting the dashboard's header into a shared `Navbar` component with an account-menu dropdown (the nav path to the new page). Logout was intentionally left out of that menu — `AuthService` has no `logout()` wired yet and it needs its own story. `docs/architecture/api-contract.md`/`frontend-architecture.md`/`openapi.yaml` and ADR 0028 updated to match.
 
-**Next step:** US-8 (View transaction history), next story in Milestone #11. Needs a transaction list endpoint/service and a place to display it (likely the dashboard's reserved right column, once the two-column layout is actually built out). US-9 (profit/loss) follows once US-8 lands.
+**Next step:** open a PR for this US-8 work and get it reviewed/merged, then US-9 (profit/loss), the last story in Milestone #11. A dedicated logout story (wiring `AuthService.logout()` + verifying `POST /auth/logout` behaves correctly for a SPA) is now on the backlog too, surfaced while building US-8's account menu.
 
 ## Deferred until deploy
 
