@@ -2,6 +2,7 @@ package com.toptrader.backend.trading;
 
 import com.toptrader.backend.user.UserPrincipal;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -33,11 +34,18 @@ public class TradeController {
   }
 
   @GetMapping("/holdings/{ticker}")
-  public ResponseEntity<HoldingResponse> holdings(
+  public ResponseEntity<HoldingResponse> getHolding(
       @AuthenticationPrincipal UserPrincipal principal, @PathVariable String ticker) {
     return tradeService
         .getHolding(principal.getUser().getId(), ticker)
         .map(ResponseEntity::ok)
         .orElseGet(() -> ResponseEntity.notFound().build());
+  }
+
+  @GetMapping("/holdings")
+  public ResponseEntity<List<HoldingResponse>> getHoldings(
+      @AuthenticationPrincipal UserPrincipal principal) {
+    List<HoldingResponse> response = tradeService.getHoldings(principal.getUser().getId());
+    return new ResponseEntity<>(response, HttpStatus.OK);
   }
 }

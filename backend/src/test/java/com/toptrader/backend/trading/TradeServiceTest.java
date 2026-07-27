@@ -15,6 +15,7 @@ import com.toptrader.backend.user.User;
 import com.toptrader.backend.user.UserRepository;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -336,5 +337,69 @@ class TradeServiceTest {
         .isInstanceOf(ResponseStatusException.class);
 
     verifyNoInteractions(holdingRepository);
+  }
+
+  @Test
+  void getHoldings_returnsAllHoldingsForUser_withComputedValues() {
+    Holding aapl = new Holding(user, "AAPL", 10, new BigDecimal("50.00"), null);
+    Holding msft = new Holding(user, "MSFT", 5, new BigDecimal("200.00"), null);
+    when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
+    when(holdingRepository.findByUser(user)).thenReturn(List.of(aapl, msft));
+    when(quoteService.getQuote("AAPL"))
+        .thenReturn(new Quote("AAPL", "Apple Inc.", new BigDecimal("100.00"), Instant.now()));
+    when(quoteService.getQuote("MSFT"))
+        .thenReturn(new Quote("MSFT", "Microsoft Corp.", new BigDecimal("180.00"), Instant.now()));
+
+    List<HoldingResponse> result = tradeService.getHoldings(USER_ID);
+
+    assertThat(result).hasSize(2);
+
+    HoldingResponse aaplResponse =
+        result.stream().filter(h -> h.ticker().equals("AAPL")).findFirst().orElseThrow();
+    assertThat(aaplResponse.quantity()).isEqualTo(10);
+    assertThat(aaplResponse.currentPrice()).isEqualByComparingTo("100.00");
+    assertThat(aaplResponse.marketValue()).isEqualByComparingTo("1000.00");
+    assertThat(aaplResponse.unrealizedGainLoss()).isEqualByComparingTo("500.00");
+
+    HoldingResponse msftResponse =
+        result.stream().filter(h -> h.ticker().equals("MSFT")).findFirst().orElseThrow();
+    assertThat(msftResponse.quantity()).isEqualTo(5);
+    assertThat(msftResponse.currentPrice()).isEqualByComparingTo("180.00");
+    assertThat(msftResponse.marketValue()).isEqualByComparingTo("900.00");
+    // cost basis 5 * 200.00 = 1000.00, market value 900.00 -> -100.00
+    assertThat(msftResponse.unrealizedGainLoss()).isEqualByComparingTo("-100.00");
+  }
+
+  @Test
+  void getHoldings_returnsEmptyList_whenUserHasNoHoldings() {
+    when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
+    when(holdingRepository.findByUser(user)).thenReturn(List.of());
+
+    List<HoldingResponse> result = tradeService.getHoldings(USER_ID);
+
+    assertThat(result).isEmpty();
+    verifyNoInteractions(quoteService);
+  }
+
+  @Test
+  void getHoldings_throwsNotFound_whenUserDoesNotExist() {
+    when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> tradeService.getHoldings(USER_ID))
+        .isInstanceOf(ResponseStatusException.class);
+
+    verifyNoInteractions(holdingRepository, quoteService);
+  }
+
+  @Test
+  void getHoldings_propagatesQuoteServiceFailure_forAnyHolding() {
+    Holding aapl = new Holding(user, "AAPL", 10, new BigDecimal("50.00"), null);
+    when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
+    when(holdingRepository.findByUser(user)).thenReturn(List.of(aapl));
+    when(quoteService.getQuote("AAPL"))
+        .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Unknown ticker: AAPL"));
+
+    assertThatThrownBy(() -> tradeService.getHoldings(USER_ID))
+        .isInstanceOf(ResponseStatusException.class);
   }
 }

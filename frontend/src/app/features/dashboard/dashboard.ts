@@ -1,27 +1,29 @@
-import { Component, ElementRef, HostListener, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, ElementRef, HostListener, inject, OnInit, signal, viewChild } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Quote, QuoteService } from '../../core/services/quote.service';
 import { ApiError } from '../../core/interceptors/error.interceptor';
 import { Router } from '@angular/router';
+import { Holding, TradeService } from '../../core/services/trade.service';
+import { Card } from '../../shared/ui/card/card';
 
 type SearchField = 'ticker';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [ReactiveFormsModule, CurrencyPipe],
+  imports: [ReactiveFormsModule, CurrencyPipe, Card],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
-export class Dashboard {
+export class Dashboard implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly quoteService = inject(QuoteService);
   private readonly authService = inject(AuthService);
+  private readonly tradeService = inject(TradeService);
   protected readonly username = this.authService.currentUser()?.username;
   protected readonly cashBalance = this.authService.currentUser()?.cashBalance;
   private readonly router = inject(Router);
-
   protected readonly searchForm = viewChild<ElementRef<HTMLElement>>('searchForm');
 
   protected readonly form = this.fb.nonNullable.group({
@@ -33,6 +35,17 @@ export class Dashboard {
   protected readonly notFound = signal(false);
   protected readonly quote = signal<Quote | null>(null);
   protected readonly submitted = signal(false);
+  protected readonly holdings = signal<Holding[]>([]);
+  protected readonly loading = signal(true);
+  protected readonly errorMessage = signal<string | null>(null);
+  
+  protected readonly portfolioBalance = computed(() =>
+    (this.cashBalance ?? 0) + this.holdings().reduce((sum, h) => sum + h.marketValue, 0)
+  );
+  
+  ngOnInit(): void {
+    this.fetchHoldingsData();
+  }
 
   protected submit(): void {
     if (this.form.invalid) {
@@ -95,5 +108,20 @@ export class Dashboard {
 
   protected onQuoteClick(): void {
     this.router.navigate([`/stocks/${this.quote()?.ticker}`]);
+  }
+
+  protected fetchHoldingsData(): void {
+    this.loading.set(true);
+    this.errorMessage.set(null);
+    this.tradeService.getHoldings().subscribe({
+      next: (data: Holding[]) => {
+        this.loading.set(false);
+        this.holdings.set(data);
+      },
+      error: (error: ApiError) => {
+        this.loading.set(false);
+        this.errorMessage.set(error.detail);
+      },
+    });
   }
 }

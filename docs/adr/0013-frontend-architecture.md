@@ -16,7 +16,7 @@ Phase 3 needed a concrete Angular architecture: component style, state managemen
 
 ### State management
 
-- **Signals + plain injectable services** - native Angular signals (`AuthService`, `PortfolioService`, `TransactionsService`, `QuoteService`), no external library. Matches the app's actual scope: ~4-5 pieces of state, no complex cross-cutting derived state.
+- **Signals + plain injectable services** - native Angular signals (`AuthService`, `PortfolioService`, `TransactionsService`, `QuoteService`), no external library. Matches the app's actual scope: ~4-5 pieces of state, no complex cross-cutting derived state. (The `PortfolioService` example didn't end up existing — see [ADR 0028](./0028-portfolio-view-no-combined-endpoint.md); the general signals-over-NgRx decision here is unaffected.)
 - **NgRx** - full Redux-style store (actions, reducers, effects, selectors). Powerful for large apps with complex shared state; meaningful boilerplate overhead not justified here.
 
 ### Styling / component library

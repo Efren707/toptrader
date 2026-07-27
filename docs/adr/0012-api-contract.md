@@ -33,7 +33,7 @@ Phase 3 needed a REST API contract covering all nine MVP user stories, built on 
 
 - **Trade pricing is always server-fetched** at the moment of the confirmed buy/sell request; the client never sends a price.
 - **Registration auto-authenticates** — the session cookie is set on `POST /auth/register`, same as on login.
-- **Portfolio and P&L are combined** into a single `GET /portfolio` response.
+- **Portfolio and P&L are combined** into a single `GET /portfolio` response. **Superseded by [ADR 0028](./0028-portfolio-view-no-combined-endpoint.md)** — US-7 shipped without this endpoint; see that ADR for what was built instead.
 - **All errors use RFC 7807 `application/problem+json`** via Spring Boot's `ProblemDetail`.
 
 Full endpoint list, request/response schemas, and conventions live in `docs/architecture/api-contract.md` and `docs/architecture/openapi.yaml`, not duplicated here.

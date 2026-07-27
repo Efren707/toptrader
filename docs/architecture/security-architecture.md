@@ -15,7 +15,7 @@
 
 - Every controller method that touches a user-owned resource re-derives ownership server-side (`WHERE user_id = :sessionUserId` in the query) — never "load by ID, then check." (ADR 0007)
 - One IDOR integration test per resource type (portfolio, transactions) asserting user A gets 403/404 on user B's data — part of the core test suite expectations from `nfr.md`.
-- `GET /portfolio` and `GET /transactions` never take a user ID from the client at all — the session is the only source of "whose data" (consistent with `openapi.yaml`).
+- `GET /trades/holdings`, `GET /trades/holdings/{ticker}`, and `GET /transactions` never take a user ID from the client at all — the session is the only source of "whose data" (consistent with `openapi.yaml`).
 
 ## Transport & network
 

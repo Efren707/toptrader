@@ -47,8 +47,12 @@ export class TradeService {
     return this.http.post<TradeResult>(`${environment.apiUrl}/trades/sell`, request)
   }
 
-  getHoldings(ticker: string): Observable<Holding> {
+  getHolding(ticker: string): Observable<Holding> {
     return this.http.get<Holding>(`${environment.apiUrl}/trades/holdings/${ticker}`)
+  }
+
+  getHoldings(): Observable<Holding[]> {
+    return this.http.get<Holding[]>(`${environment.apiUrl}/trades/holdings`)
   }
 
 }

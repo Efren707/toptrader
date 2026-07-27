@@ -1,13 +1,13 @@
 # Planning Roadmap & Status
 
-> Last updated: 2026-07-26 (US-6 merged, Milestone #10 closed; US-7 up next)
+> Last updated: 2026-07-26 (US-7 done, Milestone #11 in progress; US-8 up next)
 > This file tracks *where we are* — a lean, current-state view. Full narrative detail for completed phases/milestones lives in [docs/planning-history.md](./planning-history.md). For *why* decisions were made, see `docs/adr/`. For requirements detail, see `docs/requirements/`. Each milestone below also has a matching [GitHub Milestone](https://github.com/Efren707/toptrader/milestones) for visual progress tracking.
 
 ## Current focus
 
-**US-6 (Sell shares) is done, closing Milestone #10 (Trading Core).** `TradeService.sellStock`/`POST /trades/sell` reuses the locked-row/live-quote/all-or-nothing shape from `buyStock`; added `TradeService.getHolding`/`GET /trades/holdings/{ticker}` (returns `Optional<HoldingResponse>`, mapped to 200/404) so the frontend can conditionally show the Sell form only when the user holds that ticker — see [ADR 0027](./adr/0027-holdings-lookup-endpoint.md) for the endpoint shape and the `Optional`-for-queries convention it establishes. Frontend reused the existing `side`-aware `TradeForm`. Merged via PR [#23](https://github.com/Efren707/toptrader/pull/23), 2026-07-26.
+**US-7 (View portfolio) is done, first story in Milestone #11 (Portfolio & Reporting).** Backend added `TradeService.getHoldings`/`GET /trades/holdings` (list, reuses the same market-value/unrealized-P&L calc as `getHolding`, factored into a shared `toHoldingResponse` helper). Frontend ended up diverging from the original plan of a separate `/portfolio` page (see `docs/architecture/api-contract.md` and `frontend-architecture.md`, both updated, and [ADR 0028](./adr/0028-portfolio-view-no-combined-endpoint.md) for why): holdings now display directly on the dashboard, below the existing username/cash-balance summary, in one column — the planned two-column layout (right column reserved for future US-8/US-9 widgets) is deferred until there's real content to put there. No unified `/portfolio` endpoint was needed — cash balance already came from `GET /auth/session`, so the dashboard just combines that with the new holdings list client-side. The now-unused standalone `features/portfolio` page/route was removed. Dashboard also shows total portfolio value (cash + sum of holdings' market value) as a `computed()` signal, closing the US-7 acceptance criterion for that figure.
 
-**Next step:** US-7 (View portfolio), the first story in Milestone #11 (Portfolio & Reporting). Needs a holdings *list* endpoint (the single-ticker `GET /trades/holdings/{ticker}` from US-6 doesn't cover this — see ADR 0027) plus a new frontend page/route to show ticker, quantity, average cost, current value, and cash balance. US-8 (transaction history) and US-9 (profit/loss) follow once US-7 lands.
+**Next step:** US-8 (View transaction history) — needs a transaction list endpoint/service and a place to display it (likely the dashboard's reserved right column, per the above). US-9 (profit/loss) follows once US-8 lands.
 
 ## Deferred until deploy
 
