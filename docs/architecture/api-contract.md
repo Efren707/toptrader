@@ -21,10 +21,11 @@
 | `GET /quotes/{ticker}` | US-4 | Yes |
 | `POST /trades/buy` | US-5 | Yes |
 | `POST /trades/sell` | US-6 | Yes |
-| `GET /portfolio` | US-7, US-9 | Yes |
+| `GET /trades/holdings/{ticker}` | US-6 | Yes |
+| `GET /trades/holdings` | US-7 | Yes |
 | `GET /transactions` | US-8 | Yes |
 
-`/portfolio` combines holdings, cash, total value, and P&L in one response — they're already computed together server-side, and shown together in the UI, so there's no reason to split them into two round-trips.
+US-7 ended up not needing the unified `/portfolio` endpoint originally planned here. Holdings (with per-position market value/unrealized P&L already computed server-side) come from `GET /trades/holdings`; cash balance is already available from the existing `GET /auth/session` response (`UserSummary.cashBalance`) — the frontend combines the two client-side on the dashboard rather than round-tripping to a combined endpoint. `GET /trades/holdings/{ticker}` (added for US-6) covers the single-ticker lookup used to conditionally show the Sell form. US-9 (overall profit/loss) hasn't been built yet — revisit then whether it needs its own endpoint or can extend one of these.
 
 ## Not covered here
 

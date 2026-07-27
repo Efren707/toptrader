@@ -195,16 +195,50 @@ paths:
               schema:
                 $ref: "#/components/schemas/ProblemDetail"
 
-  /portfolio:
+  /trades/holdings/{ticker}:
     get:
-      summary: View current holdings, cash, total value, and P&L (US-7, US-9)
+      summary: Look up the logged-in user's holding in one ticker (US-6)
+      description: >
+        Used to conditionally show the sell form only when the user actually
+        holds shares of this ticker. Cash balance is not included here — see
+        GET /auth/session.
+      parameters:
+        - name: ticker
+          in: path
+          required: true
+          schema:
+            type: string
+          example: AAPL
       responses:
         "200":
-          description: Current portfolio snapshot
+          description: Current holding in this ticker
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Portfolio"
+                $ref: "#/components/schemas/Holding"
+        "404":
+          description: Unknown ticker, or no holding in that ticker
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+
+  /trades/holdings:
+    get:
+      summary: View all of the logged-in user's current holdings (US-7)
+      description: >
+        Cash balance is not included here — it's already available from
+        GET /auth/session. Returns an empty array (200) when the user holds
+        nothing, never a 404.
+      responses:
+        "200":
+          description: List of current holdings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Holding"
 
   /transactions:
     get:
@@ -365,25 +399,3 @@ components:
           nullable: true
           description: Null when a sell fully liquidates the position
 
-    Portfolio:
-      type: object
-      properties:
-        cashBalance:
-          type: number
-          format: double
-        holdings:
-          type: array
-          items:
-            $ref: "#/components/schemas/Holding"
-        totalValue:
-          type: number
-          format: double
-        profitLoss:
-          type: object
-          properties:
-            amount:
-              type: number
-              format: double
-            percent:
-              type: number
-              format: double

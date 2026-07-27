@@ -21,10 +21,10 @@ How to search by ticker, what the quote screen shows (price, and whether it's re
 Step-by-step: search → enter whole-share quantity → confirm trade → see updated cash/holdings. Notes the whole-shares-only limit and the explicit confirmation step (per acceptance criteria).
 
 ## 7. Selling shares (US-6)
-Step-by-step: from portfolio or search → choose quantity to sell (up to what you own) → confirm → see updated cash/holdings.
+Step-by-step: from the dashboard's holdings list or search → choose quantity to sell (up to what you own) → confirm → see updated cash/holdings.
 
-## 8. Viewing your portfolio (US-7)
-What the portfolio page shows: ticker, quantity, average cost, current value, and remaining cash — and how current value relates to live/delayed prices.
+## 8. Viewing your holdings (US-7)
+What the dashboard shows below your cash balance: ticker, quantity, average cost, current value, and unrealized gain/loss for each holding — and how current value relates to live/delayed prices.
 
 ## 9. Viewing transaction history (US-8)
 Where to find your chronological buy/sell log and what each entry shows.
