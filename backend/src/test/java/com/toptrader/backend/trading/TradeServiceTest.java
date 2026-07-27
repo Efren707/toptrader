@@ -402,4 +402,57 @@ class TradeServiceTest {
     assertThatThrownBy(() -> tradeService.getHoldings(USER_ID))
         .isInstanceOf(ResponseStatusException.class);
   }
+
+  @Test
+  void getTransactions_returnsAllTransactionsForUser_mostRecentFirst() {
+    Transaction buy =
+        new Transaction(
+            user,
+            "AAPL",
+            Transaction.Side.BUY,
+            10,
+            new BigDecimal("100.00"),
+            new BigDecimal("1000.00"));
+    Transaction sell =
+        new Transaction(
+            user,
+            "AAPL",
+            Transaction.Side.SELL,
+            4,
+            new BigDecimal("120.00"),
+            new BigDecimal("480.00"));
+    when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
+    when(transactionRepository.findByUserOrderByExecutedAtDesc(user))
+        .thenReturn(List.of(sell, buy));
+
+    List<TransactionResponse> result = tradeService.getTransactions(USER_ID);
+
+    assertThat(result).hasSize(2);
+    assertThat(result.get(0).side()).isEqualTo(Transaction.Side.SELL);
+    assertThat(result.get(0).quantity()).isEqualTo(4);
+    assertThat(result.get(0).pricePerShare()).isEqualByComparingTo("120.00");
+    assertThat(result.get(0).totalAmount()).isEqualByComparingTo("480.00");
+    assertThat(result.get(1).side()).isEqualTo(Transaction.Side.BUY);
+    assertThat(result.get(1).quantity()).isEqualTo(10);
+  }
+
+  @Test
+  void getTransactions_returnsEmptyList_whenUserHasNoTransactions() {
+    when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
+    when(transactionRepository.findByUserOrderByExecutedAtDesc(user)).thenReturn(List.of());
+
+    List<TransactionResponse> result = tradeService.getTransactions(USER_ID);
+
+    assertThat(result).isEmpty();
+  }
+
+  @Test
+  void getTransactions_throwsNotFound_whenUserDoesNotExist() {
+    when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> tradeService.getTransactions(USER_ID))
+        .isInstanceOf(ResponseStatusException.class);
+
+    verifyNoInteractions(transactionRepository);
+  }
 }

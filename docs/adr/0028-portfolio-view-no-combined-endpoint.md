@@ -29,5 +29,5 @@ ADR 0012 decided US-7 (and US-9) would be served by a single combined `GET /port
 ## Consequences
 
 - US-9 (profit/loss) still needs to decide its own data source when it's tackled - options include summing `GET /trades/holdings` client-side, adding a field to an existing response, or a small dedicated endpoint. Not decided here; the shape wasn't obvious from a bare holdings list alone.
-- The dashboard's reserved second column is where US-8 (transaction history) is expected to land next. If that column's content grows enough to need significant independent state/logic, revisit whether it should split back out into its own routed feature - this ADR rejects that now for lack of a second consumer, not permanently.
+- The dashboard's reserved second column is where US-8 (transaction history) is expected to land next. If that column's content grows enough to need significant independent state/logic, revisit whether it should split back out into its own routed feature - this ADR rejects that now for lack of a second consumer, not permanently. **Update:** this didn't happen - see ADR 0029, which gives US-8 its own routed page instead.
 - Anyone reading ADR 0012 or 0013 in isolation would see a `/portfolio` endpoint or `PortfolioService` that was never built; both now carry a pointer to this ADR at the relevant line.

@@ -240,7 +240,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/Holding"
 
-  /transactions:
+  /trades/transactions:
     get:
       summary: View transaction history (US-8)
       description: Full list of the logged-in user's own transactions, most recent first. Not paginated for MVP.

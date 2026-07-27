@@ -60,6 +60,7 @@ class AuthControllerRegisterTest {
 
   @Test
   void register_withDuplicateEmail_returns409AndDoesNotCreateSecondAccount() throws Exception {
+    long countBeforeSeed = userRepository.count();
     userRepository.save(
         new User(
             "bob@example.com",
@@ -78,12 +79,13 @@ class AuthControllerRegisterTest {
         .andExpect(status().isConflict())
         .andExpect(jsonPath("$.detail").value("Email already in use"));
 
-    assertThat(userRepository.count()).isEqualTo(1);
+    assertThat(userRepository.count()).isEqualTo(countBeforeSeed + 1);
   }
 
   @Test
   void register_withInvalidEmailAndShortPassword_returns400WithFieldErrorsAndNoAccountCreated()
       throws Exception {
+    long countBeforeRequest = userRepository.count();
     String requestBody =
         """
         {"email":"not-an-email","username":"carol","password":"short"}
@@ -96,6 +98,6 @@ class AuthControllerRegisterTest {
         .andExpect(jsonPath("$.errors.email").exists())
         .andExpect(jsonPath("$.errors.password").exists());
 
-    assertThat(userRepository.count()).isEqualTo(0);
+    assertThat(userRepository.count()).isEqualTo(countBeforeRequest);
   }
 }

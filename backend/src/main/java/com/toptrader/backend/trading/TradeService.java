@@ -80,16 +80,7 @@ public class TradeService {
     Transaction transaction =
         new Transaction(user, quote.ticker(), Transaction.Side.BUY, quantity, quote.price(), total);
     this.transactionRepository.save(transaction);
-
-    TransactionResponse transactionResponse =
-        new TransactionResponse(
-            transaction.getId(),
-            transaction.getTicker(),
-            transaction.getSide(),
-            transaction.getQuantity(),
-            transaction.getPricePerShare(),
-            transaction.getTotalAmount(),
-            transaction.getExecutedAt());
+    TransactionResponse transactionResponse = toTransactionResponse(transaction);
 
     return new TradeResult(transactionResponse, user.getCashBalance(), holdingResponse);
   }
@@ -142,16 +133,7 @@ public class TradeService {
         new Transaction(
             user, quote.ticker(), Transaction.Side.SELL, quantity, quote.price(), total);
     this.transactionRepository.save(transaction);
-
-    TransactionResponse transactionResponse =
-        new TransactionResponse(
-            transaction.getId(),
-            transaction.getTicker(),
-            transaction.getSide(),
-            transaction.getQuantity(),
-            transaction.getPricePerShare(),
-            transaction.getTotalAmount(),
-            transaction.getExecutedAt());
+    TransactionResponse transactionResponse = toTransactionResponse(transaction);
 
     return new TradeResult(transactionResponse, user.getCashBalance(), holdingResponse);
   }
@@ -205,5 +187,33 @@ public class TradeService {
         currentPrice,
         marketValue,
         unrealizedGainLoss);
+  }
+
+  public List<TransactionResponse> getTransactions(Long userId) {
+    User user =
+        this.userRepository
+            .findById(userId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+    List<Transaction> transactions =
+        this.transactionRepository.findByUserOrderByExecutedAtDesc(user);
+    List<TransactionResponse> transactionResponses = new ArrayList<>();
+
+    for (Transaction transaction : transactions) {
+      transactionResponses.add(toTransactionResponse(transaction));
+    }
+
+    return transactionResponses;
+  }
+
+  private TransactionResponse toTransactionResponse(Transaction transaction) {
+    return new TransactionResponse(
+        transaction.getId(),
+        transaction.getTicker(),
+        transaction.getSide(),
+        transaction.getQuantity(),
+        transaction.getPricePerShare(),
+        transaction.getTotalAmount(),
+        transaction.getExecutedAt());
   }
 }

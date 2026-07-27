@@ -48,4 +48,11 @@ public class TradeController {
     List<HoldingResponse> response = tradeService.getHoldings(principal.getUser().getId());
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
+
+  @GetMapping("/transactions")
+  public ResponseEntity<List<TransactionResponse>> getTransactions(
+      @AuthenticationPrincipal UserPrincipal principal) {
+    List<TransactionResponse> response = tradeService.getTransactions(principal.getUser().getId());
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
 }

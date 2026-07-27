@@ -9,39 +9,41 @@ Standalone components (no `NgModule`s) — Angular's modern default, less boiler
 ```
 frontend/src/app/
   core/
-    services/        auth.service.ts, trade.service.ts (buy/sell + holdings, US-5-US-7), transactions.service.ts, quote.service.ts
-    guards/          auth.guard.ts        (functional CanActivateFn)
+    services/        auth.service.ts, trade.service.ts (buy/sell + holdings + transactions, US-5-US-8), quote.service.ts
+    guards/          auth.guard.ts, guest.guard.ts   (functional CanActivateFn)
     interceptors/    error.interceptor.ts
   features/
     auth/            login/, register/
-    dashboard/       account summary, cash balance, holdings list (US-3, US-7); a reserved column for future widgets (US-8/US-9) once they exist
-    trade/           (US-4 quote lookup + US-5/US-6 buy/sell, with confirm step)
-    transactions/    (US-8)
-  shared/            reusable presentational components (e.g. confirm-dialog)
+    dashboard/       account summary, cash balance, holdings list (US-3, US-7)
+    stock-details/   quote lookup + buy/sell, with confirm step (US-4/US-5/US-6)
+    transactions/    transaction history list (US-8)
+  shared/
+    navbar/          shared header (wordmark, stock search, account menu) - used by dashboard and transactions (ADR 0029)
+    ui/              reusable presentational components (card, button, input)
+    trade-form/       buy/sell confirm form, used from stock-details
   app.routes.ts
   app.config.ts
 ```
 
-There's no separate `portfolio/` feature or route: holdings ended up living on the dashboard instead of a dedicated page, since splitting them out added a navigation hop without a second consumer to justify it. Revisit if/when US-8/US-9 content grows enough to want their own page.
+There's no separate `portfolio/` feature or route: holdings ended up living on the dashboard instead of a dedicated page, since splitting them out added a navigation hop without a second consumer to justify it (ADR 0028). US-8 (transaction history) *did* get its own routed page rather than folding into the dashboard - see ADR 0029, which also covers the `Navbar` extraction and its account-menu dropdown as the nav path to it.
 
 ## Routing
 
 | Path | Component | Guard |
 |---|---|---|
-| `/login` | `LoginComponent` | none (redirect to `/dashboard` if already authenticated) |
-| `/register` | `RegisterComponent` | none |
-| `/dashboard` | `DashboardComponent` | `authGuard` — account summary, cash balance, holdings list (US-3, US-7) |
-| `/trade` | `TradeComponent` | `authGuard` |
-| `/transactions` | `TransactionsComponent` | `authGuard` |
-| `''` | redirect to `/dashboard` | — |
+| `/register` | `Register` | `guestGuard` (redirect to `/dashboard` if already authenticated) |
+| `/login` | `Login` | `guestGuard` |
+| `/dashboard` | `Dashboard` | `authGuard` — account summary, cash balance, holdings list (US-3, US-7) |
+| `/stocks/:ticker` | `StockDetails` | `authGuard` — quote lookup + buy/sell (US-4/US-5/US-6) |
+| `/transactions` | `Transactions` | `authGuard` — transaction history, most recent first (US-8) |
+| `''`, `'**'` | redirect to `/login` | — |
 
 ## State management
 
 Native Angular **signals inside plain injectable services** — no external state library (NgRx rejected as unnecessary boilerplate for ~4-5 pieces of state: current user, portfolio, transactions, in-flight quote).
 
-- `AuthService` — `signal<UserSummary | null>` for the current user; calls `GET /auth/session` on app init (via an `app.config.ts` initializer) to restore session state across a page refresh (US-2); exposes `register()`, `login()`, `logout()`.
-- `TradeService` — stateless wrapper around `POST /trades/buy`, `POST /trades/sell`, `GET /trades/holdings/{ticker}`, and `GET /trades/holdings`; no persistent signal of its own. Holdings and cash balance aren't centralized in a shared service — `DashboardComponent` owns a local `holdings` signal populated from `getHoldings()` in `ngOnInit`, and reads cash balance directly off `AuthService.currentUser()`. There's only one consumer (the dashboard), so a dedicated `PortfolioService` wasn't justified; revisit if a second consumer shows up.
-- `TransactionsService` — `signal<Transaction[]>`, `refresh()` calling `GET /transactions`. (US-8, not yet built.)
+- `AuthService` — `signal<UserSummary | null>` for the current user; calls `GET /auth/session` on app init (via an `app.config.ts` initializer) to restore session state across a page refresh (US-2); exposes `register()`, `login()`. No `logout()` yet — deferred, see ADR 0029.
+- `TradeService` — stateless wrapper around `POST /trades/buy`, `POST /trades/sell`, `GET /trades/holdings/{ticker}`, `GET /trades/holdings`, and `GET /trades/transactions`; no persistent signal of its own. Holdings and transactions aren't centralized in shared services — `Dashboard` owns a local `holdings` signal populated from `getHoldings()` in `ngOnInit`, and `Transactions` owns a local `transactions` signal populated from `getTransactions()` the same way. Cash balance is read directly off `AuthService.currentUser()`. Each has exactly one consumer, so dedicated `PortfolioService`/`TransactionsService` weren't justified; revisit if a second consumer shows up for either.
 - `QuoteService` — stateless wrapper around `GET /quotes/{ticker}`, called on-demand from the trade feature (no persistent signal needed).
 
 ## HTTP layer
