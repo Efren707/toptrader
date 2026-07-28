@@ -25,7 +25,7 @@ frontend/src/app/
   app.config.ts
 ```
 
-There's no separate `portfolio/` feature or route: holdings ended up living on the dashboard instead of a dedicated page, since splitting them out added a navigation hop without a second consumer to justify it (ADR 0028). US-8 (transaction history) *did* get its own routed page rather than folding into the dashboard - see ADR 0029, which also covers the `Navbar` extraction and its account-menu dropdown as the nav path to it.
+There's no separate `portfolio/` feature or route: holdings ended up living on the dashboard instead of a dedicated page, since splitting them out added a navigation hop without a second consumer to justify it (ADR 0028). US-8 (transaction history) and US-9 (profit/loss) *did* get their own routed pages rather than folding into the dashboard - see ADR 0029 (transactions, plus the `Navbar` extraction and its account-menu dropdown) and ADR 0030 (performance/P&L, computed entirely client-side with no backend changes).
 
 ## Routing
 
@@ -36,6 +36,7 @@ There's no separate `portfolio/` feature or route: holdings ended up living on t
 | `/dashboard` | `Dashboard` | `authGuard` — account summary, cash balance, holdings list (US-3, US-7) |
 | `/stocks/:ticker` | `StockDetails` | `authGuard` — quote lookup + buy/sell (US-4/US-5/US-6) |
 | `/transactions` | `Transactions` | `authGuard` — transaction history, most recent first (US-8) |
+| `/performance` | `Performance` | `authGuard` — overall profit/loss vs. $500 starting balance, $ and % (US-9) |
 | `''`, `'**'` | redirect to `/login` | — |
 
 ## State management
