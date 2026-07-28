@@ -93,3 +93,13 @@
 - Dashboard holdings render as a list, not a table: each row shows ticker + share quantity on the left, current price + daily % change (visually distinguished positive vs. negative) on the right.
 - Clicking a holding row navigates to that stock's details page (`/stocks/:ticker`).
 - Existing loading/error/empty states for holdings are preserved.
+
+## US-14 — Redesign the stock details page (layout, position stats, trade form)
+
+- Page uses a 2-column layout: ~65% left, ~35% right (collapsing to a single column on narrow viewports, consistent with the existing responsive breakpoint pattern).
+- Left column: company name, current price, price/% change for the day; if the stock is held, also show equity, today's return ($ and %), total return ($ and %), average cost basis, and shares owned. Company news is explicitly out of scope (already-deferred backlog item).
+- Right column: a single `TradeForm` with a Buy/Sell toggle at the top that switches the form's side — replacing today's two separately-rendered Buy and Sell forms.
+- Trade form fields: quantity input plus a live-calculated cost (quantity × price).
+- Submitting the form shows a "Review Order" step: an order summary (e.g. "You're placing a market order to buy $X.XX of TICKER. Your order will be routed to market makers. The final execution price may vary due to market volatility. Once executed, the transaction may not be undone."), a Submit [Buy/Sell] button, and a Back button to return to editing.
+- Cash balance is shown near the submit action (e.g. "$X.XX available"), sourced from `AuthService.currentUser()`.
+- Existing trade success/error states (order filled, server error) are preserved.

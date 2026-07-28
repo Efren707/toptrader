@@ -44,6 +44,9 @@ As a logged-in user, I want the search result row to clearly show ticker and com
 **US-13 — Dashboard holdings as a list with day change, linking to stock details**
 As a logged-in user, I want my dashboard holdings shown as a scannable list with each stock's price and daily % change, and to be able to click through to a stock's details page, so I can quickly check my positions and act on them.
 
+**US-14 — Redesign the stock details page (layout, position stats, trade form)**
+As a logged-in user, I want the stock details page to clearly show the company's info and my position (if I own it) alongside a proper trade form with an order review step, so I can make an informed, deliberate trade without the page feeling like two bolted-together forms.
+
 ## Explicitly Out of Scope for MVP
 
 - Leaderboard / comparing performance across users
