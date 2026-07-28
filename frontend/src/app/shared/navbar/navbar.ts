@@ -110,4 +110,9 @@ export class Navbar {
     this.accountDropdownActive.set(false);
     this.router.navigate(['/transactions']);
   }
+
+  protected onPerformanceClick(): void {
+    this.accountDropdownActive.set(false);
+    this.router.navigate(['/performance']);
+  }
 }

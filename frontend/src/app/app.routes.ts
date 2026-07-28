@@ -28,6 +28,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/transactions/transactions').then((m) => m.Transactions),
     canActivate: [authGuard]
   },
+  {
+    path: 'performance',
+    loadComponent: () => import('./features/performance/performance').then((m) => m.Performance),
+    canActivate: [authGuard]
+  },
   { path: '', pathMatch: 'full', redirectTo: 'login' },
   { path: '**', redirectTo: 'login' },
 ];

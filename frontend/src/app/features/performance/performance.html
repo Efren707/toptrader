@@ -1,0 +1,34 @@
+<div class="page">
+  <app-navbar/>
+
+  <main class="content">
+    <div class="performance-summary">
+      <p class="welcome">Performance</p>
+
+      <h1
+        class="balance earnings-value"
+        [class.positive]="performanceBalance() >= 0"
+        [class.negative]="performanceBalance() < 0"
+      >
+        {{ performanceBalance() | currency }} ({{ performancePercentage() | percent: '1.2-2' }})
+      </h1>
+
+      @if (loading()) {
+        <p class="status">Loading…</p>
+      } @else if (errorMessage(); as message) {
+        <p class="status status-error">{{ message }}</p>
+      } @else {
+        <app-card class="stats-card">
+          <div class="stat-row">
+            <span class="stat-label">Portfolio value</span>
+            <span class="stat-value">{{ portfolioBalance() | currency }}</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Available cash</span>
+            <span class="stat-value">{{ cashBalance | currency }}</span>
+          </div>
+        </app-card>
+      }
+    </div>
+  </main>
+</div>
