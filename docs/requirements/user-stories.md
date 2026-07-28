@@ -32,6 +32,9 @@ As a logged-in user, I want to see a chronological list of my past buy/sell tran
 **US-9 — View profit/loss**
 As a logged-in user, I want to see my overall profit or loss relative to my starting cash, so that I can gauge how I'm doing.
 
+**US-10 — Navigate between auth pages, and log out**
+As a user, I want to move between login and register without hunting for a URL, jump back to my dashboard from anywhere, and log out when I'm done, so that account access feels complete and self-contained instead of a dead end.
+
 ## Explicitly Out of Scope for MVP
 
 - Leaderboard / comparing performance across users
