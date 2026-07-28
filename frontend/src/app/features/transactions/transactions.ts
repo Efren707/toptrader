@@ -3,11 +3,10 @@ import { TradeService, Transaction } from '../../core/services/trade.service';
 import { ApiError } from '../../core/interceptors/error.interceptor';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Card } from '../../shared/ui/card/card';
-import { Navbar } from '../../shared/navbar/navbar';
 
 @Component({
   selector: 'app-transactions',
-  imports: [CurrencyPipe, DatePipe, Card, Navbar],
+  imports: [ CurrencyPipe, DatePipe, Card ],
   templateUrl: './transactions.html',
   styleUrl: './transactions.css',
 })

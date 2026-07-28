@@ -13,24 +13,27 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/login/login').then((m) => m.Login),
     canActivate: [guestGuard]
   },
-  {
-    path: 'dashboard',
-    loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.Dashboard),
-    canActivate: [authGuard]
-  },
-  {
-    path: 'stocks/:ticker',
-    loadComponent: () => import('./features/stock-details/stock-details').then((m) => m.StockDetails),
-    canActivate: [authGuard]
-  },
-  {
-    path: 'transactions',
-    loadComponent: () => import('./features/transactions/transactions').then((m) => m.Transactions),
-    canActivate: [authGuard]
-  },
-  {
-    path: 'performance',
-    loadComponent: () => import('./features/performance/performance').then((m) => m.Performance),
+  { 
+    path: '',
+    loadComponent: () => import('./shared/layout/layout').then((m) => m.Layout),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.Dashboard),
+      },
+      {
+        path: 'stocks/:ticker',
+        loadComponent: () => import('./features/stock-details/stock-details').then((m) => m.StockDetails),
+      },
+      {
+        path: 'transactions',
+        loadComponent: () => import('./features/transactions/transactions').then((m) => m.Transactions),
+      },
+      {
+        path: 'performance',
+        loadComponent: () => import('./features/performance/performance').then((m) => m.Performance),
+      },
+    ],
     canActivate: [authGuard]
   },
   { path: '', pathMatch: 'full', redirectTo: 'login' },

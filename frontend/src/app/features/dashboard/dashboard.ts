@@ -4,12 +4,10 @@ import { AuthService } from '../../core/services/auth.service';
 import { ApiError } from '../../core/interceptors/error.interceptor';
 import { Holding, TradeService } from '../../core/services/trade.service';
 import { Card } from '../../shared/ui/card/card';
-import { Navbar } from '../../shared/navbar/navbar';
-
 
 @Component({
   selector: 'app-dashboard',
-  imports: [Navbar, CurrencyPipe, Card],
+  imports: [ CurrencyPipe, Card ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })

@@ -1,50 +1,46 @@
-<div class="page">
-  <app-navbar/>
+<main class="content">
+  <div class="account-summary">
+    <p class="welcome">Welcome, {{ username }}</p>
+    <h1 class="balance portfolio-value">{{ portfolioBalance() | currency }}</h1>
+    <p class="balance cash-value">Available Cash: {{ cashBalance | currency }}</p>
+  </div>
 
-  <main class="content">
-    <div class="account-summary">
-      <p class="welcome">Welcome, {{ username }}</p>
-      <h1 class="balance portfolio-value">{{ portfolioBalance() | currency }}</h1>
-      <p class="balance cash-value">Available Cash: {{ cashBalance | currency }}</p>
-    </div>
-
-    <section class="holdings-section">
-      @if (loading()) {
-        <p class="status">Loading…</p>
-      } @else if (errorMessage(); as message) {
-        <p class="status status-error">{{ message }}</p>
-      } @else if (holdings().length === 0) {
-        <p class="status">You don't hold any positions yet.</p>
-      } @else {
-        <app-card class="holdings-card">
-          <table class="holdings-table">
-            <thead>
+  <section class="holdings-section">
+    @if (loading()) {
+      <p class="status">Loading…</p>
+    } @else if (errorMessage(); as message) {
+      <p class="status status-error">{{ message }}</p>
+    } @else if (holdings().length === 0) {
+      <p class="status">You don't hold any positions yet.</p>
+    } @else {
+      <app-card class="holdings-card">
+        <table class="holdings-table">
+          <thead>
+            <tr>
+              <th>Ticker</th>
+              <th>Quantity</th>
+              <th>Avg. cost</th>
+              <th>Current price</th>
+              <th>Market value</th>
+              <th>Unrealized P/L</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (holding of holdings(); track holding.ticker) {
               <tr>
-                <th>Ticker</th>
-                <th>Quantity</th>
-                <th>Avg. cost</th>
-                <th>Current price</th>
-                <th>Market value</th>
-                <th>Unrealized P/L</th>
+                <td class="ticker">{{ holding.ticker }}</td>
+                <td>{{ holding.quantity }}</td>
+                <td>{{ holding.averageCostBasis | currency }}</td>
+                <td>{{ holding.currentPrice | currency }}</td>
+                <td>{{ holding.marketValue | currency }}</td>
+                <td [class.positive]="holding.unrealizedGainLoss >= 0" [class.negative]="holding.unrealizedGainLoss < 0">
+                  {{ holding.unrealizedGainLoss | currency }}
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              @for (holding of holdings(); track holding.ticker) {
-                <tr>
-                  <td class="ticker">{{ holding.ticker }}</td>
-                  <td>{{ holding.quantity }}</td>
-                  <td>{{ holding.averageCostBasis | currency }}</td>
-                  <td>{{ holding.currentPrice | currency }}</td>
-                  <td>{{ holding.marketValue | currency }}</td>
-                  <td [class.positive]="holding.unrealizedGainLoss >= 0" [class.negative]="holding.unrealizedGainLoss < 0">
-                    {{ holding.unrealizedGainLoss | currency }}
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </app-card>
-      }
-    </section>
-  </main>
-</div>
+            }
+          </tbody>
+        </table>
+      </app-card>
+    }
+  </section>
+</main>

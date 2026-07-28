@@ -1,41 +1,37 @@
-<div class="page">
-  <app-navbar/>
+<main class="content">
+  <div class="transactions-header">
+    <p class="welcome">Transaction history</p>
+  </div>
 
-  <main class="content">
-    <div class="transactions-header">
-      <p class="welcome">Transaction history</p>
-    </div>
-
-    <section class="transactions-section">
-      @if (loading()) {
-        <p class="status">Loading…</p>
-      } @else if (errorMessage(); as message) {
-        <p class="status status-error">{{ message }}</p>
-      } @else if (transactions().length === 0) {
-        <p class="status">You have not made any transactions yet.</p>
-      } @else {
-        <app-card class="transactions-card">
-          <ul class="transaction-list">
-            @for (transaction of transactions(); track transaction.id) {
-              <li class="transaction-item">
-                <div class="transaction-row transaction-row-primary">
-                  <span class="transaction-summary">
-                    <span class="ticker">{{ transaction.ticker }}</span>
-                    <span class="side">market {{ transaction.side.toLowerCase() }}</span>
-                  </span>
-                  <span class="transaction-total">{{ transaction.totalAmount | currency }}</span>
-                </div>
-                <div class="transaction-row transaction-row-secondary">
-                  <span class="executed-at">{{ transaction.executedAt | date: 'longDate' }}</span>
-                  <span class="transaction-detail">
-                    {{ transaction.quantity }} shares at {{ transaction.pricePerShare | currency }}
-                  </span>
-                </div>
-              </li>
-            }
-          </ul>
-        </app-card>
-      }
-    </section>
-  </main>
-</div>
+  <section class="transactions-section">
+    @if (loading()) {
+      <p class="status">Loading…</p>
+    } @else if (errorMessage(); as message) {
+      <p class="status status-error">{{ message }}</p>
+    } @else if (transactions().length === 0) {
+      <p class="status">You have not made any transactions yet.</p>
+    } @else {
+      <app-card class="transactions-card">
+        <ul class="transaction-list">
+          @for (transaction of transactions(); track transaction.id) {
+            <li class="transaction-item">
+              <div class="transaction-row transaction-row-primary">
+                <span class="transaction-summary">
+                  <span class="ticker">{{ transaction.ticker }}</span>
+                  <span class="side">market {{ transaction.side.toLowerCase() }}</span>
+                </span>
+                <span class="transaction-total">{{ transaction.totalAmount | currency }}</span>
+              </div>
+              <div class="transaction-row transaction-row-secondary">
+                <span class="executed-at">{{ transaction.executedAt | date: 'longDate' }}</span>
+                <span class="transaction-detail">
+                  {{ transaction.quantity }} shares at {{ transaction.pricePerShare | currency }}
+                </span>
+              </div>
+            </li>
+          }
+        </ul>
+      </app-card>
+    }
+  </section>
+</main>
