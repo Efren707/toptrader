@@ -78,3 +78,10 @@
 - Navbar does not appear on login or register.
 - Navbar content spans the full width of the page container, with the account menu pinned to the right edge instead of leaving a dead gap after the search field.
 - Existing responsive behavior at the `40rem` breakpoint is unaffected.
+
+## US-12 — Correct search result row layout and click behavior
+
+- Search result row shows ticker on the left and company name on the right, evenly spaced (price removed from the row).
+- Clicking a search result navigates to the stock's details page without any error message flashing.
+- The result button has an explicit `type="button"` so it can no longer trigger an accidental native form submission.
+- The row's flex/spacing layout is applied to the actual content container (the button), not the unused `<li>` wrapper.

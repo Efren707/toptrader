@@ -38,6 +38,9 @@ As a user, I want to move between login and register without hunting for a URL, 
 **US-11 — Consistent, evenly-spaced navbar**
 As a logged-in user, I want the navbar to appear on every authenticated page and use the full page width evenly, so navigation feels consistent and the layout doesn't look broken.
 
+**US-12 — Correct search result row layout and click behavior**
+As a logged-in user, I want the search result row to clearly show ticker and company name, and clicking it to reliably open the stock's details page without a stray error flashing, so search feels polished and trustworthy.
+
 ## Explicitly Out of Scope for MVP
 
 - Leaderboard / comparing performance across users
