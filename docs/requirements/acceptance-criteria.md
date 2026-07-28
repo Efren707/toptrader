@@ -61,3 +61,13 @@
 - Displays overall P&L as `current total portfolio value − $500 starting balance`, shown in both dollar amount and percentage.
 - P&L reflects current holdings' market value, consistent with what's shown on the portfolio view (US-7).
 - Negative P&L is displayed clearly as a loss (not just an unsigned/ambiguous number).
+
+## US-10 — Navigate between auth pages, and log out
+
+- Login page shows a "Not registered? Create an account" link that navigates to `/register`.
+- Register page shows an "Already have an account? Log in" link that navigates to `/login`.
+- The TopTrader wordmark in the navbar is clickable and navigates to `/dashboard` from any page it appears on.
+- Navbar account menu gains a "Log out" action.
+- `AuthService` gains a `logout()` method that calls the backend, clears `currentUser` client-side, and redirects to `/login`.
+- Backend: `POST /auth/logout` is explicitly configured (custom `logoutUrl`, session/cookie cleared, plain success response — no redirect) so it matches the documented contract and behaves correctly for a SPA caller.
+- After logout, hitting a protected route (dashboard, transactions, performance) redirects to login, same as an expired/missing session today.
