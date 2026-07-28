@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, inject, signal, viewChild } from '@angular/core';
 import { Quote, QuoteService } from '../../core/services/quote.service';
 import { AuthService } from '../../core/services/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiError } from '../../core/interceptors/error.interceptor';
 
@@ -9,7 +9,7 @@ type SearchField = 'ticker';
 
 @Component({
   selector: 'app-navbar',
-  imports: [ ReactiveFormsModule ],
+  imports: [ ReactiveFormsModule, RouterLink ],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
@@ -114,5 +114,18 @@ export class Navbar {
   protected onPerformanceClick(): void {
     this.accountDropdownActive.set(false);
     this.router.navigate(['/performance']);
+  }
+
+  protected onLogoutClick(): void {
+    this.authService.logout().subscribe({
+      next: () => {
+        this.accountDropdownActive.set(false);
+        this.router.navigate(['/login']);
+      },
+      error: (error: ApiError) => {
+        this.accountDropdownActive.set(false);
+        this.formError.set(error.detail);
+      },
+    });
   }
 }

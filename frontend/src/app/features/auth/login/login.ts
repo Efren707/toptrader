@@ -4,14 +4,14 @@ import { AuthService } from '../../../core/services/auth.service';
 import { Button } from '../../../shared/ui/button/button';
 import { Card } from '../../../shared/ui/card/card';
 import { Input } from '../../../shared/ui/input/input';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ApiError } from '../../../core/interceptors/error.interceptor';
 
 type LoginField = 'email' | 'password';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, Button, Card, Input],
+  imports: [ReactiveFormsModule, Button, Card, Input, RouterLink ],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })

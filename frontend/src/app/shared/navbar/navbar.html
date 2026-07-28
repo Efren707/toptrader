@@ -1,5 +1,5 @@
 <nav class="navbar">
-  <div class="wordmark">TOP<span>TRADER</span></div>
+  <a routerLink="/dashboard" class="wordmark">TOP<span>TRADER</span></a>
 
   @if (formError(); as message) {
     <p class="form-error">{{ message }}</p>
@@ -120,6 +120,9 @@
           </li>
           <li class="menu-item">
             <button type="button" (click)="onPerformanceClick()">Performance</button>
+          </li>
+          <li class="menu-item">
+            <button type="button" (click)="onLogoutClick()">Logout</button>
           </li>
         </ul>
       </div>

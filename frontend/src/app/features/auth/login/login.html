@@ -6,8 +6,7 @@
   <div class="layout">
     <app-card class="auth-panel">
         <p class="eyebrow">Log in</p>
-        <h1>Welcome back</h1>
-        <p class="lede">Log in to pick up where you left off.</p>
+        <h1>Continue paper trading</h1>
 
         <form [formGroup]="form" (ngSubmit)="submit()">
           @if (formError(); as message) {
@@ -32,6 +31,8 @@
             {{ submitting() ? 'Logging in…' : 'Log in' }}
           </app-button>
         </form>
+
+        <p class="auth-switch">Not registered?<a routerLink="/register">Create an account</a></p>
     </app-card>
 
     <app-card class="pitch-panel">

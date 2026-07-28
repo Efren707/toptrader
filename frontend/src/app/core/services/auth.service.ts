@@ -40,6 +40,12 @@ export class AuthService {
       .pipe(tap((user) => this.currentUser.set(user)));
   }
 
+  logout(): Observable<void> {
+    return this.http
+      .post<void>(`${environment.apiUrl}/auth/logout`, null)
+      .pipe(tap(() => this.currentUser.set(null)));
+  }
+
   checkSession(): Observable<UserSummary | null> {
     return this.http.get<UserSummary>(`${environment.apiUrl}/auth/session`).pipe(
       tap((user) => this.currentUser.set(user)),

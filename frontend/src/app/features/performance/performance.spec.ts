@@ -1,6 +1,7 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { errorInterceptor } from '../../core/interceptors/error.interceptor';
 import { AuthService, UserSummary } from '../../core/services/auth.service';
@@ -37,7 +38,11 @@ describe('Performance', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Performance],
-      providers: [provideHttpClient(withInterceptors([errorInterceptor])), provideHttpClientTesting()],
+      providers: [
+        provideHttpClient(withInterceptors([errorInterceptor])),
+        provideHttpClientTesting(),
+        provideRouter([]),
+      ],
     }).compileComponents();
   });
 
