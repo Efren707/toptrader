@@ -7,7 +7,6 @@
     <app-card class="auth-panel">
         <p class="eyebrow">Create account</p>
         <h1>Start paper trading</h1>
-        <p class="lede">$500.00 in virtual cash, credited the moment you register.</p>
 
         <form [formGroup]="form" (ngSubmit)="submit()">
           @if (formError(); as message) {
@@ -37,6 +36,8 @@
             {{ submitting() ? 'Creating account…' : 'Create account' }}
           </app-button>
         </form>
+
+        <p class="auth-switch">Already have an account?<a routerLink="/login">Log in</a></p>
     </app-card>
 
     <app-card class="pitch-panel">
