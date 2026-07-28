@@ -35,6 +35,9 @@ As a logged-in user, I want to see my overall profit or loss relative to my star
 **US-10 — Navigate between auth pages, and log out**
 As a user, I want to move between login and register without hunting for a URL, jump back to my dashboard from anywhere, and log out when I'm done, so that account access feels complete and self-contained instead of a dead end.
 
+**US-11 — Consistent, evenly-spaced navbar**
+As a logged-in user, I want the navbar to appear on every authenticated page and use the full page width evenly, so navigation feels consistent and the layout doesn't look broken.
+
 ## Explicitly Out of Scope for MVP
 
 - Leaderboard / comparing performance across users

@@ -71,3 +71,10 @@
 - `AuthService` gains a `logout()` method that calls the backend, clears `currentUser` client-side, and redirects to `/login`.
 - Backend: `POST /auth/logout` is explicitly configured (custom `logoutUrl`, session/cookie cleared, plain success response — no redirect) so it matches the documented contract and behaves correctly for a SPA caller.
 - After logout, hitting a protected route (dashboard, transactions, performance) redirects to login, same as an expired/missing session today.
+
+## US-11 — Consistent, evenly-spaced navbar
+
+- Navbar appears on all authenticated pages, including stock details (currently missing there).
+- Navbar does not appear on login or register.
+- Navbar content spans the full width of the page container, with the account menu pinned to the right edge instead of leaving a dead gap after the search field.
+- Existing responsive behavior at the `40rem` breakpoint is unaffected.
