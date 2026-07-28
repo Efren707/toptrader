@@ -1,6 +1,6 @@
 # Planning Roadmap & Status
 
-> Last updated: 2026-07-28 (Milestone #12 UI/UX Polish Pass: US-10 and US-11 scoped, issues #31 and #34 open)
+> Last updated: 2026-07-28 (Milestone #12 UI/UX Polish Pass: US-10, US-11, US-12 scoped, issues #31, #34, #35 open)
 > This file tracks *where we are* — a lean, current-state view. Full narrative detail for completed phases/milestones lives in [docs/planning-history.md](./planning-history.md). For *why* decisions were made, see `docs/adr/`. For requirements detail, see `docs/requirements/`. Each milestone below also has a matching [GitHub Milestone](https://github.com/Efren707/toptrader/milestones) for visual progress tracking.
 
 ## Current focus
@@ -13,7 +13,7 @@ The polish pass has been scoped from a manual test pass of the running app into 
 
 1. **US-10 — Navigate between auth pages, and log out** — scoped, issue [#31](https://github.com/Efren707/toptrader/issues/31) open. Login/register cross-links, navbar logo → dashboard, logout wiring (frontend `AuthService.logout()` + fixing the backend `POST /auth/logout` endpoint, which currently only has Spring Security's default `/logout` and doesn't match the documented contract). **Next step: implement this story.**
 2. **US-11 — Consistent, evenly-spaced navbar** — scoped, issue [#34](https://github.com/Efren707/toptrader/issues/34) open. Navbar is missing entirely on the stock details page; `.search-form`'s `max-width: 28rem` plus no `margin-left: auto` on `.account-menu-wrap` leaves a dead gap instead of filling the page width evenly.
-3. Search result item layout + error-flash bug fix (not yet turned into a user story)
+3. **US-12 — Correct search result row layout and click behavior** — scoped, issue [#35](https://github.com/Efren707/toptrader/issues/35) open. Price dropped from the row (ticker left / company name right only); result button was missing `type="button"`, so it defaulted to `type="submit"` and re-triggered the search form against the already-cleared ticker field, flashing a "Required" error on click; layout rules targeted the unused `<li>` wrapper instead of the button.
 4. Dashboard holdings redesign (table → list) + click-through to stock details (not yet turned into a user story)
 5. Stock details page redesign — 2-column layout, P&L stats, trade form with Buy/Sell toggle and Review Order confirmation step (not yet turned into a user story)
 
