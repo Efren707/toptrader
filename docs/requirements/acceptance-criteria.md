@@ -85,3 +85,11 @@
 - Clicking a search result navigates to the stock's details page without any error message flashing.
 - The result button has an explicit `type="button"` so it can no longer trigger an accidental native form submission.
 - The row's flex/spacing layout is applied to the actual content container (the button), not the unused `<li>` wrapper.
+
+## US-13 — Dashboard holdings as a list with day change, linking to stock details
+
+- Backend: Finnhub's `dp` (percent change) field is captured and threaded through `Quote` → `QuoteService` (`/quotes/{ticker}`) and `HoldingResponse` (`/trades/holdings`), which currently discard it.
+- Frontend `Quote` and `Holding` models include the new day-change-percent field.
+- Dashboard holdings render as a list, not a table: each row shows ticker + share quantity on the left, current price + daily % change (visually distinguished positive vs. negative) on the right.
+- Clicking a holding row navigates to that stock's details page (`/stocks/:ticker`).
+- Existing loading/error/empty states for holdings are preserved.

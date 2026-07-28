@@ -41,6 +41,9 @@ As a logged-in user, I want the navbar to appear on every authenticated page and
 **US-12 — Correct search result row layout and click behavior**
 As a logged-in user, I want the search result row to clearly show ticker and company name, and clicking it to reliably open the stock's details page without a stray error flashing, so search feels polished and trustworthy.
 
+**US-13 — Dashboard holdings as a list with day change, linking to stock details**
+As a logged-in user, I want my dashboard holdings shown as a scannable list with each stock's price and daily % change, and to be able to click through to a stock's details page, so I can quickly check my positions and act on them.
+
 ## Explicitly Out of Scope for MVP
 
 - Leaderboard / comparing performance across users
