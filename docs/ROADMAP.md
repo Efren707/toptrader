@@ -1,23 +1,23 @@
 # Planning Roadmap & Status
 
-> Last updated: 2026-07-28 (Milestone #12 UI/UX Polish Pass: US-10, US-11, US-12, US-13 scoped, issues #31, #34, #35, #37 open)
+> Last updated: 2026-07-28 (Milestone #12 UI/UX Polish Pass fully scoped: US-10 through US-14, issues #31/#34/#35/#37/#39 open — none implemented yet)
 > This file tracks *where we are* — a lean, current-state view. Full narrative detail for completed phases/milestones lives in [docs/planning-history.md](./planning-history.md). For *why* decisions were made, see `docs/adr/`. For requirements detail, see `docs/requirements/`. Each milestone below also has a matching [GitHub Milestone](https://github.com/Efren707/toptrader/milestones) for visual progress tracking.
 
 ## Current focus
 
-**US-9 (View profit/loss) is done, last story in Milestone #11 (Portfolio & Reporting) — Milestone #11 is now complete.** Per [ADR 0030](./adr/0030-profit-loss-client-side-performance-page.md), P&L is computed entirely client-side (portfolio value − $500 starting balance, shown as both $ and %) — no backend changes. New `Performance` component/route (`/performance`, `authGuard`), reachable from the `Navbar` account menu alongside "Transaction history". `docs/architecture/frontend-architecture.md`'s routing table updated to match. `performance.spec.ts` covers positive/negative P&L rendering and the holdings-fetch error state, following the `TradeForm` spec's `HttpTestingController` pattern rather than the bare smoke test used by `Dashboard`/`Transactions`. Merged via PR [#29](https://github.com/Efren707/toptrader/pull/29), 2026-07-28.
+**Every MVP user story (US-1–US-9) is implemented; before deploying we're doing a UI/UX polish pass.** AWS deployment (already architected — ADR 0005/0006/0014/0016/0017, not yet executed) stays blocked until this pass is done.
 
-**This closes out US-1 through US-9 — every MVP user story is implemented.** Before deploying, we're doing another planning pass: a round of UI/UX changes and additional features to get to a polished MVP, rather than shipping the current feature-complete-but-rough state. AWS deployment (already architected — ADR 0005/0006/0014/0016/0017, not yet executed) stays blocked until this polish pass is scoped and done.
+A manual test pass of the running app was scoped into **Milestone #12 (UI/UX Polish Pass)** — 5 stories, all scoped, none implemented yet:
 
-The polish pass has been scoped from a manual test pass of the running app into **Milestone #12 (UI/UX Polish Pass)**, grouped into 5 stories:
-
-1. **US-10 — Navigate between auth pages, and log out** — scoped, issue [#31](https://github.com/Efren707/toptrader/issues/31) open. Login/register cross-links, navbar logo → dashboard, logout wiring (frontend `AuthService.logout()` + fixing the backend `POST /auth/logout` endpoint, which currently only has Spring Security's default `/logout` and doesn't match the documented contract). **Next step: implement this story.**
-2. **US-11 — Consistent, evenly-spaced navbar** — scoped, issue [#34](https://github.com/Efren707/toptrader/issues/34) open. Navbar is missing entirely on the stock details page; `.search-form`'s `max-width: 28rem` plus no `margin-left: auto` on `.account-menu-wrap` leaves a dead gap instead of filling the page width evenly.
-3. **US-12 — Correct search result row layout and click behavior** — scoped, issue [#35](https://github.com/Efren707/toptrader/issues/35) open. Price dropped from the row (ticker left / company name right only); result button was missing `type="button"`, so it defaulted to `type="submit"` and re-triggered the search form against the already-cleared ticker field, flashing a "Required" error on click; layout rules targeted the unused `<li>` wrapper instead of the button.
-4. **US-13 — Dashboard holdings as a list with day change, linking to stock details** — scoped, issue [#37](https://github.com/Efren707/toptrader/issues/37) open. Finnhub's `/quote` response already includes `dp` (percent change), silently discarded by `FinnhubQuoteResponse` (only `c`/`t` declared, unknown properties ignored); threading it through `Quote`/`QuoteService`/`HoldingResponse` powers the daily % change shown per holding. Touches backend + frontend, like US-10.
-5. Stock details page redesign — 2-column layout, P&L stats, trade form with Buy/Sell toggle and Review Order confirmation step (not yet turned into a user story)
+1. **US-10 — Navigate between auth pages, and log out** — issue [#31](https://github.com/Efren707/toptrader/issues/31). Login/register cross-links, navbar logo → dashboard, logout wiring (frontend `AuthService.logout()` + fixing the backend `POST /auth/logout` endpoint, which currently only has Spring Security's default `/logout` and doesn't match the documented contract).
+2. **US-11 — Consistent, evenly-spaced navbar** — issue [#34](https://github.com/Efren707/toptrader/issues/34). Navbar is missing entirely on the stock details page; `.search-form`'s `max-width: 28rem` plus no `margin-left: auto` on `.account-menu-wrap` leaves a dead gap instead of filling the page width evenly.
+3. **US-12 — Correct search result row layout and click behavior** — issue [#35](https://github.com/Efren707/toptrader/issues/35). Price dropped from the row (ticker left / company name right only); result button was missing `type="button"`, so it defaulted to `type="submit"` and re-triggered the search form against the already-cleared ticker field, flashing a "Required" error on click; layout rules targeted the unused `<li>` wrapper instead of the button.
+4. **US-13 — Dashboard holdings as a list with day change, linking to stock details** — issue [#37](https://github.com/Efren707/toptrader/issues/37). Finnhub's `/quote` response already includes `dp` (percent change), silently discarded by `FinnhubQuoteResponse` (only `c`/`t` declared, unknown properties ignored); threading it through `Quote`/`QuoteService`/`HoldingResponse` powers the daily % change shown per holding. Touches backend + frontend, like US-10.
+5. **US-14 — Redesign the stock details page (layout, position stats, trade form)** — issue [#39](https://github.com/Efren707/toptrader/issues/39). `TradeForm` already has a confirm step (satisfies US-5/US-6) but it's a bare quantity-only prompt, and the page renders two separate Buy/Sell forms instead of one with a toggle. Frontend-only — all needed data is already available client-side.
 
 Deferred out of this pass to a future backlog: general market news feed (dashboard + stock details — needs a new news data source) and a profile page for editing/deleting an account.
+
+**Next step:** implement US-10 first (smallest, foundational), then work through US-11–14 in order.
 
 ## Deferred until deploy
 
