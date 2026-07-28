@@ -1,6 +1,4 @@
-<div class="page">
-  <a routerLink="/dashboard" class="back-link">← Back to dashboard</a>
-
+<main class="content">
   @if (loading()) {
     <p class="status">Loading…</p>
   } @else if (notFound()) {
@@ -20,4 +18,4 @@
     }
 
   }
-</div>
+</main>

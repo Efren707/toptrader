@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Quote, QuoteService } from '../../core/services/quote.service';
 import { ApiError } from '../../core/interceptors/error.interceptor';
@@ -9,7 +9,7 @@ import { Holding, TradeService, TradeSide } from '../../core/services/trade.serv
 
 @Component({
   selector: 'app-stock-details',
-  imports: [CurrencyPipe, DatePipe, RouterLink, Card, TradeForm],
+  imports: [CurrencyPipe, DatePipe, Card, TradeForm],
   templateUrl: './stock-details.html',
   styleUrl: './stock-details.css',
 })

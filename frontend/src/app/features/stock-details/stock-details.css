@@ -1,21 +1,3 @@
-.page {
-  max-width: 78rem;
-  margin: 0 auto;
-  padding: 2rem 1.5rem 4rem;
-}
-
-.back-link {
-  display: inline-block;
-  font-size: 0.8125rem;
-  color: var(--color-text-muted);
-  text-decoration: none;
-  margin-bottom: 1.5rem;
-}
-
-.back-link:hover {
-  color: var(--color-text);
-}
-
 .status {
   font-size: 0.875rem;
   color: var(--color-text-muted);

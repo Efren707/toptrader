@@ -3,12 +3,11 @@ import { CurrencyPipe, PercentPipe } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
 import { Holding, TradeService } from '../../core/services/trade.service';
 import { ApiError } from '../../core/interceptors/error.interceptor';
-import { Navbar } from '../../shared/navbar/navbar';
 import { Card } from '../../shared/ui/card/card';
 
 @Component({
   selector: 'app-performance',
-  imports: [ Navbar, Card, CurrencyPipe, PercentPipe ],
+  imports: [ Card, CurrencyPipe, PercentPipe ],
   templateUrl: './performance.html',
   styleUrl: './performance.css',
 })
