@@ -6,4 +6,6 @@ import java.math.BigDecimal;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record FinnhubQuoteResponse(
-    @JsonProperty("c") BigDecimal currentPrice, @JsonProperty("t") long timestamp) {}
+    @JsonProperty("c") BigDecimal currentPrice,
+    @JsonProperty("dp") BigDecimal percentChange,
+    @JsonProperty("t") long timestamp) {}

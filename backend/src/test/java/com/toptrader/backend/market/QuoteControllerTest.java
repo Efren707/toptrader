@@ -27,7 +27,9 @@ class QuoteControllerTest {
   @Test
   void getQuote_withValidTicker_returns200WithQuoteData() throws Exception {
     when(finnhubClient.fetchQuote("AAPL"))
-        .thenReturn(new FinnhubQuoteResponse(new BigDecimal("210.50"), 1721500000L));
+        .thenReturn(
+            new FinnhubQuoteResponse(
+                new BigDecimal("210.50"), new BigDecimal("5.19"), 1721500000L));
     when(finnhubClient.fetchProfile("AAPL"))
         .thenReturn(new FinnhubCompanyProfileResponse("Apple Inc"));
 
@@ -43,7 +45,7 @@ class QuoteControllerTest {
   @Test
   void getQuote_withZeroPrice_returns404() throws Exception {
     when(finnhubClient.fetchQuote("ZZZZ"))
-        .thenReturn(new FinnhubQuoteResponse(BigDecimal.ZERO, 1721500000L));
+        .thenReturn(new FinnhubQuoteResponse(BigDecimal.ZERO, new BigDecimal("5.19"), 1721500000L));
     when(finnhubClient.fetchProfile("ZZZZ"))
         .thenReturn(new FinnhubCompanyProfileResponse("irrelevant"));
 
@@ -56,7 +58,9 @@ class QuoteControllerTest {
   @Test
   void getQuote_withMissingCompanyName_returns404() throws Exception {
     when(finnhubClient.fetchQuote("ZZZZ"))
-        .thenReturn(new FinnhubQuoteResponse(new BigDecimal("210.50"), 1721500000L));
+        .thenReturn(
+            new FinnhubQuoteResponse(
+                new BigDecimal("210.50"), new BigDecimal("5.19"), 1721500000L));
     when(finnhubClient.fetchProfile("ZZZZ")).thenReturn(new FinnhubCompanyProfileResponse(null));
 
     mockMvc
@@ -75,7 +79,9 @@ class QuoteControllerTest {
   @Test
   void getQuote_whenProfileCallFails_returns502() throws Exception {
     when(finnhubClient.fetchQuote("AAPL"))
-        .thenReturn(new FinnhubQuoteResponse(new BigDecimal("210.50"), 1721500000L));
+        .thenReturn(
+            new FinnhubQuoteResponse(
+                new BigDecimal("210.50"), new BigDecimal("5.19"), 1721500000L));
     when(finnhubClient.fetchProfile("AAPL")).thenThrow(new RestClientException("timeout"));
 
     mockMvc.perform(get("/quotes/AAPL")).andExpect(status().isBadGateway());

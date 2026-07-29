@@ -7,6 +7,7 @@ export interface Quote {
   ticker: string;
   companyName: string;
   price: number;
+  percentChange: number;
   asOf: string;
 }
 

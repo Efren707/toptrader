@@ -20,6 +20,7 @@ export interface Holding {
   quantity: number;
   averageCostBasis: number;
   currentPrice: number;
+  percentChange: number;
   marketValue: number;
   unrealizedGainLoss: number;
 }

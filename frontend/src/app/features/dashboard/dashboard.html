@@ -13,34 +13,28 @@
     } @else if (holdings().length === 0) {
       <p class="status">You don't hold any positions yet.</p>
     } @else {
-      <app-card class="holdings-card">
-        <table class="holdings-table">
-          <thead>
-            <tr>
-              <th>Ticker</th>
-              <th>Quantity</th>
-              <th>Avg. cost</th>
-              <th>Current price</th>
-              <th>Market value</th>
-              <th>Unrealized P/L</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (holding of holdings(); track holding.ticker) {
-              <tr>
-                <td class="ticker">{{ holding.ticker }}</td>
-                <td>{{ holding.quantity }}</td>
-                <td>{{ holding.averageCostBasis | currency }}</td>
-                <td>{{ holding.currentPrice | currency }}</td>
-                <td>{{ holding.marketValue | currency }}</td>
-                <td [class.positive]="holding.unrealizedGainLoss >= 0" [class.negative]="holding.unrealizedGainLoss < 0">
-                  {{ holding.unrealizedGainLoss | currency }}
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </app-card>
+      <div class="holdings-list">
+        <p class="holdings-title">Current positions</p>
+        @for (holding of holdings(); track holding.ticker) {
+          <button type="button" class="holding-row" (click)="onHoldingClick(holding.ticker)">
+            <div class="holding-left">
+              <p class="ticker">{{ holding.ticker }}</p>
+              <p class="quantity">{{ holding.quantity }}</p>
+            </div>
+
+            <div class="holding-right">
+              <p class="current-price">{{ holding.currentPrice | currency }}</p>
+
+              <p
+                class="percentChange"
+                [class.positive]="holding.percentChange >= 0"
+                [class.negative]="holding.percentChange < 0">
+                {{ holding.percentChange > 0 ? '+' : '' }}{{ holding.percentChange | number:'1.2-2' }}%
+              </p>
+            </div>
+          </button>
+        }
+      </div>
     }
   </section>
 </main>

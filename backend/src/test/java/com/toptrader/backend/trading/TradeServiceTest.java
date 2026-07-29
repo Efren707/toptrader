@@ -52,7 +52,13 @@ class TradeServiceTest {
   void buyStock_createsNewHolding_whenNoneExistsForTicker() {
     when(userRepository.findByIdForUpdate(USER_ID)).thenReturn(Optional.of(user));
     when(quoteService.getQuote("AAPL"))
-        .thenReturn(new Quote("AAPL", "Apple Inc.", new BigDecimal("100.00"), Instant.now()));
+        .thenReturn(
+            new Quote(
+                "AAPL",
+                "Apple Inc.",
+                new BigDecimal("100.00"),
+                new BigDecimal("5.19"),
+                Instant.now()));
     when(holdingRepository.findByUserAndTicker(user, "AAPL")).thenReturn(Optional.empty());
 
     TradeResult result = tradeService.buyStock(USER_ID, new TradeRequest("AAPL", 5));
@@ -75,7 +81,13 @@ class TradeServiceTest {
     Holding existing = new Holding(user, "AAPL", 10, new BigDecimal("50.00"), null);
     when(userRepository.findByIdForUpdate(USER_ID)).thenReturn(Optional.of(user));
     when(quoteService.getQuote("AAPL"))
-        .thenReturn(new Quote("AAPL", "Apple Inc.", new BigDecimal("100.00"), Instant.now()));
+        .thenReturn(
+            new Quote(
+                "AAPL",
+                "Apple Inc.",
+                new BigDecimal("100.00"),
+                new BigDecimal("5.19"),
+                Instant.now()));
     when(holdingRepository.findByUserAndTicker(user, "AAPL")).thenReturn(Optional.of(existing));
 
     TradeResult result = tradeService.buyStock(USER_ID, new TradeRequest("AAPL", 10));
@@ -92,7 +104,13 @@ class TradeServiceTest {
     user = new User("trader@example.com", "trader", "hash", new BigDecimal("100.00"));
     when(userRepository.findByIdForUpdate(USER_ID)).thenReturn(Optional.of(user));
     when(quoteService.getQuote("AAPL"))
-        .thenReturn(new Quote("AAPL", "Apple Inc.", new BigDecimal("100.00"), Instant.now()));
+        .thenReturn(
+            new Quote(
+                "AAPL",
+                "Apple Inc.",
+                new BigDecimal("100.00"),
+                new BigDecimal("5.19"),
+                Instant.now()));
 
     assertThatThrownBy(() -> tradeService.buyStock(USER_ID, new TradeRequest("AAPL", 5)))
         .isInstanceOf(ResponseStatusException.class)
@@ -134,7 +152,13 @@ class TradeServiceTest {
   @Test
   void buyStock_throwsNotFound_whenUserDoesNotExist() {
     when(quoteService.getQuote("AAPL"))
-        .thenReturn(new Quote("AAPL", "Apple Inc.", new BigDecimal("100.00"), Instant.now()));
+        .thenReturn(
+            new Quote(
+                "AAPL",
+                "Apple Inc.",
+                new BigDecimal("100.00"),
+                new BigDecimal("5.19"),
+                Instant.now()));
     when(userRepository.findByIdForUpdate(USER_ID)).thenReturn(Optional.empty());
 
     assertThatThrownBy(() -> tradeService.buyStock(USER_ID, new TradeRequest("AAPL", 5)))
@@ -147,7 +171,13 @@ class TradeServiceTest {
   void buyStock_usesTheFetchedQuotePriceExactlyOnce_forExecution() {
     when(userRepository.findByIdForUpdate(USER_ID)).thenReturn(Optional.of(user));
     when(quoteService.getQuote("AAPL"))
-        .thenReturn(new Quote("AAPL", "Apple Inc.", new BigDecimal("210.50"), Instant.now()));
+        .thenReturn(
+            new Quote(
+                "AAPL",
+                "Apple Inc.",
+                new BigDecimal("210.50"),
+                new BigDecimal("5.19"),
+                Instant.now()));
     when(holdingRepository.findByUserAndTicker(user, "AAPL")).thenReturn(Optional.empty());
 
     TradeResult result = tradeService.buyStock(USER_ID, new TradeRequest("AAPL", 3));
@@ -161,7 +191,13 @@ class TradeServiceTest {
     Holding existing = new Holding(user, "AAPL", 10, new BigDecimal("50.00"), null);
     when(userRepository.findByIdForUpdate(USER_ID)).thenReturn(Optional.of(user));
     when(quoteService.getQuote("AAPL"))
-        .thenReturn(new Quote("AAPL", "Apple Inc.", new BigDecimal("100.00"), Instant.now()));
+        .thenReturn(
+            new Quote(
+                "AAPL",
+                "Apple Inc.",
+                new BigDecimal("100.00"),
+                new BigDecimal("5.19"),
+                Instant.now()));
     when(holdingRepository.findByUserAndTicker(user, "AAPL")).thenReturn(Optional.of(existing));
 
     TradeResult result = tradeService.sellStock(USER_ID, new TradeRequest("AAPL", 4));
@@ -184,7 +220,13 @@ class TradeServiceTest {
     Holding existing = new Holding(user, "AAPL", 10, new BigDecimal("50.00"), null);
     when(userRepository.findByIdForUpdate(USER_ID)).thenReturn(Optional.of(user));
     when(quoteService.getQuote("AAPL"))
-        .thenReturn(new Quote("AAPL", "Apple Inc.", new BigDecimal("100.00"), Instant.now()));
+        .thenReturn(
+            new Quote(
+                "AAPL",
+                "Apple Inc.",
+                new BigDecimal("100.00"),
+                new BigDecimal("5.19"),
+                Instant.now()));
     when(holdingRepository.findByUserAndTicker(user, "AAPL")).thenReturn(Optional.of(existing));
 
     TradeResult result = tradeService.sellStock(USER_ID, new TradeRequest("AAPL", 10));
@@ -202,7 +244,13 @@ class TradeServiceTest {
     Holding existing = new Holding(user, "AAPL", 5, new BigDecimal("50.00"), null);
     when(userRepository.findByIdForUpdate(USER_ID)).thenReturn(Optional.of(user));
     when(quoteService.getQuote("AAPL"))
-        .thenReturn(new Quote("AAPL", "Apple Inc.", new BigDecimal("100.00"), Instant.now()));
+        .thenReturn(
+            new Quote(
+                "AAPL",
+                "Apple Inc.",
+                new BigDecimal("100.00"),
+                new BigDecimal("5.19"),
+                Instant.now()));
     when(holdingRepository.findByUserAndTicker(user, "AAPL")).thenReturn(Optional.of(existing));
 
     assertThatThrownBy(() -> tradeService.sellStock(USER_ID, new TradeRequest("AAPL", 6)))
@@ -220,7 +268,13 @@ class TradeServiceTest {
   void sellStock_rejectsWhenNoHoldingExists() {
     when(userRepository.findByIdForUpdate(USER_ID)).thenReturn(Optional.of(user));
     when(quoteService.getQuote("AAPL"))
-        .thenReturn(new Quote("AAPL", "Apple Inc.", new BigDecimal("100.00"), Instant.now()));
+        .thenReturn(
+            new Quote(
+                "AAPL",
+                "Apple Inc.",
+                new BigDecimal("100.00"),
+                new BigDecimal("5.19"),
+                Instant.now()));
     when(holdingRepository.findByUserAndTicker(user, "AAPL")).thenReturn(Optional.empty());
 
     assertThatThrownBy(() -> tradeService.sellStock(USER_ID, new TradeRequest("AAPL", 1)))
@@ -262,7 +316,13 @@ class TradeServiceTest {
   @Test
   void sellStock_throwsNotFound_whenUserDoesNotExist() {
     when(quoteService.getQuote("AAPL"))
-        .thenReturn(new Quote("AAPL", "Apple Inc.", new BigDecimal("100.00"), Instant.now()));
+        .thenReturn(
+            new Quote(
+                "AAPL",
+                "Apple Inc.",
+                new BigDecimal("100.00"),
+                new BigDecimal("5.19"),
+                Instant.now()));
     when(userRepository.findByIdForUpdate(USER_ID)).thenReturn(Optional.empty());
 
     assertThatThrownBy(() -> tradeService.sellStock(USER_ID, new TradeRequest("AAPL", 1)))
@@ -276,7 +336,13 @@ class TradeServiceTest {
     Holding existing = new Holding(user, "AAPL", 10, new BigDecimal("50.00"), null);
     when(userRepository.findByIdForUpdate(USER_ID)).thenReturn(Optional.of(user));
     when(quoteService.getQuote("AAPL"))
-        .thenReturn(new Quote("AAPL", "Apple Inc.", new BigDecimal("210.50"), Instant.now()));
+        .thenReturn(
+            new Quote(
+                "AAPL",
+                "Apple Inc.",
+                new BigDecimal("210.50"),
+                new BigDecimal("5.19"),
+                Instant.now()));
     when(holdingRepository.findByUserAndTicker(user, "AAPL")).thenReturn(Optional.of(existing));
 
     TradeResult result = tradeService.sellStock(USER_ID, new TradeRequest("AAPL", 3));
@@ -290,7 +356,13 @@ class TradeServiceTest {
     Holding existing = new Holding(user, "AAPL", 10, new BigDecimal("50.00"), null);
     when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
     when(quoteService.getQuote("AAPL"))
-        .thenReturn(new Quote("AAPL", "Apple Inc.", new BigDecimal("100.00"), Instant.now()));
+        .thenReturn(
+            new Quote(
+                "AAPL",
+                "Apple Inc.",
+                new BigDecimal("100.00"),
+                new BigDecimal("5.19"),
+                Instant.now()));
     when(holdingRepository.findByUserAndTicker(user, "AAPL")).thenReturn(Optional.of(existing));
 
     Optional<HoldingResponse> result = tradeService.getHolding(USER_ID, "AAPL");
@@ -308,7 +380,13 @@ class TradeServiceTest {
   void getHolding_returnsEmpty_whenNoHoldingExistsForTicker() {
     when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
     when(quoteService.getQuote("AAPL"))
-        .thenReturn(new Quote("AAPL", "Apple Inc.", new BigDecimal("100.00"), Instant.now()));
+        .thenReturn(
+            new Quote(
+                "AAPL",
+                "Apple Inc.",
+                new BigDecimal("100.00"),
+                new BigDecimal("5.19"),
+                Instant.now()));
     when(holdingRepository.findByUserAndTicker(user, "AAPL")).thenReturn(Optional.empty());
 
     Optional<HoldingResponse> result = tradeService.getHolding(USER_ID, "AAPL");
@@ -330,7 +408,13 @@ class TradeServiceTest {
   @Test
   void getHolding_throwsNotFound_whenUserDoesNotExist() {
     when(quoteService.getQuote("AAPL"))
-        .thenReturn(new Quote("AAPL", "Apple Inc.", new BigDecimal("100.00"), Instant.now()));
+        .thenReturn(
+            new Quote(
+                "AAPL",
+                "Apple Inc.",
+                new BigDecimal("100.00"),
+                new BigDecimal("5.19"),
+                Instant.now()));
     when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
 
     assertThatThrownBy(() -> tradeService.getHolding(USER_ID, "AAPL"))
@@ -346,9 +430,21 @@ class TradeServiceTest {
     when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
     when(holdingRepository.findByUser(user)).thenReturn(List.of(aapl, msft));
     when(quoteService.getQuote("AAPL"))
-        .thenReturn(new Quote("AAPL", "Apple Inc.", new BigDecimal("100.00"), Instant.now()));
+        .thenReturn(
+            new Quote(
+                "AAPL",
+                "Apple Inc.",
+                new BigDecimal("100.00"),
+                new BigDecimal("5.19"),
+                Instant.now()));
     when(quoteService.getQuote("MSFT"))
-        .thenReturn(new Quote("MSFT", "Microsoft Corp.", new BigDecimal("180.00"), Instant.now()));
+        .thenReturn(
+            new Quote(
+                "MSFT",
+                "Microsoft Corp.",
+                new BigDecimal("180.00"),
+                new BigDecimal("5.19"),
+                Instant.now()));
 
     List<HoldingResponse> result = tradeService.getHoldings(USER_ID);
 
