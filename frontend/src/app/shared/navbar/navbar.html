@@ -71,11 +71,10 @@
             <p class="search-status">Searching…</p>
           } @else if (quote(); as result) {
             <ul class="results-list">
-              <li class="result-item">
-                <button (click)="onQuoteClick()">
+              <li>
+                <button class="result-item" type="button" (click)="onQuoteClick()">
                   <span class="result-ticker">{{ result.ticker }}</span>
                   <span class="result-name">{{ result.companyName }}</span>
-                  <span class="result-price">${{ result.price }}</span>
                 </button>
               </li>
             </ul>

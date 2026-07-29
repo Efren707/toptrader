@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { of } from 'rxjs';
 
 import { StockDetails } from './stock-details';
 
@@ -17,7 +18,10 @@ describe('StockDetails', () => {
         provideHttpClientTesting(),
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: convertToParamMap({ ticker: 'AAPL' }) } },
+          useValue: {
+            snapshot: { paramMap: convertToParamMap({ ticker: 'AAPL' }) },
+            paramMap: of(convertToParamMap({ ticker: 'AAPL' })),
+          },
         },
       ],
     }).compileComponents();

@@ -139,20 +139,16 @@
   font-family: var(--font-mono);
   font-weight: 600;
   color: var(--color-text);
+  margin-right: 1rem;
 }
 
 .result-name {
   flex: 1;
-  font-size: 0.8125rem;
+  font-size: 0.9rem;
   color: var(--color-text-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.result-price {
-  font-family: var(--font-mono);
-  color: var(--color-text);
 }
 
 /* ---------- account menu ---------- */

@@ -95,7 +95,7 @@ describe('Navbar', () => {
       .flush({ ticker: 'AAPL', companyName: 'Apple Inc.', price: 210.5, asOf: '2026-07-28T15:00:00Z' });
     fixture.detectChanges();
 
-    fixture.nativeElement.querySelector('.result-item button').click();
+    fixture.nativeElement.querySelector('.result-item').click();
 
     expect(router.navigate).toHaveBeenCalledWith(['/stocks/AAPL']);
   });

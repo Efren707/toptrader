@@ -100,6 +100,9 @@ export class Navbar {
 
   protected onQuoteClick(): void {
     this.router.navigate([`/stocks/${this.quote()?.ticker}`]);
+    this.quote.set(null); 
+    this.notFound.set(false);
+    this.submitted.set(false);
   }
 
   protected onAccountClick(): void {
