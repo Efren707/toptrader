@@ -27,9 +27,15 @@ export class StockDetails implements OnInit {
   protected readonly sellStock = TradeSide.SELL;
 
   ngOnInit(): void {
-    this.ticker.set(this.route.snapshot.paramMap.get('ticker'));
-    this.fetchQuoteData();
-    this.fetchHoldingData();
+    this.route.paramMap.subscribe((params) => {
+      this.ticker.set(params.get('ticker'));
+      this.loading.set(true);
+      this.notFound.set(false);
+      this.quote.set(null);
+      this.holding.set(null);
+      this.fetchQuoteData();
+      this.fetchHoldingData();
+    });
   }
 
   fetchQuoteData() {
