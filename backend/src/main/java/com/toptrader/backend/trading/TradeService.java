@@ -75,7 +75,7 @@ public class TradeService {
     }
     this.holdingRepository.save(holding);
 
-    HoldingResponse holdingResponse = toHoldingResponse(holding, quote.price());
+    HoldingResponse holdingResponse = toHoldingResponse(holding, quote);
 
     Transaction transaction =
         new Transaction(user, quote.ticker(), Transaction.Side.BUY, quantity, quote.price(), total);
@@ -127,7 +127,7 @@ public class TradeService {
     user.setCashBalance(user.getCashBalance().add(total));
     this.userRepository.save(user);
 
-    HoldingResponse holdingResponse = toHoldingResponse(holding, quote.price());
+    HoldingResponse holdingResponse = toHoldingResponse(holding, quote);
 
     Transaction transaction =
         new Transaction(
@@ -152,7 +152,7 @@ public class TradeService {
       return Optional.empty();
     }
 
-    HoldingResponse holdingResponse = toHoldingResponse(holding, quote.price());
+    HoldingResponse holdingResponse = toHoldingResponse(holding, quote);
 
     return Optional.of(holdingResponse);
   }
@@ -168,14 +168,14 @@ public class TradeService {
 
     for (Holding holding : holdings) {
       Quote quote = this.quoteService.getQuote(holding.getTicker());
-      holdingResponses.add(toHoldingResponse(holding, quote.price()));
+      holdingResponses.add(toHoldingResponse(holding, quote));
     }
 
     return holdingResponses;
   }
 
-  private HoldingResponse toHoldingResponse(Holding holding, BigDecimal currentPrice) {
-    BigDecimal marketValue = currentPrice.multiply(BigDecimal.valueOf(holding.getQuantity()));
+  private HoldingResponse toHoldingResponse(Holding holding, Quote quote) {
+    BigDecimal marketValue = quote.price().multiply(BigDecimal.valueOf(holding.getQuantity()));
     BigDecimal costBasisTotal =
         holding.getAverageCostBasis().multiply(BigDecimal.valueOf(holding.getQuantity()));
     BigDecimal unrealizedGainLoss = marketValue.subtract(costBasisTotal);
@@ -184,7 +184,8 @@ public class TradeService {
         holding.getTicker(),
         holding.getQuantity(),
         holding.getAverageCostBasis(),
-        currentPrice,
+        quote.price(),
+        quote.percentChange(),
         marketValue,
         unrealizedGainLoss);
   }

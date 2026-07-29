@@ -27,6 +27,7 @@ describe('TradeForm', () => {
       quantity: 3,
       averageCostBasis: 210.5,
       currentPrice: 210.5,
+      percentChange: 0,
       marketValue: 631.5,
       unrealizedGainLoss: 0,
     },

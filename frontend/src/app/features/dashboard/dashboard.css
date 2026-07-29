@@ -33,51 +33,82 @@
   color: var(--color-danger);
 }
 
-.holdings-card {
-  padding: 0;
-  overflow-x: auto;
+.holdings-list {
+  display: flex;
+  flex-direction: column;
+  width: 25rem;
+  max-width: 100%;
 }
 
-.holdings-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.holdings-table th,
-.holdings-table td {
-  text-align: right;
-  padding: 0.85rem 1.25rem;
-  font-size: 0.875rem;
-  white-space: nowrap;
-}
-
-.holdings-table th:first-child,
-.holdings-table td:first-child {
-  text-align: left;
-}
-
-.holdings-table th {
+.holdings-title {
   font-family: var(--font-mono);
   font-size: 0.6875rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-text-faint);
   font-weight: 500;
-  border-bottom: 1px solid var(--color-border);
+  margin: 0 0 0.75rem;
 }
 
-.holdings-table td {
+.holding-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2.5rem;
+  width: 100%;
+  padding: 0.85rem 0.6rem;
+  border: none;
   border-bottom: 1px solid var(--color-border);
-  color: var(--color-text);
-  font-family: var(--font-mono);
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
-.holdings-table tr:last-child td {
+.holding-row:hover {
+  background: var(--color-surface-raised);
+}
+
+.holdings-list .holding-row:last-child {
   border-bottom: none;
+}
+
+.holding-left,
+.holding-right {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.holding-right {
+  align-items: flex-end;
+}
+
+.holding-left p,
+.holding-right p {
+  margin: 0;
 }
 
 .ticker {
   font-weight: 600;
+  font-size: 1rem;
+}
+
+.quantity {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.current-price {
+  font-weight: 600;
+  font-size: 1rem;
+  font-family: var(--font-mono);
+}
+
+.percentChange {
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
 }
 
 .positive {
@@ -86,11 +117,4 @@
 
 .negative {
   color: var(--color-danger);
-}
-
-@media (max-width: 40rem) {
-  .holdings-table th,
-  .holdings-table td {
-    padding: 0.65rem 0.85rem;
-  }
 }

@@ -1,13 +1,13 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
 import { ApiError } from '../../core/interceptors/error.interceptor';
 import { Holding, TradeService } from '../../core/services/trade.service';
-import { Card } from '../../shared/ui/card/card';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [ CurrencyPipe, Card ],
+  imports: [ CurrencyPipe, DecimalPipe ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
@@ -16,6 +16,7 @@ export class Dashboard implements OnInit {
   private readonly tradeService = inject(TradeService);
   protected readonly username = this.authService.currentUser()?.username;
   protected readonly cashBalance = this.authService.currentUser()?.cashBalance;
+  private readonly router = inject(Router);
 
   protected readonly holdings = signal<Holding[]>([]);
   protected readonly loading = signal(true);
@@ -42,5 +43,9 @@ export class Dashboard implements OnInit {
         this.errorMessage.set(error.detail);
       },
     });
+  }
+
+  protected onHoldingClick(ticker: string): void {
+    this.router.navigate([`/stocks/${ticker}`]);
   }
 }

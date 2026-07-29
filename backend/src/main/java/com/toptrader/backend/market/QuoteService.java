@@ -47,6 +47,7 @@ public class QuoteService {
         ticker,
         profileResponse.name(),
         quoteResponse.currentPrice(),
+        quoteResponse.percentChange(),
         Instant.ofEpochSecond(quoteResponse.timestamp()));
   }
 }

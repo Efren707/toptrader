@@ -7,5 +7,6 @@ public record HoldingResponse(
     Integer quantity,
     BigDecimal averageCostBasis,
     BigDecimal currentPrice,
+    BigDecimal percentChange,
     BigDecimal marketValue,
     BigDecimal unrealizedGainLoss) {}

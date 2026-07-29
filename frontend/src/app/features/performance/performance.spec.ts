@@ -60,7 +60,7 @@ describe('Performance', () => {
   it('shows a positive P&L in green when the portfolio value has grown past the starting balance', () => {
     setup();
     const holdings: Holding[] = [
-      { ticker: 'AAPL', quantity: 2, averageCostBasis: 100, currentPrice: 200, marketValue: 400, unrealizedGainLoss: 200 },
+      { ticker: 'AAPL', quantity: 2, averageCostBasis: 100, currentPrice: 200, percentChange: 5, marketValue: 400, unrealizedGainLoss: 200 },
     ];
     flushHoldings(holdings);
 
@@ -79,7 +79,7 @@ describe('Performance', () => {
   it('shows a negative P&L in red when the portfolio value has dropped below the starting balance', () => {
     setup();
     const holdings: Holding[] = [
-      { ticker: 'AAPL', quantity: 1, averageCostBasis: 100, currentPrice: 50, marketValue: 50, unrealizedGainLoss: -50 },
+      { ticker: 'AAPL', quantity: 1, averageCostBasis: 100, currentPrice: 50, percentChange: -3, marketValue: 50, unrealizedGainLoss: -50 },
     ];
     flushHoldings(holdings);
 
