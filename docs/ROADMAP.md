@@ -19,9 +19,9 @@ Done:
 - [x] Explicit `application-prod.properties` + explicit actuator lockdown — committed prod profile (`spring.profiles.active=prod`) with explicit CORS origin (no unsafe localhost fallback), stack-trace suppression, actuator health-only/no-details, `jpa.show-sql=false`; secrets/DB config stay env-var-only, never committed — see [ADR 0032](./adr/0032-prod-config-shape.md)
 - [x] Session timeout/fixation — explicit `.sessionManagement(session -> session.sessionFixation().migrateSession())` in `SecurityConfig.java` (previously implicit default), explicit `server.servlet.session.timeout=30m`
 - [x] Frontend 401/403 handling consistency — route-guard coverage was already fine (parent-level `authGuard` covers all protected children, `checkSession()` blocks bootstrap via `provideAppInitializer` so no race on refresh); the real gap was a mid-session 401 (e.g. after the new 30m timeout) going unhandled. New `session-expired.interceptor.ts` clears `currentUser` and redirects to `/login` on any 401 outside `/auth/login`, `/auth/register`, `/auth/session` — manually verified in-browser (session-cookie deletion → redirect; wrong password on `/login` still shows inline, no redirect loop)
+- [x] Logging/PII guard — no logging framework exists yet so nothing is at risk today; recorded the binding policy for whenever logging is added (never log full bodies, secret-carrying DTOs must mask `toString()`, log identifiers not object graphs) — see [ADR 0033](./adr/0033-logging-pii-policy.md)
 
 Still open (ordered quickest-to-largest; each needs a decision: fix, or accept as a documented trade-off):
-- [ ] Logging/PII guard — no logging framework wired up yet, so no enforced guard against a future accidental credential/PII leak once request logging is added (e.g. for ADR 0008's CloudWatch pipeline)
 - [ ] CSP directives — baseline documented but not finalized/verified against the real Angular build output
 - [ ] General API rate limiting — only login lockout exists; quote/trade/register endpoints have no throttle
 - [ ] Password-reset / email-verification flow — none exists; locked-out/forgetful real users have no self-service recovery
