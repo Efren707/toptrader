@@ -6,7 +6,7 @@
 
 - Server-side sessions (Spring Session), `SESSION` cookie: `HttpOnly; Secure; SameSite=Lax` (ADR 0004, ADR 0012).
 - Passwords hashed with Argon2id via Spring Security's `DelegatingPasswordEncoder` (ADR 0004); never logged or stored in plaintext.
-- Brute-force protection: DB-tracked `failed_attempts`/`locked_until` on `users` (ADR 0004, ADR 0010), fixed lockout window, populated via Spring Security's auth event listeners.
+- Brute-force protection: DB-tracked `failed_attempts`/`locked_until` on `users` (ADR 0004, ADR 0010), fixed lockout window, tracked inline in `LoginService` around the `authenticate()` call (ADR 0025 - not via Spring Security auth event listeners, which was ADR 0004's original wording).
 - Session fixation protection stays on Spring Security's default (`sessionFixation().migrateSession()`) — confirmed, not disabled (ADR 0007, OWASP A07).
 - Logout uses Spring Security's default `/logout` endpoint, which invalidates the `HttpSession` server-side — not a client-side-only cookie clear (ADR 0007).
 - Login errors are a single generic "invalid email or password" message regardless of which was wrong — no user enumeration (per `acceptance-criteria.md`).
@@ -34,6 +34,14 @@
 ## CSRF
 
 - Kept enabled (not disabled, despite that being a common SPA-tutorial mistake) — cookie + header pattern: `CookieCsrfTokenRepository.withHttpOnlyFalse()` server-side, Angular's `HttpClientXsrfModule` client-side (ADR 0007). This is the correct posture specifically *because* auth uses session cookies, not JWT bearer tokens.
+
+## Rate limiting
+
+- `bucket4j-core` + `bucket4j-caffeine` (in-process, no Redis/distributed store - matches the single-EC2-instance deployment shape, ADR 0005/0014), applied via a `RateLimitFilter` wired into `SecurityConfig`'s filter chain the same way as `CsrfCookieFilter` (ADR 0034).
+- Mixed key extraction: client IP (`X-Forwarded-For` first hop) for `POST /auth/register`, which has no session yet; authenticated user ID for `GET /quotes/{ticker}`, `POST /trades/buy`, `POST /trades/sell`.
+- Tiered thresholds: register 5/hour per IP, quotes 20/minute per user, trades (buy+sell shared) 10/minute per user.
+- Exceeding a limit returns `429` with an RFC 7807 `ProblemDetail` body (consistent with every other error response, ADR 0012) and a `Retry-After` header.
+- Login's existing DB-tracked lockout (ADR 0004/0025) is a separate, stricter mechanism and is unaffected by this.
 
 ## XSS (new in this doc)
 
@@ -88,6 +96,5 @@ End-to-end flow, consolidating ADR 0006 and ADR 0009:
 
 ## Explicitly out of scope for MVP
 
-- General-purpose API rate-limiting beyond login lockout (`user-stories.md`).
 - Password reset / email verification flows (`user-stories.md`).
 - Automated penetration testing / SAST tooling beyond Dependabot (not raised as a requirement yet — revisit if this ever needs to look more "production-grade" for resume purposes).

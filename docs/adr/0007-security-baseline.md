@@ -43,4 +43,4 @@ Dependabot wins on effort-to-value for a solo project; the others were rejected 
 - CORS origins are environment-specific, so local dev (`localhost:4200`) and prod (`app.toptrader.com`, per ADR 0005's domain) need separate Spring profiles or config — a detail for Phase 3/4 implementation, not resolved here.
 - Angular's `HttpClientXsrfModule` needs to be wired up in the frontend app config to complete the CSRF cookie+header pairing — noted for Phase 3 frontend architecture.
 - Dependabot version-update PRs will need a lightweight solo-dev triage habit (review and merge or dismiss) to stay useful rather than becoming noise — a process note, not a blocker.
-- This ADR does not cover rate-limiting/abuse protection beyond the login lockout already decided in ADR 0004 — general API rate-limiting remains explicitly out of MVP scope per `user-stories.md`.
+- This ADR does not cover rate-limiting/abuse protection beyond the login lockout already decided in ADR 0004 — general API rate-limiting remains explicitly out of MVP scope per `user-stories.md`. (Amended 2026-07-30: general API rate-limiting is now decided in ADR 0034, ahead of production deployment.)

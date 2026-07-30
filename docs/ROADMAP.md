@@ -7,7 +7,7 @@
 
 **Milestone #12 (UI/UX Polish Pass) is complete** — all 5 stories (US-10–US-14) merged, closing out the manual test pass of the running app. US-14 (redesign the stock details page, issue [#39](https://github.com/Efren707/toptrader/issues/39)) was the last: a 2-column layout with a position-stats block (equity, today's/total return, average cost basis, shares owned, portfolio diversity) and `TradeForm` collapsed into a single instance with an internal Buy/Sell toggle and a full Review Order confirm step, merged via PR [#49](https://github.com/Efren707/toptrader/pull/49).
 
-Every MVP user story (US-1–US-9) plus this polish pass is now done. AWS deployment is already architected (ADR 0005/0006/0014/0016/0017) but execution hasn't started — before sequencing it, we paused (2026-07-30) to run a **pre-production security review**, since going live means real user accounts (emails/passwords) on the public internet, not just an internal demo. 7 of 9 checklist items are done; the user has confirmed all remaining items get implemented (not deferred). **Next session: continue with general API rate limiting, then the password-reset/email-verification flow — in that order — before sequencing AWS deployment execution.**
+Every MVP user story (US-1–US-9) plus this polish pass is now done. AWS deployment is already architected (ADR 0005/0006/0014/0016/0017) but execution hasn't started — before sequencing it, we paused (2026-07-30) to run a **pre-production security review**, since going live means real user accounts (emails/passwords) on the public internet, not just an internal demo. 7 of 9 checklist items are done; the user has confirmed all remaining items get implemented (not deferred). **Next session: implement general API rate limiting per ADR 0034 (`RateLimitFilter` + `bucket4j-core`/`bucket4j-caffeine` dependencies — mentor mode, user implements), then the password-reset/email-verification flow — in that order — before sequencing AWS deployment execution.**
 
 Two small things surfaced while verifying CSP against the real build, noted here so they don't get lost (not blocking, not yet actioned):
 - `frontend/src/environments/environment.ts` has a placeholder prod `apiUrl` (`https://api.toptrader.example`) that doesn't match the real domain used elsewhere in the docs (`https://api.toptrader.com`) — needs reconciling once the domain is actually registered.
@@ -29,7 +29,7 @@ Done (continued):
 - [x] CSP directives — finalized and empirically verified against the real production build output; required disabling Angular's critical-CSS inlining (`inlineCritical: false` in `frontend/angular.json`) to avoid needing any `'unsafe-inline'`/hash/nonce exceptions — see `docs/architecture/security-architecture.md`
 
 Still open (ordered quickest-to-largest; each needs a decision: fix, or accept as a documented trade-off):
-- [ ] General API rate limiting — only login lockout exists; quote/trade/register endpoints have no throttle
+- [ ] General API rate limiting — design decided ([ADR 0034](./adr/0034-api-rate-limiting.md): bucket4j in-memory, mixed IP/user keying, tiered thresholds — register 5/hr per IP, quotes 20/min per user, trades 10/min per user), implementation not started yet
 - [ ] Password-reset / email-verification flow — none exists; locked-out/forgetful real users have no self-service recovery
 
 Full detail/evidence for each item: see the security review plan at the time it was written (`.claude/plans/before-moving-on-to-inherited-haven.md`, local to this machine, not repo-tracked).
