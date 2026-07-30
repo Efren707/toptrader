@@ -25,7 +25,11 @@
   - `Strict-Transport-Security: max-age=63072000; includeSubDomains`
   - `X-Content-Type-Options: nosniff`
   - `Referrer-Policy: strict-origin-when-cross-origin`
-  - `Content-Security-Policy` — a `default-src 'self'` baseline restricted to the app's own origins; exact directives (in particular whether Angular's production build needs any style/script exceptions) need verifying against the actual build output once the frontend exists, so this is flagged as an implementation-time task, not locked in with false precision here.
+  - `Content-Security-Policy` — finalized and verified against the actual production build output (2026-07-30):
+    ```
+    default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.toptrader.com; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'
+    ```
+    No `'unsafe-inline'`, hashes, or nonces are needed. Angular CLI's production build inlines "critical CSS" by default (via Beasties), which emits an inline `<style>` block and a `<link ... onload="...">` attribute in `index.html` — both would be blocked under this policy, leaving the site unstyled. This is disabled via `"optimization": { "styles": { "inlineCritical": false } }` in `frontend/angular.json`'s production configuration, verified empirically (build output inspected, then the app loaded under an enforced version of this policy against the real backend with zero console violations). `connect-src` uses the real prod API origin from `docs/architecture/environments.md`, not `frontend/src/environments/environment.ts`'s current placeholder value — that file needs updating to the real domain once it's registered, tracked separately from this decision.
 
 ## CSRF
 
