@@ -29,8 +29,128 @@
   gap: 0.75rem;
 }
 
+.confirm-actions app-button {
+  flex: 1;
+}
+
+.summary-highlight {
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
+.cash-balance-row {
+  border-top: 1px solid var(--color-border);
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  display: flex;
+  justify-content: center;
+}
+
+.cash-balance-row p {
+  margin: 0;
+}
+
+.order-summary {
+  border-top: 1px solid var(--color-border);
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+}
+
+.order-summary-title {
+  font-weight: 600;
+  padding-bottom: 0.6rem;
+}
+
 .form-error {
   font-size: 0.8125rem;
   color: var(--color-danger);
   margin: 0 0 1rem;
+}
+
+.side-toggle {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.side-tab {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 0 0 0.75rem;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  cursor: pointer;
+}
+
+.side-tab:not(:last-child) {
+  border-right: 1px solid var(--color-border);
+}
+
+.side-tab.active {
+  color: var(--color-text);
+  text-decoration: underline;
+  text-underline-offset: 0.25rem;
+}
+
+.side-tab:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.cost-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 1rem 0 1.5rem;
+  font-size: 0.9375rem;
+}
+
+.cost-label {
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.cost-value {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.cost-row-total {
+  border-top: 1px solid var(--color-border);
+  padding-top: 0.85rem;
+}
+
+.quantity-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.5rem;
+}
+
+.quantity-input {
+  width: 6rem;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 0.9375rem;
+  text-align: right;
+  padding: 0.5rem 0.65rem;
+}
+
+.quantity-input:focus {
+  outline: none;
+  border-color: var(--color-text-muted);
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
 }

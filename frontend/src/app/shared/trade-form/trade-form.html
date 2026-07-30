@@ -14,34 +14,103 @@
       <p class="as-of">New cash balance: {{ trade.cashBalance | currency }}</p>
       <app-button [fullWidth]="true" (pressed)="tradeAgain()">Trade again</app-button>
     </app-card>
-  } @else if (confirming()) {
-    <app-card class="details-card">
-      <p class="summary">
-        {{ side() === TradeSide.BUY ? 'Buy' : 'Sell' }} {{ pendingQuantity() }} {{ ticker() }} @ {{ price() | currency }} — Confirm?
-      </p>
-
-      <div class="confirm-actions">
-        <app-button variant="secondary" [fullWidth]="true" [disabled]="submitting()" (pressed)="cancel()">
-          Cancel
-        </app-button>
-        <app-button [fullWidth]="true" [disabled]="submitting()" (pressed)="confirmTrade()">
-          {{ submitting() ? 'Confirming…' : 'Confirm' }}
-        </app-button>
-      </div>
-    </app-card>
   } @else {
     <app-card class="details-card">
       <form [formGroup]="form" (ngSubmit)="submit()">
-        <app-input
-          label="Quantity"
-          type="text"
-          formControlName="quantity"
-          [errorMessage]="errorFor('quantity')"
-        />
+  
+        @if(hasHolding()){
+          <div class="side-toggle">
+            <button
+              type="button"
+              class="side-tab"
+              [class.active]="side() === TradeSide.BUY"
+              (click)="selectSide(TradeSide.BUY)"
+            >Buy</button>
+  
+            <button
+              type="button"
+              class="side-tab"
+              [class.active]="side() === TradeSide.SELL"
+              (click)="selectSide(TradeSide.SELL)"
+            >Sell</button>
+          </div>
+  
+        } @else {
+          <div class="side-toggle">
+            <button
+              type="button"
+              class="side-tab"
+              [class.active]="side() === TradeSide.BUY"
+            >Buy</button>
+          </div>
+        }
+  
+        <div class="quantity-row">
+          <label for="quantity" class="cost-label">Quantity</label>
+          <input
+            id="quantity"
+            type="text"
+            inputmode="numeric"
+            class="quantity-input"
+            formControlName="quantity"
+            (keydown)="filterDigits($event)"
+          />
+          @if (errorFor('quantity'); as message) {
+            <p class="form-error">{{ message }}</p>
+          }
+        </div>
+  
+        <div class="cost-row">
+          <p class="cost-label">Market value</p>
+          <p class="cost-value">{{ price() | currency }}</p>
+        </div>
+  
+        <div class="cost-row cost-row-total">
+          <p class="cost-label">
+            {{ side() === TradeSide.BUY ? 'Cost' : 'Credit' }}
+          </p>
+          @if (quantity() > 0) {
+            <p class="cost-value">{{ pendingCost() | currency }}</p>
+          } @else {
+            <p class="cost-value">{{ 0 | currency }}</p>
+          }
+        </div>
+  
         <app-button type="submit" [fullWidth]="true">
-          {{ side() === TradeSide.BUY ? 'Buy' : 'Sell' }}
+          Review order
         </app-button>
+  
       </form>
+
+      <div class="cash-balance-row">
+        <p>{{cashBalance() | currency}} available</p>
+      </div>
+
+      @if (confirming()) {
+        <div class="order-summary">
+          <p class="order-summary-title">Order Summary</p>
+
+          <p class="summary">
+            You're placing a market order to 
+            <span class="summary-highlight">{{ side() === TradeSide.BUY ? 'buy' : 'sell' }} 
+              {{ pendingCost() | currency }} of {{ ticker() }}</span>. 
+              Your order will be routed to market makers. 
+              The final execution price may vary due to market volatility. 
+              Once executed, the transaction may not be undone.
+          </p>
+
+          <div class="confirm-actions">
+            <app-button variant="secondary" [fullWidth]="true" [disabled]="submitting()" (pressed)="cancel()">
+              Cancel
+            </app-button>
+            <app-button [fullWidth]="true" [disabled]="submitting()" (pressed)="confirmTrade()">
+              {{ submitting() ? 'Confirming…' : 'Confirm' }}
+            </app-button>
+          </div>
+        </div>
+      }
+  
     </app-card>
   }
+  
 </div>
