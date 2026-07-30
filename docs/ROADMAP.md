@@ -1,13 +1,33 @@
 # Planning Roadmap & Status
 
-> Last updated: 2026-07-30 (Milestone #12 UI/UX Polish Pass complete — US-10–US-14 merged via PR #41/#43/#45/#47/#49)
+> Last updated: 2026-07-30 (Milestone #12 UI/UX Polish Pass complete — US-10–US-14 merged via PR #41/#43/#45/#47/#49; pre-production security review started, see Current focus)
 > This file tracks *where we are* — a lean, current-state view. Full narrative detail for completed phases/milestones lives in [docs/planning-history.md](./planning-history.md). For *why* decisions were made, see `docs/adr/`. For requirements detail, see `docs/requirements/`. Each milestone below also has a matching [GitHub Milestone](https://github.com/Efren707/toptrader/milestones) for visual progress tracking.
 
 ## Current focus
 
 **Milestone #12 (UI/UX Polish Pass) is complete** — all 5 stories (US-10–US-14) merged, closing out the manual test pass of the running app. US-14 (redesign the stock details page, issue [#39](https://github.com/Efren707/toptrader/issues/39)) was the last: a 2-column layout with a position-stats block (equity, today's/total return, average cost basis, shares owned, portfolio diversity) and `TradeForm` collapsed into a single instance with an internal Buy/Sell toggle and a full Review Order confirm step, merged via PR [#49](https://github.com/Efren707/toptrader/pull/49).
 
-Every MVP user story (US-1–US-9) plus this polish pass is now done. AWS deployment (already architected — ADR 0005/0006/0014/0016/0017, not yet executed) is no longer blocked. **Next step: begin AWS deployment execution** — the deployment steps themselves aren't scoped/sequenced yet, so that's the first thing to plan out next session.
+Every MVP user story (US-1–US-9) plus this polish pass is now done. AWS deployment is already architected (ADR 0005/0006/0014/0016/0017) but execution hasn't started — before sequencing it, we paused (2026-07-30) to run a **pre-production security review**, since going live means real user accounts (emails/passwords) on the public internet, not just an internal demo. **Next step once the checklist below clears (or each remaining item gets an explicit accept/defer decision): sequence and begin AWS deployment execution.**
+
+### Pre-production security checklist
+
+Compiled from a full audit (docs/ADRs vs. actual backend/frontend/CI code) on 2026-07-29.
+
+Done:
+- [x] `gitleaks` CI scanning + custom ruleset for this app's secret shapes, `.github/dependabot.yml` (maven/npm/github-actions) — PR [#53](https://github.com/Efren707/toptrader/pull/53), amends ADR 0007
+- [x] Dependency vulnerabilities: `bcprov-jdk18on` → 1.84 (PR [#51](https://github.com/Efren707/toptrader/pull/51)), `fast-uri` → 3.1.4 (PR [#52](https://github.com/Efren707/toptrader/pull/52)), `esbuild`/`@hono/node-server` pinned + `brace-expansion`/`tar` audit-fixed (PR [#54](https://github.com/Efren707/toptrader/pull/54)) — frontend at 0 known vulnerabilities
+
+Still open (each needs a decision: fix, or accept as a documented trade-off):
+- [ ] Password-reset / email-verification flow — none exists; locked-out/forgetful real users have no self-service recovery
+- [ ] General API rate limiting — only login lockout exists; quote/trade/register endpoints have no throttle
+- [ ] Explicit `application-prod.yml` — prod currently relies on base `application.properties` defaults rather than a verified, explicit prod profile
+- [ ] CSP directives — baseline documented but not finalized/verified against the real Angular build output
+- [ ] Actuator lockdown — relies on Spring Boot defaults (health-only), not an explicit verified prod setting
+- [ ] Session timeout/fixation — relies on Spring Security defaults, not explicitly configured or end-to-end verified
+- [ ] Frontend 401/403 handling consistency — `error.interceptor.ts` doesn't redirect-to-login itself; behavior lives in `auth.guard.ts` instead, needs confirming it covers every route
+- [ ] Logging/PII guard — no logging framework wired up yet, so no enforced guard against a future accidental credential/PII leak once request logging is added (e.g. for ADR 0008's CloudWatch pipeline)
+
+Full detail/evidence for each item: see the security review plan at the time it was written (`.claude/plans/before-moving-on-to-inherited-haven.md`, local to this machine, not repo-tracked).
 
 Deferred out of the polish pass to a future backlog: general market news feed (dashboard + stock details — needs a new news data source), a profile page for editing/deleting an account, and a possible single-page auth redesign (login/register combined with client-side toggle instead of separate routes, black-background landing treatment, password-strength checkmark on the password field — floated 2026-07-28, not yet scoped).
 
