@@ -46,7 +46,8 @@ describe('TradeForm', () => {
     component = fixture.componentInstance;
     fixture.componentRef.setInput('ticker', 'AAPL');
     fixture.componentRef.setInput('price', 210.5);
-    fixture.componentRef.setInput('side', TradeSide.BUY);
+    fixture.componentRef.setInput('cashBalance', 1000);
+    fixture.componentRef.setInput('hasHolding', true);
     httpTesting = TestBed.inject(HttpTestingController);
     fixture.detectChanges();
   });
@@ -81,7 +82,7 @@ describe('TradeForm', () => {
     input.value = quantity;
     input.dispatchEvent(new Event('input'));
     fixture.detectChanges();
-    buttonByText('Buy').click();
+    buttonByText('Review order').click();
     fixture.detectChanges();
   }
 
@@ -90,21 +91,20 @@ describe('TradeForm', () => {
   });
 
   it('shows a required error and does not move to the confirm step when quantity is left blank', () => {
-    buttonByText('Buy').click();
+    buttonByText('Review order').click();
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('.error')?.textContent).toContain('Required');
-    expect(fixture.nativeElement.textContent).not.toContain('Confirm?');
+    expect(fixture.nativeElement.querySelector('.form-error')?.textContent).toContain('Required');
+    expect(fixture.nativeElement.textContent).not.toContain('Order Summary');
     expectNoBuyRequest();
   });
 
-  it('moves to the confirm step without calling the API when quantity is valid', () => {
+  it('shows the order summary without calling the API when quantity is valid', () => {
     enterQuantityAndSubmit('3');
 
     const text = fixture.nativeElement.textContent;
-    expect(text).toContain('Buy 3 AAPL');
-    expect(text).toContain('$210.50');
-    expect(text).toContain('Confirm?');
+    expect(text).toContain('Order Summary');
+    expect(text).toContain('buy $631.50 of AAPL');
     expectNoBuyRequest();
   });
 
@@ -154,7 +154,7 @@ describe('TradeForm', () => {
     buttonByText('Cancel').click();
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent).not.toContain('Confirm?');
+    expect(fixture.nativeElement.textContent).not.toContain('Order Summary');
     expect(quantityInput()).toBeTruthy();
     expectNoBuyRequest();
   });
@@ -171,7 +171,7 @@ describe('TradeForm', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('.form-error')?.textContent).toContain('Insufficient cash');
-    expect(fixture.nativeElement.textContent).toContain('Confirm?');
+    expect(fixture.nativeElement.textContent).toContain('Order Summary');
   });
 
   it('resets to a blank quantity form when Trade again is clicked after a successful trade', () => {

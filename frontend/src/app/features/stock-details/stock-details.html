@@ -4,18 +4,69 @@
   } @else if (notFound()) {
     <p class="status">No stock found for "{{ ticker() }}".</p>
   } @else if (quote(); as result) {
-    <app-card class="details-card">
-      <p class="eyebrow">{{ result.ticker }}</p>
-      <h1>{{ result.companyName }}</h1>
-      <p class="price">{{ result.price | currency }}</p>
-      <p class="as-of">As of {{ result.asOf | date: 'medium' }}</p>
-    </app-card>
 
-    <app-trade-form [ticker]="result.ticker" [price]="result.price" [side]="buyStock"/>
+    <div class="layout">
 
-    @if (holding()){
-      <app-trade-form [ticker]="result.ticker" [price]="result.price" [side]="sellStock"/>
-    }
+      <app-card class="stock-details-panel">
+        <p class="eyebrow">{{ result.ticker }}</p>
+        <h1>{{ result.companyName }}</h1>
+        <p class="price">{{ result.price | currency }}</p>
+        <p class="as-of">As of {{ result.asOf | date: 'medium' }}</p>
+
+        @if (holding(); as position) {
+          <div class="position-stats">
+            <div class="stat-column">
+              <p class="stat-heading-label">Your equity</p>
+              <p class="stat-headline">{{ position.marketValue | currency }}</p>
+
+              <div class="stat-row">
+                <p class="stat-row-label">Today's return</p>
+                <p
+                  class="stat-row-value"
+                  [class.positive]="(todaysReturn() ?? 0) >= 0"
+                  [class.negative]="(todaysReturn() ?? 0) < 0">
+                  {{ todaysReturn() | currency }} {{ position.percentChange > 0 ? '+' : '' }}({{ position.percentChange | number: '1.2-2' }}%)
+                </p>
+              </div>
+
+              <div class="stat-row">
+                <p class="stat-row-label">Total return</p>
+                <p
+                  class="stat-row-value"
+                  [class.positive]="position.unrealizedGainLoss >= 0"
+                  [class.negative]="position.unrealizedGainLoss < 0">
+                  {{ position.unrealizedGainLoss | currency }} {{ (totalReturnPercent() ?? 0) > 0 ? '+' : '' }}({{ totalReturnPercent() | number: '1.2-2' }}%)
+                </p>
+              </div>
+            </div>
+
+            <div class="stat-column">
+              <p class="stat-heading-label">Your average cost</p>
+              <p class="stat-headline">{{ position.averageCostBasis | currency }}</p>
+
+              <div class="stat-row">
+                <p class="stat-row-label">Quantity</p>
+                <p class="stat-row-value">{{ position.quantity }} shares</p>
+              </div>
+
+              <div class="stat-row">
+                <p class="stat-row-label">Portfolio diversity</p>
+                <p class="stat-row-value">{{ portfolioDiversity() | number: '1.2-2' }}%</p>
+              </div>
+            </div>
+          </div>
+        }
+      </app-card>
+
+      <div class="trade-form-panel">
+        <app-trade-form 
+          [ticker]="result.ticker" 
+          [price]="result.price"
+          [cashBalance]="cashBalance" 
+          [hasHolding]="!!holding()"/>
+      </div>
+
+    </div>
 
   }
 </main>

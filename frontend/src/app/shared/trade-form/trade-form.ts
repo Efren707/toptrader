@@ -1,17 +1,17 @@
-import { Component, inject, signal, input, output } from '@angular/core';
+import { Component, inject, signal, input, output, computed } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { TradeRequest, TradeResult, TradeService, TradeSide } from '../../core/services/trade.service';
 import { ApiError } from '../../core/interceptors/error.interceptor';
 import { Button } from '../ui/button/button';
 import { Card } from '../ui/card/card';
-import { Input } from '../ui/input/input';
 
 type TradeField = 'quantity'
 
 @Component({
   selector: 'app-trade-form',
-  imports: [ReactiveFormsModule, CurrencyPipe, Button, Card, Input],
+  imports: [ReactiveFormsModule, CurrencyPipe, Button, Card],
   templateUrl: './trade-form.html',
   styleUrl: './trade-form.css',
 })
@@ -26,18 +26,30 @@ export class TradeForm {
 
   readonly ticker = input.required<string>();
   readonly price = input.required<number>();
-  readonly side = input.required<TradeSide>();
-
+  readonly cashBalance = input.required<number>();
+  readonly hasHolding = input<boolean>(false); 
+  
   protected readonly TradeSide = TradeSide; 
+  protected readonly side = signal<TradeSide>(TradeSide.BUY); 
   protected readonly submitting = signal(false);
   protected readonly confirming = signal(false);
   protected readonly formError = signal<string | null>(null);
   protected readonly pendingQuantity = signal<number | null>(null);
   protected readonly result = signal<TradeResult | null>(null);
+  protected readonly submitted = signal(false);
+
+  protected readonly quantity = computed(() => Number(this.quantityInput()) || 0);
+  protected readonly pendingCost = computed(() => this.quantity() * this.price());
 
   traded = output<TradeResult>()
 
+  private readonly quantityInput = toSignal(this.form.controls.quantity.valueChanges, {
+    initialValue: this.form.getRawValue().quantity,
+  });
+
   protected submit(): void {
+    this.submitted.set(true);
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -95,6 +107,22 @@ export class TradeForm {
     
   }
 
+  protected selectSide(side: TradeSide): void {
+    this.side.set(side)
+    this.confirming.set(false);
+    this.formError.set(null);
+    this.submitted.set(false);
+  }
+
+  protected filterDigits(event: KeyboardEvent): void {
+    if (event.ctrlKey || event.metaKey || event.altKey) {
+      return;
+    }
+    if (event.key.length === 1 && !/[0-9]/.test(event.key)) {
+      event.preventDefault();
+    }
+  }
+
   protected cancel(): void {
     this.confirming.set(false);
     this.pendingQuantity.set(null);
@@ -105,12 +133,13 @@ export class TradeForm {
     this.result.set(null);
     this.pendingQuantity.set(null);
     this.formError.set(null);
+    this.submitted.set(false);
     this.form.reset();
   }
 
   protected errorFor(field: TradeField): string {
     const control = this.form.get(field);
-    if (!control || !control.touched || !control.errors) {
+    if (!control || !this.submitted() || !control.errors) {
       return '';
     }
     if (control.errors['server']) {
