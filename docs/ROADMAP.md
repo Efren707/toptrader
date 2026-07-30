@@ -16,13 +16,12 @@ Compiled from a full audit (docs/ADRs vs. actual backend/frontend/CI code) on 20
 Done:
 - [x] `gitleaks` CI scanning + custom ruleset for this app's secret shapes, `.github/dependabot.yml` (maven/npm/github-actions) — PR [#53](https://github.com/Efren707/toptrader/pull/53), amends ADR 0007
 - [x] Dependency vulnerabilities: `bcprov-jdk18on` → 1.84 (PR [#51](https://github.com/Efren707/toptrader/pull/51)), `fast-uri` → 3.1.4 (PR [#52](https://github.com/Efren707/toptrader/pull/52)), `esbuild`/`@hono/node-server` pinned + `brace-expansion`/`tar` audit-fixed (PR [#54](https://github.com/Efren707/toptrader/pull/54)) — frontend at 0 known vulnerabilities
+- [x] Explicit `application-prod.properties` + explicit actuator lockdown — committed prod profile (`spring.profiles.active=prod`) with explicit CORS origin (no unsafe localhost fallback), stack-trace suppression, actuator health-only/no-details, `jpa.show-sql=false`; secrets/DB config stay env-var-only, never committed — see [ADR 0032](./adr/0032-prod-config-shape.md)
 
 Still open (each needs a decision: fix, or accept as a documented trade-off):
 - [ ] Password-reset / email-verification flow — none exists; locked-out/forgetful real users have no self-service recovery
 - [ ] General API rate limiting — only login lockout exists; quote/trade/register endpoints have no throttle
-- [ ] Explicit `application-prod.yml` — prod currently relies on base `application.properties` defaults rather than a verified, explicit prod profile
 - [ ] CSP directives — baseline documented but not finalized/verified against the real Angular build output
-- [ ] Actuator lockdown — relies on Spring Boot defaults (health-only), not an explicit verified prod setting
 - [ ] Session timeout/fixation — relies on Spring Security defaults, not explicitly configured or end-to-end verified
 - [ ] Frontend 401/403 handling consistency — `error.interceptor.ts` doesn't redirect-to-login itself; behavior lives in `auth.guard.ts` instead, needs confirming it covers every route
 - [ ] Logging/PII guard — no logging framework wired up yet, so no enforced guard against a future accidental credential/PII leak once request logging is added (e.g. for ADR 0008's CloudWatch pipeline)
