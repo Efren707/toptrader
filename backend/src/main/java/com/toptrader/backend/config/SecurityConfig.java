@@ -55,6 +55,7 @@ public class SecurityConfig {
         .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
         .formLogin(AbstractHttpConfigurer::disable)
         .httpBasic(AbstractHttpConfigurer::disable)
+        .sessionManagement(session -> session.sessionFixation().migrateSession())
         .logout(
             logout ->
                 logout
