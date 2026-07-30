@@ -7,7 +7,11 @@
 
 **Milestone #12 (UI/UX Polish Pass) is complete** — all 5 stories (US-10–US-14) merged, closing out the manual test pass of the running app. US-14 (redesign the stock details page, issue [#39](https://github.com/Efren707/toptrader/issues/39)) was the last: a 2-column layout with a position-stats block (equity, today's/total return, average cost basis, shares owned, portfolio diversity) and `TradeForm` collapsed into a single instance with an internal Buy/Sell toggle and a full Review Order confirm step, merged via PR [#49](https://github.com/Efren707/toptrader/pull/49).
 
-Every MVP user story (US-1–US-9) plus this polish pass is now done. AWS deployment is already architected (ADR 0005/0006/0014/0016/0017) but execution hasn't started — before sequencing it, we paused (2026-07-30) to run a **pre-production security review**, since going live means real user accounts (emails/passwords) on the public internet, not just an internal demo. 6 of 9 checklist items are done; the user has confirmed all 3 remaining items get implemented (not deferred). **Next session: continue with CSP directives, then general API rate limiting, then the password-reset/email-verification flow — in that order — before sequencing AWS deployment execution.**
+Every MVP user story (US-1–US-9) plus this polish pass is now done. AWS deployment is already architected (ADR 0005/0006/0014/0016/0017) but execution hasn't started — before sequencing it, we paused (2026-07-30) to run a **pre-production security review**, since going live means real user accounts (emails/passwords) on the public internet, not just an internal demo. 7 of 9 checklist items are done; the user has confirmed all remaining items get implemented (not deferred). **Next session: continue with general API rate limiting, then the password-reset/email-verification flow — in that order — before sequencing AWS deployment execution.**
+
+Two small things surfaced while verifying CSP against the real build, noted here so they don't get lost (not blocking, not yet actioned):
+- `frontend/src/environments/environment.ts` has a placeholder prod `apiUrl` (`https://api.toptrader.example`) that doesn't match the real domain used elsewhere in the docs (`https://api.toptrader.com`) — needs reconciling once the domain is actually registered.
+- When the frontend's initial session check (`checkSession()` in the app initializer) fails outright (network error, wrong/unreachable API origin), the app renders a blank page instead of falling back to a logged-out view — worth a look before going live, separate from the CSP work.
 
 ### Pre-production security checklist
 
@@ -21,8 +25,10 @@ Done:
 - [x] Frontend 401/403 handling consistency — route-guard coverage was already fine (parent-level `authGuard` covers all protected children, `checkSession()` blocks bootstrap via `provideAppInitializer` so no race on refresh); the real gap was a mid-session 401 (e.g. after the new 30m timeout) going unhandled. New `session-expired.interceptor.ts` clears `currentUser` and redirects to `/login` on any 401 outside `/auth/login`, `/auth/register`, `/auth/session` — manually verified in-browser (session-cookie deletion → redirect; wrong password on `/login` still shows inline, no redirect loop)
 - [x] Logging/PII guard — no logging framework exists yet so nothing is at risk today; recorded the binding policy for whenever logging is added (never log full bodies, secret-carrying DTOs must mask `toString()`, log identifiers not object graphs) — see [ADR 0033](./adr/0033-logging-pii-policy.md)
 
+Done (continued):
+- [x] CSP directives — finalized and empirically verified against the real production build output; required disabling Angular's critical-CSS inlining (`inlineCritical: false` in `frontend/angular.json`) to avoid needing any `'unsafe-inline'`/hash/nonce exceptions — see `docs/architecture/security-architecture.md`
+
 Still open (ordered quickest-to-largest; each needs a decision: fix, or accept as a documented trade-off):
-- [ ] CSP directives — baseline documented but not finalized/verified against the real Angular build output
 - [ ] General API rate limiting — only login lockout exists; quote/trade/register endpoints have no throttle
 - [ ] Password-reset / email-verification flow — none exists; locked-out/forgetful real users have no self-service recovery
 
