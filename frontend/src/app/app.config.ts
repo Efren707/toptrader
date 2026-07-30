@@ -15,6 +15,7 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { credentialsInterceptor } from './core/interceptors/credentials.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
+import { sessionExpiredInterceptor } from './core/interceptors/session-expired.interceptor';
 import { xsrfInterceptor } from './core/interceptors/xsrf.interceptor';
 import { AuthService } from './core/services/auth.service';
 
@@ -25,7 +26,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withFetch(),
       withXsrfConfiguration({ cookieName: 'XSRF-TOKEN', headerName: 'X-XSRF-TOKEN' }),
-      withInterceptors([credentialsInterceptor, xsrfInterceptor, errorInterceptor]),
+      withInterceptors([credentialsInterceptor, xsrfInterceptor, errorInterceptor, sessionExpiredInterceptor]),
     ),
     provideAppInitializer(() => {
       const authService = inject(AuthService);
