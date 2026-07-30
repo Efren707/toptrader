@@ -1,0 +1,25 @@
+title = "TopTrader gitleaks config"
+
+[extend]
+useDefault = true
+
+# Custom rules for this app's own secret-shaped config keys (ADR 0018) -
+# generic provider-pattern rules (AWS keys, etc.) wouldn't recognize these.
+[[rules]]
+id = "toptrader-finnhub-api-key"
+description = "Finnhub API key assigned in config"
+regex = '''(?i)finnhub[.\-_]?api[.\-_]?key["'\s:=]+([a-zA-Z0-9]{16,})'''
+tags = ["key", "toptrader"]
+
+[[rules]]
+id = "toptrader-session-signing-secret"
+description = "Session signing secret assigned in config"
+regex = '''(?i)session[.\-_]?signing[.\-_]?secret["'\s:=]+(\S{16,})'''
+tags = ["secret", "toptrader"]
+
+[allowlist]
+description = "Known placeholder values in the committed application-local.yml.example template"
+regexes = [
+  '''YOUR_FINNHUB_API_KEY''',
+  '''YOUR_LOCAL_SESSION_SIGNING_SECRET''',
+]
