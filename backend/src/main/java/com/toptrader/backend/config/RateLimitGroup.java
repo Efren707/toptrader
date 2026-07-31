@@ -77,7 +77,8 @@ public enum RateLimitGroup {
   // it gets rejected downstream instead of rate-limited).
   private static String authenticatedUserId(HttpServletRequest request) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal principal)) {
+    if (authentication == null
+        || !(authentication.getPrincipal() instanceof UserPrincipal principal)) {
       return null;
     }
     return String.valueOf(principal.getUser().getId());

@@ -67,7 +67,8 @@ class RateLimitFilterTest {
   void quote_exceedingLimitForOneUser_doesNotAffectAnotherUser() throws Exception {
     when(finnhubClient.fetchQuote("AAPL"))
         .thenReturn(
-            new FinnhubQuoteResponse(new BigDecimal("210.50"), new BigDecimal("5.19"), 1721500000L));
+            new FinnhubQuoteResponse(
+                new BigDecimal("210.50"), new BigDecimal("5.19"), 1721500000L));
     when(finnhubClient.fetchProfile("AAPL"))
         .thenReturn(new FinnhubCompanyProfileResponse("Apple Inc"));
 
