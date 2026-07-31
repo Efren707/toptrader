@@ -24,7 +24,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
  * Auth mechanism, password hashing, CORS, and CSRF posture per ADR 0004 and ADR 0007. CSRF
- * exemption for /auth/register and /auth/login per ADR 0022.
+ * exemption for /auth/register and /auth/login per ADR 0022. Rate limiting per ADR 0034.
  */
 @Configuration
 @EnableWebSecurity
@@ -53,6 +53,7 @@ public class SecurityConfig {
                     .anyRequest()
                     .authenticated())
         .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
+        .addFilterAfter(new RateLimitFilter(), CsrfCookieFilter.class)
         .formLogin(AbstractHttpConfigurer::disable)
         .httpBasic(AbstractHttpConfigurer::disable)
         .sessionManagement(session -> session.sessionFixation().migrateSession())
