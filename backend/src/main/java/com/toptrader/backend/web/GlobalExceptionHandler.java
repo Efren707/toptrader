@@ -1,13 +1,17 @@
 package com.toptrader.backend.web;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -32,5 +36,27 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     problemDetail.setProperty("errors", fieldErrors);
 
     return ResponseEntity.status(status).headers(headers).body(problemDetail);
+  }
+
+  /**
+   * Handles constraint violations on {@code @PathVariable}/{@code @RequestParam} (enforced via
+   * class-level {@code @Validated}), which is a separate mechanism from {@code @Valid @RequestBody}
+   * above and isn't covered by {@link #handleMethodArgumentNotValid}.
+   */
+  @ExceptionHandler(ConstraintViolationException.class)
+  public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex) {
+    ProblemDetail problemDetail =
+        ProblemDetail.forStatusAndDetail(
+            HttpStatus.BAD_REQUEST, "Validation failed for one or more fields.");
+
+    Map<String, String> fieldErrors = new LinkedHashMap<>();
+    for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+      String path = violation.getPropertyPath().toString();
+      String field = path.substring(path.lastIndexOf('.') + 1);
+      fieldErrors.put(field, violation.getMessage());
+    }
+    problemDetail.setProperty("errors", fieldErrors);
+
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
   }
 }

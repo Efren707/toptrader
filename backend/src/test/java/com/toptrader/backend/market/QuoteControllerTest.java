@@ -91,4 +91,21 @@ class QuoteControllerTest {
   void getQuote_withoutSession_returns401() throws Exception {
     mockMvc.perform(get("/quotes/AAPL").with(anonymous())).andExpect(status().isUnauthorized());
   }
+
+  @Test
+  void getQuote_withInvalidTicker_returns400() throws Exception {
+    mockMvc.perform(get("/quotes/not-a-ticker!!!")).andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void getQuote_withLowercaseTicker_returns200() throws Exception {
+    when(finnhubClient.fetchQuote("AAPL"))
+        .thenReturn(
+            new FinnhubQuoteResponse(
+                new BigDecimal("210.50"), new BigDecimal("5.19"), 1721500000L));
+    when(finnhubClient.fetchProfile("AAPL"))
+        .thenReturn(new FinnhubCompanyProfileResponse("Apple Inc"));
+
+    mockMvc.perform(get("/quotes/aapl")).andExpect(status().isOk());
+  }
 }
