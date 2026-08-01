@@ -3,6 +3,8 @@
     <p class="status">Loading…</p>
   } @else if (notFound()) {
     <p class="status">No stock found for "{{ ticker() }}".</p>
+  } @else if (errorQuoteMessage(); as message) {
+    <p class="status status-error">{{ message }}</p>
   } @else if (quote(); as result) {
 
     <div class="layout">
@@ -12,8 +14,10 @@
         <h1>{{ result.companyName }}</h1>
         <p class="price">{{ result.price | currency }}</p>
         <p class="as-of">As of {{ result.asOf | date: 'medium' }}</p>
-
-        @if (holding(); as position) {
+        
+        @if (errorHoldingMessage(); as message) {
+          <p class="status status-error">{{ message }}</p>
+        } @else if (holding(); as position) {
           <div class="position-stats">
             <div class="stat-column">
               <p class="stat-heading-label">Your equity</p>
@@ -51,7 +55,11 @@
 
               <div class="stat-row">
                 <p class="stat-row-label">Portfolio diversity</p>
-                <p class="stat-row-value">{{ portfolioDiversity() | number: '1.2-2' }}%</p>
+                @if (errorHoldingsMessage(); as message) {
+                  <p class="stat-row-value status-error">Unavailable</p>
+                } @else {
+                  <p class="stat-row-value">{{ portfolioDiversity() | number: '1.2-2' }}%</p>
+                }
               </div>
             </div>
           </div>
