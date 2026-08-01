@@ -20,6 +20,9 @@ export class StockDetails implements OnInit {
   private readonly tradeService = inject(TradeService);
   private readonly authService = inject(AuthService);
 
+  protected readonly errorHoldingsMessage = signal<string | null>(null);
+  protected readonly errorHoldingMessage = signal<string | null>(null);
+  protected readonly errorQuoteMessage = signal<string | null>(null);
   protected readonly quote = signal<Quote | null>(null);
   protected readonly holding = signal<Holding | null>(null);
   protected readonly holdings = signal<Holding[]>([]);
@@ -72,6 +75,7 @@ export class StockDetails implements OnInit {
   }
 
   fetchQuoteData() {
+    this.errorQuoteMessage.set(null);
     this.quoteService.getQuote(this.ticker() ?? '').subscribe({
       next: (quote) => {
         this.loading.set(false);
@@ -81,28 +85,35 @@ export class StockDetails implements OnInit {
         this.loading.set(false);
         if (error.status === 404) {
           this.notFound.set(true);
+        } else {
+          this.errorQuoteMessage.set(error.detail);
         }
       },
     });
   }
 
   fetchHoldingData() {
+    this.errorHoldingMessage.set(null);
     this.tradeService.getHolding(this.ticker() ?? '').subscribe({
       next: (holding) => {
         this.holding.set(holding);
       },
       error: (error: ApiError) => {
         if (error.status !== 404) {
-          throw error;
+          this.errorHoldingMessage.set(error.detail);
         }
       },
     });
   }
 
   fetchHoldingsData() {
+    this.errorHoldingsMessage.set(null);
     this.tradeService.getHoldings().subscribe({
       next: (holdings) => {
         this.holdings.set(holdings);
+      },
+      error: (error: ApiError) => {
+        this.errorHoldingsMessage.set(error.detail);
       },
     });
   }
