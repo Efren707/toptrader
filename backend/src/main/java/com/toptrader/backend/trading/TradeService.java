@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -32,6 +33,7 @@ public class TradeService {
     this.userRepository = userRepository;
   }
 
+  @PreAuthorize("#userId == authentication.principal.user.id")
   @Transactional
   public TradeResult buyStock(long userId, TradeRequest tradeRequest) {
     String ticker = tradeRequest.ticker();
@@ -85,6 +87,7 @@ public class TradeService {
     return new TradeResult(transactionResponse, user.getCashBalance(), holdingResponse);
   }
 
+  @PreAuthorize("#userId == authentication.principal.user.id")
   @Transactional
   public TradeResult sellStock(long userId, TradeRequest tradeRequest) {
     String ticker = tradeRequest.ticker();
@@ -138,6 +141,7 @@ public class TradeService {
     return new TradeResult(transactionResponse, user.getCashBalance(), holdingResponse);
   }
 
+  @PreAuthorize("#userId == authentication.principal.user.id")
   public Optional<HoldingResponse> getHolding(Long userId, String ticker) {
     Quote quote = this.quoteService.getQuote(ticker);
 
@@ -157,6 +161,7 @@ public class TradeService {
     return Optional.of(holdingResponse);
   }
 
+  @PreAuthorize("#userId == authentication.principal.user.id")
   public List<HoldingResponse> getHoldings(Long userId) {
     User user =
         this.userRepository
@@ -190,6 +195,7 @@ public class TradeService {
         unrealizedGainLoss);
   }
 
+  @PreAuthorize("#userId == authentication.principal.user.id")
   public List<TransactionResponse> getTransactions(Long userId) {
     User user =
         this.userRepository
