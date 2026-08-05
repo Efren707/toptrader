@@ -1,6 +1,6 @@
 # Planning Roadmap & Status
 
-> Last updated: 2026-08-05 (password-reset flow merged — PR [#89](https://github.com/Efren707/toptrader/pull/89), ADR 0036 — see Current focus)
+> Last updated: 2026-08-04 (dev workflow formalized — PR [#91](https://github.com/Efren707/toptrader/pull/91) — see Current focus)
 > This file tracks *where we are* — a lean, current-state view. Full narrative detail for completed phases/milestones lives in [docs/planning-history.md](./planning-history.md). The full pre-deployment security checklist (done items + evidence, remaining items) lives in [docs/pre-deployment-checklist.md](./pre-deployment-checklist.md). For *why* decisions were made, see `docs/adr/`. For requirements detail, see `docs/requirements/`. Each milestone below also has a matching [GitHub Milestone](https://github.com/Efren707/toptrader/milestones) for visual progress tracking.
 
 ## Current focus
@@ -8,6 +8,8 @@
 Every MVP user story (US-1–US-9) plus the UI/UX polish pass (Milestone #12) is done — see Completed milestones below. AWS deployment is architected (ADR 0005/0006/0014/0016/0017) but not started; before sequencing it, a **pre-production security checklist** is being worked through item by item (not deferred) — see [docs/pre-deployment-checklist.md](./pre-deployment-checklist.md) for the full list and evidence on closed items.
 
 **Password reset is done and merged** (PR [#89](https://github.com/Efren707/toptrader/pull/89), design in [ADR 0036](./adr/0036-password-reset-flow.md)): token generation/hashing/TTL, forgot-password/reset-password endpoints and frontend, and session invalidation of a user's other active sessions on reset via a new `SessionRegistry`. Full evidence lives in `docs/pre-deployment-checklist.md`'s Done section.
+
+**Dev workflow formalized and merged** (PR [#91](https://github.com/Efren707/toptrader/pull/91)): planning-before-coding, branching, commit cadence, testing-before-done (incl. manual UI smoke test), and full-suite-before-PR are now written up in `CONTRIBUTING.md` and `CLAUDE.md`'s "Feature workflow" section, rather than living only in conversation. Repo is also now configured to only allow merge-commit merges (squash/rebase disabled) so the documented merge strategy is enforced structurally, not just by habit. Process-only change, doesn't affect the checklist below.
 
 **Next up on the still-open checklist (quickest-to-largest):**
 1. Email verification at signup — split out from the password-reset item per ADR 0036's scope note; not yet started.
