@@ -13,6 +13,7 @@
 ## Checklist
 
 - [ ] Builds locally without errors
-- [ ] Tests pass locally
+- [ ] New/updated tests included for this change
+- [ ] Tests pass locally (backend: `./mvnw test`, frontend: `ng test`, as applicable)
 - [ ] Docs updated if this changes architecture/behavior/setup steps
 - [ ] No secrets/credentials committed
