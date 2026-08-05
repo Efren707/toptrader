@@ -11,6 +11,18 @@ Current phase, completed work, and next steps live in **[docs/ROADMAP.md](./docs
 - **Start of session:** read `CLAUDE.md` (this file) and `docs/ROADMAP.md`'s "Current focus" line before doing anything else.
 - **End of session:** update `docs/ROADMAP.md` (checkboxes + "Current focus") to reflect what actually happened, and commit/push it — even if mid-task. The next session should never need to be re-briefed verbally.
 
+## Feature workflow
+
+Full detail lives in **[CONTRIBUTING.md](./CONTRIBUTING.md)**; the short version for every feature/fix:
+
+1. **Plan first.** Talk through the approach and open questions before writing any code (see "always check in before deciding" below).
+2. **Branch off `main`** (`feature/*` or `fix/*`, ADR 0002) before starting implementation.
+3. **Commit after each completed step**, not one big commit at the end.
+4. **Tests before "done."** A step isn't done until it has passing tests (backend and/or frontend, whichever it touches). Frontend/UI changes also need a manual smoke test in a browser — passing `.spec.ts` tests doesn't confirm it looks or behaves right.
+5. **Full suite before a PR.** Run the same commands CI runs — backend `./mvnw -B spotless:check test`, frontend `npm run lint && npx ng test --watch=false` — and confirm both are green before opening the PR.
+6. **Open the PR** from the template; merge once CI is green (no required reviewer — solo project, ADR 0017), using **"Create a merge commit"** (not squash/rebase) so the step-by-step commits survive on `main`.
+7. Update `docs/ROADMAP.md` (see "End of session" above).
+
 ## How to work on this project
 
 - **One step at a time.** Do not build ahead or auto-complete multiple features/phases in one go.

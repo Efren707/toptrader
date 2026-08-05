@@ -1,6 +1,6 @@
 # Contribution / Workflow Guide — Outline
 
-> Status: Draft outline only — no prose yet. Scope: how work actually moves through this repo day-to-day — branching, commits, PRs, issues, and the ADR process. Assumes local setup is already done (see [developer-setup-guide-outline.md](./developer-setup-guide-outline.md)).
+> Status: Superseded — written up as prose in [/CONTRIBUTING.md](../../CONTRIBUTING.md) (2026-08-04). Kept here as the original planning outline. Scope: how work actually moves through this repo day-to-day — branching, commits, PRs, issues, and the ADR process. Assumes local setup is already done (see [developer-setup-guide-outline.md](./developer-setup-guide-outline.md)).
 
 ## 1. Branching strategy
 Trunk-based development: `main` is always deployable, work happens on short-lived `feature/*` or `fix/*` branches merged via PR (ADR 0002). Notes there's no `develop` branch and no staging environment.
