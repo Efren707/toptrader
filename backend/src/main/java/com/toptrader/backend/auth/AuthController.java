@@ -19,10 +19,15 @@ public class AuthController {
 
   private final RegistrationService registrationService;
   private final LoginService loginService;
+  private final PasswordResetService passwordResetService;
 
-  public AuthController(RegistrationService registrationService, LoginService loginService) {
+  public AuthController(
+      RegistrationService registrationService,
+      LoginService loginService,
+      PasswordResetService passwordResetService) {
     this.registrationService = registrationService;
     this.loginService = loginService;
+    this.passwordResetService = passwordResetService;
   }
 
   @PostMapping("/register")
@@ -46,5 +51,17 @@ public class AuthController {
   @GetMapping("/session")
   public ResponseEntity<UserSummary> getSession(@AuthenticationPrincipal UserPrincipal principal) {
     return ResponseEntity.ok(UserSummary.from(principal.getUser()));
+  }
+
+  @PostMapping("/forgot-password")
+  public ResponseEntity<Void> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+    passwordResetService.resetRequest(request.email());
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+  }
+
+  @PostMapping("/reset-password")
+  public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+    passwordResetService.resetPassword(request.rawToken(), request.password());
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 }

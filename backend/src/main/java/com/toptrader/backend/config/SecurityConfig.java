@@ -13,19 +13,23 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
  * Auth mechanism, password hashing, CORS, and CSRF posture per ADR 0004 and ADR 0007. CSRF
- * exemption for /auth/register and /auth/login per ADR 0022. Rate limiting per ADR 0034.
+ * exemption for /auth/register and /auth/login per ADR 0022, and for /auth/forgot-password and
+ * /auth/reset-password per ADR 0036. Rate limiting per ADR 0034.
  */
 @Configuration
 @EnableWebSecurity
@@ -45,12 +49,25 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http.csrf(csrf -> csrf.spa().ignoringRequestMatchers("/auth/register", "/auth/login"))
+    http.csrf(
+            csrf ->
+                csrf.spa()
+                    .ignoringRequestMatchers(
+                        "/auth/register",
+                        "/auth/login",
+                        "/auth/forgot-password",
+                        "/auth/reset-password"))
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .authorizeHttpRequests(
             authorize ->
                 authorize
-                    .requestMatchers("/auth/register", "/auth/login", "/actuator/health", "/error")
+                    .requestMatchers(
+                        "/auth/register",
+                        "/auth/login",
+                        "/auth/forgot-password",
+                        "/auth/reset-password",
+                        "/actuator/health",
+                        "/error")
                     .permitAll()
                     .anyRequest()
                     .authenticated())
@@ -58,7 +75,14 @@ public class SecurityConfig {
         .addFilterAfter(new RateLimitFilter(), CsrfCookieFilter.class)
         .formLogin(AbstractHttpConfigurer::disable)
         .httpBasic(AbstractHttpConfigurer::disable)
-        .sessionManagement(session -> session.sessionFixation().migrateSession())
+        .sessionManagement(
+            session ->
+                session
+                    .sessionFixation()
+                    .migrateSession()
+                    .sessionConcurrency(
+                        concurrency ->
+                            concurrency.sessionRegistry(sessionRegistry()).maximumSessions(-1)))
         .logout(
             logout ->
                 logout
@@ -90,5 +114,15 @@ public class SecurityConfig {
   public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
       throws Exception {
     return config.getAuthenticationManager();
+  }
+
+  @Bean
+  public SessionRegistry sessionRegistry() {
+    return new SessionRegistryImpl();
+  }
+
+  @Bean
+  public HttpSessionEventPublisher httpSessionEventPublisher() {
+    return new HttpSessionEventPublisher();
   }
 }
