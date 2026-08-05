@@ -23,9 +23,12 @@
             label="Password"
             type="password"
             formControlName="password"
-            hint="Minimum 8 characters"
             [errorMessage]="errorFor('password')"
           />
+          <div class="password-meta">
+            <span class="hint">Minimum 8 characters</span>
+            <a routerLink="/forgot-password" class="forgot-password">Forgot password?</a>
+          </div>
 
           <app-button type="submit" [fullWidth]="true" [disabled]="submitting()">
             {{ submitting() ? 'Logging in…' : 'Log in' }}

@@ -76,6 +76,29 @@
   color: var(--color-text-muted);
 }
 
+.password-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: -0.75rem 0 1.25rem;
+}
+
+.password-meta .hint {
+  font-size: 0.75rem;
+  color: var(--color-text-faint);
+}
+
+.forgot-password {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  text-underline-offset: 0.15em;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+  color: #fff;
+}
+
 .form-error {
   font-size: 0.8125rem;
   color: var(--color-danger);

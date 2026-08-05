@@ -13,6 +13,16 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/login/login').then((m) => m.Login),
     canActivate: [guestGuard]
   },
+  {
+    path: 'forgot-password',
+    loadComponent: () => import('./features/auth/forgot-password/forgot-password').then((m) => m.ForgotPassword),
+    canActivate: [guestGuard]
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () => import('./features/auth/reset-password/reset-password').then((m) => m.ResetPassword),
+    canActivate: [guestGuard]
+  },
   { 
     path: '',
     loadComponent: () => import('./shared/layout/layout').then((m) => m.Layout),
