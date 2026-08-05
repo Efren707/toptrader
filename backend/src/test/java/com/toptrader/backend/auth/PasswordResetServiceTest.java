@@ -11,13 +11,16 @@ import static org.mockito.Mockito.when;
 
 import com.toptrader.backend.email.EmailSender;
 import com.toptrader.backend.user.User;
+import com.toptrader.backend.user.UserPrincipal;
 import com.toptrader.backend.user.UserRepository;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HexFormat;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +29,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.session.SessionInformation;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.server.ResponseStatusException;
@@ -41,12 +46,14 @@ class PasswordResetServiceTest {
   @Mock private PasswordResetTokenRepository passwordResetTokenRepository;
   @Mock private PasswordEncoder passwordEncoder;
   @Mock private EmailSender emailSender;
+  @Mock private SessionRegistry sessionRegistry;
 
   private User user;
 
   @BeforeEach
   void setUp() {
     user = new User(EMAIL, "trader", "old-hash", BigDecimal.ZERO);
+    ReflectionTestUtils.setField(user, "id", 1L);
   }
 
   private PasswordResetService serviceWithEmailSender() {
@@ -55,14 +62,19 @@ class PasswordResetServiceTest {
             userRepository,
             passwordResetTokenRepository,
             passwordEncoder,
-            Optional.of(emailSender));
+            Optional.of(emailSender),
+            sessionRegistry);
     ReflectionTestUtils.setField(service, "frontendOrigin", FRONTEND_ORIGIN);
     return service;
   }
 
   private PasswordResetService serviceWithoutEmailSender() {
     return new PasswordResetService(
-        userRepository, passwordResetTokenRepository, passwordEncoder, Optional.empty());
+        userRepository,
+        passwordResetTokenRepository,
+        passwordEncoder,
+        Optional.empty(),
+        sessionRegistry);
   }
 
   private static String sha256Hex(String rawToken) {
@@ -131,6 +143,7 @@ class PasswordResetServiceTest {
     when(passwordResetTokenRepository.findByTokenHash(tokenHash))
         .thenReturn(Optional.of(resetToken));
     when(passwordEncoder.encode("newPassword123")).thenReturn("new-hash");
+    when(sessionRegistry.getAllPrincipals()).thenReturn(List.of());
 
     service.resetPassword(rawToken, "newPassword123");
 
@@ -138,6 +151,34 @@ class PasswordResetServiceTest {
     verify(userRepository).save(user);
     assertThat(resetToken.getUsedAt()).isNotNull();
     verify(passwordResetTokenRepository).save(resetToken);
+  }
+
+  @Test
+  void resetPassword_expiresOnlyTheResetUsersOtherSessions_whenTokenValid() {
+    PasswordResetService service = serviceWithEmailSender();
+    String rawToken = "valid-raw-token";
+    String tokenHash = sha256Hex(rawToken);
+    PasswordResetToken resetToken =
+        new PasswordResetToken(user, tokenHash, LocalDateTime.now().plusMinutes(10));
+    when(passwordResetTokenRepository.findByTokenHash(tokenHash))
+        .thenReturn(Optional.of(resetToken));
+    when(passwordEncoder.encode("newPassword123")).thenReturn("new-hash");
+
+    User otherUser = new User("other@example.com", "other", "other-hash", BigDecimal.ZERO);
+    ReflectionTestUtils.setField(otherUser, "id", 2L);
+    UserPrincipal thisUserPrincipal = new UserPrincipal(user);
+    UserPrincipal otherUserPrincipal = new UserPrincipal(otherUser);
+    when(sessionRegistry.getAllPrincipals())
+        .thenReturn(List.of(thisUserPrincipal, otherUserPrincipal));
+    SessionInformation thisUserSession =
+        new SessionInformation(thisUserPrincipal, "this-user-session-id", new Date());
+    when(sessionRegistry.getAllSessions(thisUserPrincipal, false))
+        .thenReturn(List.of(thisUserSession));
+
+    service.resetPassword(rawToken, "newPassword123");
+
+    assertThat(thisUserSession.isExpired()).isTrue();
+    verify(sessionRegistry, never()).getAllSessions(eq(otherUserPrincipal), any(Boolean.class));
   }
 
   @Test

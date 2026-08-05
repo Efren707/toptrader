@@ -2,6 +2,7 @@ package com.toptrader.backend.auth;
 
 import com.toptrader.backend.email.EmailSender;
 import com.toptrader.backend.user.User;
+import com.toptrader.backend.user.UserPrincipal;
 import com.toptrader.backend.user.UserRepository;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -10,9 +11,12 @@ import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.HexFormat;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.session.SessionInformation;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,6 +30,7 @@ public class PasswordResetService {
   private final PasswordResetTokenRepository passwordResetTokenRepository;
   private final PasswordEncoder passwordEncoder;
   private final Optional<EmailSender> emailSender;
+  private final SessionRegistry sessionRegistry;
 
   @Value("${toptrader.frontend-origin:http://localhost:4200}")
   private String frontendOrigin;
@@ -34,11 +39,13 @@ public class PasswordResetService {
       UserRepository userRepository,
       PasswordResetTokenRepository passwordResetTokenRepository,
       PasswordEncoder passwordEncoder,
-      Optional<EmailSender> emailSender) {
+      Optional<EmailSender> emailSender,
+      SessionRegistry sessionRegistry) {
     this.userRepository = userRepository;
     this.passwordResetTokenRepository = passwordResetTokenRepository;
     this.passwordEncoder = passwordEncoder;
     this.emailSender = emailSender;
+    this.sessionRegistry = sessionRegistry;
   }
 
   public void resetRequest(String email) {
@@ -88,6 +95,16 @@ public class PasswordResetService {
     User user = passwordResetToken.getUser();
     user.setPasswordHash(passwordEncoder.encode(newPassword));
     userRepository.save(user);
+
+    List<Object> principals = sessionRegistry.getAllPrincipals();
+    for (Object principal : principals) {
+      if (principal instanceof UserPrincipal userPrincipal
+          && userPrincipal.getUser().getId().equals(user.getId())) {
+        for (SessionInformation session : sessionRegistry.getAllSessions(principal, false)) {
+          session.expireNow();
+        }
+      }
+    }
 
     passwordResetToken.setUsedAt(LocalDateTime.now());
     passwordResetTokenRepository.save(passwordResetToken);
