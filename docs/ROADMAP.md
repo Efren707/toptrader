@@ -1,6 +1,6 @@
 # Planning Roadmap & Status
 
-> Last updated: 2026-08-04 (dev workflow formalized — PR [#91](https://github.com/Efren707/toptrader/pull/91) — see Current focus)
+> Last updated: 2026-08-04 (email verification at signup started — ADR [0037](./adr/0037-email-verification-at-signup.md), branch `feature/email-verification-at-signup` — see Current focus)
 > This file tracks *where we are* — a lean, current-state view. Full narrative detail for completed phases/milestones lives in [docs/planning-history.md](./planning-history.md). The full pre-deployment security checklist (done items + evidence, remaining items) lives in [docs/pre-deployment-checklist.md](./pre-deployment-checklist.md). For *why* decisions were made, see `docs/adr/`. For requirements detail, see `docs/requirements/`. Each milestone below also has a matching [GitHub Milestone](https://github.com/Efren707/toptrader/milestones) for visual progress tracking.
 
 ## Current focus
@@ -12,7 +12,19 @@ Every MVP user story (US-1–US-9) plus the UI/UX polish pass (Milestone #12) is
 **Dev workflow formalized and merged** (PR [#91](https://github.com/Efren707/toptrader/pull/91)): planning-before-coding, branching, commit cadence, testing-before-done (incl. manual UI smoke test), and full-suite-before-PR are now written up in `CONTRIBUTING.md` and `CLAUDE.md`'s "Feature workflow" section, rather than living only in conversation. Repo is also now configured to only allow merge-commit merges (squash/rebase disabled) so the documented merge strategy is enforced structurally, not just by habit. Process-only change, doesn't affect the checklist below.
 
 **Next up on the still-open checklist (quickest-to-largest):**
-1. Email verification at signup — split out from the password-reset item per ADR 0036's scope note; not yet started.
+1. **Email verification at signup — in progress**, on branch `feature/email-verification-at-signup`, design in [ADR 0037](./adr/0037-email-verification-at-signup.md) (no login gate; verification is informational only, mirrors ADR 0036's password-reset token pattern). Broken into 12 tracked steps:
+   - [x] `V4` migration: `email_verification_tokens` table + `User.emailVerifiedAt` column
+   - [x] `EmailVerificationToken` entity + repository
+   - [x] `RegistrationService` sends a verification email on signup (non-blocking if no `EmailSender` bean, i.e. prod today)
+   - [x] `EmailVerificationService.verifyEmail(token)`
+   - [ ] `EmailVerificationService.resendVerification(email)`
+   - [ ] `AuthController` verify/resend endpoints
+   - [ ] `SecurityConfig` CSRF/`permitAll()` wiring for both new endpoints
+   - [ ] `RateLimitGroup.EMAIL_VERIFICATION`
+   - [ ] Backend tests for verify/resend flow
+   - [ ] Frontend: register success verification notice
+   - [ ] Frontend: verify-email route/component (success/expired/invalid + resend)
+   - [ ] Frontend tests + manual browser smoke test, then full suite + PR
 2. Logging and alerts in prod — zero logging framework exists yet; ADR 0008 plans the infra (logback → CloudWatch Logs, alarm → SNS email) but execution hasn't started.
 3. Rollback strategy — the exception to "quickest-to-largest": the user wants an actual rollback plan instead of the current fix-forward posture, which needs its own dedicated session to design (likely revisiting ADR 0005/0006/0011/0017/0019).
 
