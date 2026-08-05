@@ -17,7 +17,7 @@ Every MVP user story (US-1–US-9) plus the UI/UX polish pass (Milestone #12) is
    - [x] `EmailVerificationToken` entity + repository
    - [x] `RegistrationService` sends a verification email on signup (non-blocking if no `EmailSender` bean, i.e. prod today)
    - [x] `EmailVerificationService.verifyEmail(token)`
-   - [ ] `EmailVerificationService.resendVerification(email)`
+   - [ ] `EmailVerificationService.resendVerification(email)` — **next up.** Decided: mirror `PasswordResetService.resetRequest`'s enumeration-safe shape (identical response whether the email exists or not); additionally skip issuing a token for already-verified users (no dead tokens), but the response must still look identical either way. Needs its own `Optional<EmailSender>` + `frontendOrigin` (unlike `verifyEmail`, this one builds a link) — generate the token the same way `RegistrationService.sendVerificationEmail` does.
    - [ ] `AuthController` verify/resend endpoints
    - [ ] `SecurityConfig` CSRF/`permitAll()` wiring for both new endpoints
    - [ ] `RateLimitGroup.EMAIL_VERIFICATION`
