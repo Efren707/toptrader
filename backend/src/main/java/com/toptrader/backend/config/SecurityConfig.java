@@ -25,7 +25,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
  * Auth mechanism, password hashing, CORS, and CSRF posture per ADR 0004 and ADR 0007. CSRF
- * exemption for /auth/register and /auth/login per ADR 0022. Rate limiting per ADR 0034.
+ * exemption for /auth/register and /auth/login per ADR 0022, and for /auth/forgot-password and
+ * /auth/reset-password per ADR 0036. Rate limiting per ADR 0034.
  */
 @Configuration
 @EnableWebSecurity
@@ -45,12 +46,25 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http.csrf(csrf -> csrf.spa().ignoringRequestMatchers("/auth/register", "/auth/login"))
+    http.csrf(
+            csrf ->
+                csrf.spa()
+                    .ignoringRequestMatchers(
+                        "/auth/register",
+                        "/auth/login",
+                        "/auth/forgot-password",
+                        "/auth/reset-password"))
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .authorizeHttpRequests(
             authorize ->
                 authorize
-                    .requestMatchers("/auth/register", "/auth/login", "/actuator/health", "/error")
+                    .requestMatchers(
+                        "/auth/register",
+                        "/auth/login",
+                        "/auth/forgot-password",
+                        "/auth/reset-password",
+                        "/actuator/health",
+                        "/error")
                     .permitAll()
                     .anyRequest()
                     .authenticated())
