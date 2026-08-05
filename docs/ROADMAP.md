@@ -1,6 +1,6 @@
 # Planning Roadmap & Status
 
-> Last updated: 2026-08-04 (email verification at signup started — ADR [0037](./adr/0037-email-verification-at-signup.md), branch `feature/email-verification-at-signup` — see Current focus)
+> Last updated: 2026-08-05 (email verification at signup in progress — ADR [0037](./adr/0037-email-verification-at-signup.md), branch `feature/email-verification-at-signup` — see Current focus)
 > This file tracks *where we are* — a lean, current-state view. Full narrative detail for completed phases/milestones lives in [docs/planning-history.md](./planning-history.md). The full pre-deployment security checklist (done items + evidence, remaining items) lives in [docs/pre-deployment-checklist.md](./pre-deployment-checklist.md). For *why* decisions were made, see `docs/adr/`. For requirements detail, see `docs/requirements/`. Each milestone below also has a matching [GitHub Milestone](https://github.com/Efren707/toptrader/milestones) for visual progress tracking.
 
 ## Current focus
@@ -17,8 +17,8 @@ Every MVP user story (US-1–US-9) plus the UI/UX polish pass (Milestone #12) is
    - [x] `EmailVerificationToken` entity + repository
    - [x] `RegistrationService` sends a verification email on signup (non-blocking if no `EmailSender` bean, i.e. prod today)
    - [x] `EmailVerificationService.verifyEmail(token)`
-   - [ ] `EmailVerificationService.resendVerification(email)` — **next up.** Decided: mirror `PasswordResetService.resetRequest`'s enumeration-safe shape (identical response whether the email exists or not); additionally skip issuing a token for already-verified users (no dead tokens), but the response must still look identical either way. Needs its own `Optional<EmailSender>` + `frontendOrigin` (unlike `verifyEmail`, this one builds a link) — generate the token the same way `RegistrationService.sendVerificationEmail` does.
-   - [ ] `AuthController` verify/resend endpoints
+   - [x] `EmailVerificationService.resendVerification(email)` — done: mirrors `PasswordResetService.resetRequest`'s enumeration-safe shape (identical response whether the email exists or not), skips issuing a token for already-verified users, and throws `SERVICE_UNAVAILABLE` with no `EmailSender` configured (unlike the registration-time send, which no-ops silently so registration itself never fails). Token-issuing logic was extracted out of `RegistrationService` into a new `EmailVerificationService.sendVerificationEmail(User)` method that both registration and resend now share, instead of duplicating it. Covered by new `EmailVerificationServiceTest` (service-layer only — controller-level coverage is still open, see below).
+   - [ ] `AuthController` verify/resend endpoints — **next up.**
    - [ ] `SecurityConfig` CSRF/`permitAll()` wiring for both new endpoints
    - [ ] `RateLimitGroup.EMAIL_VERIFICATION`
    - [ ] Backend tests for verify/resend flow
