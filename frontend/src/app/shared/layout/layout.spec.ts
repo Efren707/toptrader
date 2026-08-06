@@ -6,6 +6,7 @@ import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 
 import { Layout } from './layout';
+import { NotificationService } from '../../core/services/notification.service';
 
 @Component({ selector: 'app-stub', template: '<p>routed content</p>' })
 class StubPage {}
@@ -34,5 +35,31 @@ describe('Layout', () => {
     expect(harness.routeNativeElement?.querySelector('main.content')?.textContent).toContain(
       'routed content',
     );
+  });
+
+  it('does not render the notice toast when there is no notification', () => {
+    expect(harness.routeNativeElement?.querySelector('.notice-toast')).toBeNull();
+  });
+
+  it('renders the notice toast when a notification is shown', () => {
+    const notificationService = TestBed.inject(NotificationService);
+    notificationService.show('Account created — check your email to verify your address.');
+    harness.detectChanges();
+
+    expect(harness.routeNativeElement?.querySelector('.notice-toast')?.textContent).toContain(
+      'Account created',
+    );
+  });
+
+  it('clears the notification when the dismiss button is clicked', () => {
+    const notificationService = TestBed.inject(NotificationService);
+    notificationService.show('Account created — check your email to verify your address.');
+    harness.detectChanges();
+
+    harness.routeNativeElement?.querySelector<HTMLButtonElement>('.notice-dismiss')?.click();
+    harness.detectChanges();
+
+    expect(notificationService.message()).toBeNull();
+    expect(harness.routeNativeElement?.querySelector('.notice-toast')).toBeNull();
   });
 });
