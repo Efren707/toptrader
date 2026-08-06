@@ -17,6 +17,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.HexFormat;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -123,6 +124,21 @@ class EmailVerificationServiceTest {
 
     verify(emailVerificationTokenRepository).save(any(EmailVerificationToken.class));
     verify(emailSender).send(eq(EMAIL), any(String.class), any(String.class));
+  }
+
+  @Test
+  void resendVerification_invalidatesPriorOutstandingTokens_whenReissuing() {
+    EmailVerificationService service = serviceWithEmailSender();
+    when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(user));
+    EmailVerificationToken outstandingToken =
+        new EmailVerificationToken(user, "old-hash", LocalDateTime.now().plusMinutes(10));
+    when(emailVerificationTokenRepository.findByUserAndUsedAtIsNull(user))
+        .thenReturn(List.of(outstandingToken));
+
+    service.resendVerification(EMAIL);
+
+    assertThat(outstandingToken.getUsedAt()).isNotNull();
+    verify(emailVerificationTokenRepository).saveAll(List.of(outstandingToken));
   }
 
   @Test

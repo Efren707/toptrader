@@ -10,6 +10,7 @@ import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.HexFormat;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -94,8 +95,17 @@ public class EmailVerificationService {
     Optional<User> user = this.userRepository.findByEmail(email);
 
     if (user.isPresent() && user.get().getEmailVerifiedAt() == null) {
+      invalidateOutstandingTokens(user.get());
       sendVerificationEmail(user.get());
     }
+  }
+
+  private void invalidateOutstandingTokens(User user) {
+    List<EmailVerificationToken> outstanding =
+        emailVerificationTokenRepository.findByUserAndUsedAtIsNull(user);
+    LocalDateTime now = LocalDateTime.now();
+    outstanding.forEach(token -> token.setUsedAt(now));
+    emailVerificationTokenRepository.saveAll(outstanding);
   }
 
   private String hashToken(String rawToken) {

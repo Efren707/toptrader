@@ -10,4 +10,6 @@ public interface EmailVerificationTokenRepository
   Optional<EmailVerificationToken> findByTokenHash(String tokenHash);
 
   List<EmailVerificationToken> findByUser(User user);
+
+  List<EmailVerificationToken> findByUserAndUsedAtIsNull(User user);
 }
