@@ -10,8 +10,9 @@ Issue [#97](https://github.com/Efren707/toptrader/issues/97) is implementing the
 ## Options considered
 
 ### Log format
-- **Structured JSON** (chosen) — via the `logstash-logback-encoder` dependency, encoding each log line as JSON with key-value fields (event name, userId, ticker, tradeId, etc.) instead of a string-interpolated message. Makes fields queryable in CloudWatch Insights later without re-parsing. Costs one new dependency and a bit more setup than the default pattern layout.
-- **Plain text pattern** — Logback's default, zero new dependencies, greppable via SSH. Rejected: loses queryable structure in CloudWatch Insights, which is a one-time setup cost now versus a recurring parsing cost later if the logs ever need real querying.
+- **Structured JSON via Spring Boot's native structured logging** (chosen) — Spring Boot 3.4+ (including the 4.1 line this project is on) supports `ecs`/`gelf`/`logstash` JSON formats out of the box, fully property-driven (`logging.structured.format.file=logstash`), with no additional dependency. Key-value fields come from SLF4J 2.x's own fluent API (`log.atInfo().addKeyValue(...)`), which Boot's structured formatters fold into the JSON output automatically. Originally scoped around the `logstash-logback-encoder` library before this native support was found — see below.
+- **`logstash-logback-encoder` dependency** — the pre-3.4 way to get JSON output; rejected once Boot's native support was confirmed to cover the same `logstash` format with zero added dependencies and less custom XML.
+- **Plain text pattern** — Logback's default, greppable via SSH. Rejected: loses queryable structure in CloudWatch Insights, which is a one-time setup cost now versus a recurring parsing cost later if the logs ever need real querying — and with native support, that one-time cost is now just a couple of properties, not a new dependency.
 
 ### Failed-login identifier
 - **Log the submitted email** (chosen) — `LoginService.recordFailedAttempt(email)` already keys its brute-force lockout tracking (ADR 0004 amendment) off the submitted email; a failed-auth event has no `userId` yet, so email is the only identifier available. Since the email is already the security-relevant key this code path correlates on internally, logging it doesn't newly expose anything beyond what the lockout mechanism already does in the database.
@@ -19,11 +20,10 @@ Issue [#97](https://github.com/Efren707/toptrader/issues/97) is implementing the
 
 ## Decision
 
-- Add `logstash-logback-encoder` to `backend/pom.xml`.
-- `logback-spring.xml` with profile-scoped appenders:
-  - **default (local)**: console, human-readable pattern (current Spring Boot default behavior, unchanged).
-  - **`prod` profile**: file appender using `LogstashEncoder` (JSON), path externalized as a property (`logging.file.name` in `application-prod.properties`, not hardcoded in the XML) so the actual filesystem path is a deploy-time config concern, not a code concern. Local rolling policy (size+time based) to bound disk usage on the EC2 instance independently of CloudWatch's own retention setting (ADR 0008) — the two are separate knobs, one local disk, one AWS-side.
-- Structured fields are logged as key-value arguments (e.g. `StructuredArguments.kv("userId", id)`), not string-concatenated into the message, so they land as queryable JSON fields.
+- No new Maven dependency, no `logback-spring.xml`. Everything is properties-only, using Spring Boot's existing profile mechanism (`application-prod.properties`, already present in this project):
+  - **default (local)**: unset — Boot's normal human-readable console output, unchanged.
+  - **`prod` profile** (`application-prod.properties`): `logging.structured.format.file=logstash`, plus `logging.file.name` set to the (deploy-time-supplied) log file path — externalizing the actual filesystem path as a deploy-time config concern, not a code concern. Rotation via Boot's built-in `logging.logback.rollingpolicy.*` properties (`max-file-size`, `total-size-cap`, `max-history`) to bound disk usage on the EC2 instance independently of CloudWatch's own retention setting (ADR 0008) — the two are separate knobs, one local disk, one AWS-side.
+- Structured fields are logged via SLF4J's fluent API (e.g. `log.atInfo().addKeyValue("userId", id).log("Login succeeded")`), not string-concatenated into the message, so they land as queryable JSON fields under Boot's structured formatter.
 - Content policy (applying ADR 0033 per-event):
   - Login success: INFO, `userId`.
   - Login failure: WARN, submitted `email` (see decision above) + reason.
@@ -36,7 +36,7 @@ Issue [#97](https://github.com/Efren707/toptrader/issues/97) is implementing the
 
 ## Consequences
 
-- New runtime dependency (`logstash-logback-encoder`); worth a quick check that it doesn't drag in anything unexpected via `mvn dependency:tree`.
+- No new dependency — zero added build/classpath surface, and one less thing to keep patched.
 - The local rolling policy's retention should be spot-checked against real disk usage once the app has actual prod traffic, same caveat ADR 0008 already notes for CloudWatch-side retention.
 - `logging.file.name` needs a real value in `application-prod.properties` (or an env override) before this is meaningful in prod — ties into EC2 bootstrap/ADR 0014, tracked under #102, not this issue.
 - Deliberately logging the submitted email on failed login is a narrower, justified exception to ADR 0033's general rule, not a reopening of it — future PII-adjacent logging decisions should still default to identifiers-only unless a similarly concrete justification applies.
