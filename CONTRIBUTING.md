@@ -63,10 +63,11 @@ Pulling the above together, a feature/fix is done when:
 
 ## 7. Issue and project tracking
 
-Work is tracked via GitHub Issues + a Projects board, with Milestones mapped to roadmap phases (and later, MVP build-order features). Use the issue templates under `.github/ISSUE_TEMPLATE/`:
+Work is tracked via GitHub Issues + a Projects board, with Milestones mapped to roadmap phases (and later, MVP build-order features and pre-deployment hardening work). Every non-trivial unit of work — a user story, a bug, or a pre-deployment/security/ops item — gets an Issue on the relevant Milestone before it's built, closed by the PR that implements it (`Closes #NN`). This applies to hardening/checklist work too, not just user-facing features: file an Issue instead of adding a paragraph straight to `docs/pre-deployment-checklist.md`. Use the issue templates under `.github/ISSUE_TEMPLATE/`:
 
 - **Bug report** — something broken
-- **Feature request** — new functionality
+- **Feature request** — new, user-facing functionality
+- **Hardening task** — pre-deployment security/reliability/ops work that isn't a user-facing feature
 - **Research spike** — an open question that needs investigation before it can be planned
 
 ## 8. Writing an ADR
