@@ -24,6 +24,13 @@ public enum RateLimitGroup {
       RateLimitGroup::clientIp,
       5,
       Duration.ofHours(1)),
+  EMAIL_VERIFICATION(
+      List.of(
+          PathPatternRequestMatcher.pathPattern(HttpMethod.POST, "/auth/verify-email"),
+          PathPatternRequestMatcher.pathPattern(HttpMethod.POST, "/auth/resend-verification")),
+      RateLimitGroup::clientIp,
+      5,
+      Duration.ofHours(1)),
   QUOTE(
       List.of(PathPatternRequestMatcher.pathPattern(HttpMethod.GET, "/quotes/{ticker}")),
       RateLimitGroup::authenticatedUserId,
