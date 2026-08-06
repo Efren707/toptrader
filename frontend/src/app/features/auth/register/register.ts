@@ -6,6 +6,7 @@ import { Card } from '../../../shared/ui/card/card';
 import { Input } from '../../../shared/ui/input/input';
 import { Router, RouterLink } from '@angular/router';
 import { ApiError } from '../../../core/interceptors/error.interceptor';
+import { NotificationService } from '../../../core/services/notification.service';
 
 type RegisterField = 'email' | 'username' | 'password';
 
@@ -18,6 +19,7 @@ type RegisterField = 'email' | 'username' | 'password';
 export class Register {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
+  private readonly notificationService = inject(NotificationService);
   private readonly router = inject(Router);
 
   protected readonly form = this.fb.nonNullable.group({
@@ -40,6 +42,7 @@ export class Register {
 
     this.authService.register(this.form.getRawValue()).subscribe({
       next: () => {
+        this.notificationService.show('Account created — check your email to verify your address.');
         this.router.navigate(['/dashboard']);
       },
       error: (error: ApiError) => {

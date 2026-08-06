@@ -1,5 +1,13 @@
 <div class="page">
   <app-navbar/>
+
+  @if (notificationService.message(); as message) {
+    <div class="notice-banner">
+      <p>{{ message }}</p>
+      <button type="button" (click)="notificationService.clear()">Dismiss</button>
+    </div>
+  }
+  
   <main class="content">
     <router-outlet/>
   </main>
