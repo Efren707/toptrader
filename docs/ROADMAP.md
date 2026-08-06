@@ -1,6 +1,6 @@
 # Planning Roadmap & Status
 
-> Last updated: 2026-08-05 (email verification at signup merged — PR [#95](https://github.com/Efren707/toptrader/pull/95), ADR [0037](./adr/0037-email-verification-at-signup.md) — see Current focus)
+> Last updated: 2026-08-05 (restructured tracking to lean on GitHub Issues/Milestones for hardening work, trimmed duplication out of this file and `pre-deployment-checklist.md` — see Current focus)
 > This file tracks *where we are* — a lean, current-state view, pointers only. **How work is tracked:** every unit of work (MVP user story or pre-deployment hardening item) is a GitHub Issue on a [Milestone](https://github.com/Efren707/toptrader/milestones), closed by a PR; the PR holds full implementation detail, an ADR (`docs/adr/`) holds the "why" for notable decisions. Locally, [docs/planning-history.md](./planning-history.md) is the frozen narrative archive for completed phases/milestones, and [docs/pre-deployment-checklist.md](./pre-deployment-checklist.md) is the living checklist (done items + evidence links, remaining items → their Issues). Requirements detail lives in `docs/requirements/`.
 
 ## Current focus
@@ -10,6 +10,8 @@ Every MVP user story (US-1–US-9) plus the UI/UX polish pass (Milestone #12) is
 Since the last update: password reset (PR [#89](https://github.com/Efren707/toptrader/pull/89), [ADR 0036](./adr/0036-password-reset-flow.md)) and email verification at signup (PR [#95](https://github.com/Efren707/toptrader/pull/95), [ADR 0037](./adr/0037-email-verification-at-signup.md)) both merged, and the dev workflow itself got formalized into `CONTRIBUTING.md`/`CLAUDE.md` (PR [#91](https://github.com/Efren707/toptrader/pull/91), merge-commit-only now enforced structurally). Full detail for all three: `docs/pre-deployment-checklist.md`'s Done section.
 
 **Next up:** the two remaining hardening issues, quickest-to-largest — [#97](https://github.com/Efren707/toptrader/issues/97) logging/alerts in prod, then [#98](https://github.com/Efren707/toptrader/issues/98) rollback strategy (needs its own dedicated design session).
+
+Also this session: task/milestone tracking got restructured so hardening work follows the same Issue → Milestone → PR flow the MVP user stories always used, instead of living only as prose here and in `pre-deployment-checklist.md` — new [Pre-Deployment Hardening milestone](https://github.com/Efren707/toptrader/milestone/13), new `hardening` issue template, milestones #8-12 closed out (were done but never closed).
 
 Coding collaboration mode applies throughout (user implements, Claude guides/reviews) — expect a guided-review round per file.
 
