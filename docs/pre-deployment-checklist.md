@@ -23,7 +23,8 @@ Compiled from a full audit (docs/ADRs vs. actual backend/frontend/CI code) on 20
 
 Tracked as GitHub Issues under the [Pre-Deployment Hardening milestone](https://github.com/Efren707/toptrader/milestone/13) — each needs a decision (fix, or accept as a documented trade-off) before it closes:
 
-- [ ] [#97](https://github.com/Efren707/toptrader/issues/97) Logging and alerts in prod
+- [ ] [#97](https://github.com/Efren707/toptrader/issues/97) Logging framework in backend
 - [ ] [#98](https://github.com/Efren707/toptrader/issues/98) Rollback strategy
+- [ ] [#102](https://github.com/Efren707/toptrader/issues/102) CloudWatch log shipping + StatusCheckFailed alarm — split out of #97, blocked on EC2 provisioning (deployment-sequencing work, not before)
 
 Full detail/evidence as of the 2026-07-31 re-audit: see the security review plan at the time it was written (`.claude/plans/before-moving-on-to-inherited-haven.md`, local to this machine, not repo-tracked).
