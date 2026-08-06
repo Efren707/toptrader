@@ -1,4 +1,4 @@
-# 0038 - Backend logging framework: structured JSON, externalized prod log path, email logged on failed login
+# 0038 - Backend logging framework: structured JSON, externalized prod log path, email logged on failed login and registration conflicts
 
 - Status: Accepted
 - Date: 2026-08-06
@@ -18,6 +18,11 @@ Issue [#97](https://github.com/Efren707/toptrader/issues/97) is implementing the
 - **Log the submitted email** (chosen) — `LoginService.recordFailedAttempt(email)` already keys its brute-force lockout tracking (ADR 0004 amendment) off the submitted email; a failed-auth event has no `userId` yet, so email is the only identifier available. Since the email is already the security-relevant key this code path correlates on internally, logging it doesn't newly expose anything beyond what the lockout mechanism already does in the database.
 - **No identifier, event only** — safer read of ADR 0033's "identifiers, not object graphs," but makes a logged failed-login event useless for spotting a targeted attack against one account, and ADR 0034's general rate limiting already covers blunt brute-force volume, not per-account correlation.
 
+### Registration-conflict identifier
+- **Log the submitted email/username** (chosen) — `RegistrationService.register` logs the attempted email on a `409 Email already in use` conflict (and username on the equivalent username conflict). Industry precedent (Auth0/Okta/Cognito-style event logs) logs the attempted identifier on signup conflicts specifically because it's the primary signal for registration abuse (bot signups, account enumeration scraping) — the same category of security-relevant event as a failed login, not an incidental extension of it. Decisive factor for this app specifically: the endpoint already returns a distinguishing `409 Email already in use` in the HTTP response, so the "does this email exist" signal is already an external enumeration oracle independent of logging — writing it to a log file with far more restricted access than the API response doesn't create a new leak, it just records what already happened.
+- **No identifier, event only** — closer to ADR 0033's default, but discards the only field that makes a registration-conflict log line useful for spotting abuse, and (unlike the login case) there's no separate rate-limit correlation already covering per-identifier signup probing.
+- **Fix enumeration at the response layer instead** — return a generic response regardless of conflict outcome, removing the oracle entirely, then logging the email would be a non-issue either way. Out of scope here: that's a change to ADR 0036/0037's registration API contract, not a logging-content decision, and wasn't made when those ADRs shipped.
+
 ## Decision
 
 - No new Maven dependency, no `logback-spring.xml`. Everything is properties-only, using Spring Boot's existing profile mechanism (`application-prod.properties`, already present in this project):
@@ -29,6 +34,7 @@ Issue [#97](https://github.com/Efren707/toptrader/issues/97) is implementing the
   - Login failure: WARN, submitted `email` (see decision above) + reason.
   - Account lockout triggered: WARN, `userId`/`email`.
   - Registration success: INFO, `userId`.
+  - Registration conflict (duplicate email/username): WARN, submitted `email` or `username` (see decision above) + reason.
   - Password reset / email verification requested and completed: INFO, `userId` when known.
   - Trade executed (buy/sell): INFO, `userId`, `ticker`, `tradeId`.
   - Unhandled exception (new catch-all in `GlobalExceptionHandler`): ERROR, full exception logged server-side; the client response stays a generic, stack-trace-free `ProblemDetail` (consistent with `server.error.include-stacktrace=never`).
@@ -39,4 +45,5 @@ Issue [#97](https://github.com/Efren707/toptrader/issues/97) is implementing the
 - No new dependency — zero added build/classpath surface, and one less thing to keep patched.
 - The local rolling policy's retention should be spot-checked against real disk usage once the app has actual prod traffic, same caveat ADR 0008 already notes for CloudWatch-side retention.
 - `logging.file.name` needs a real value in `application-prod.properties` (or an env override) before this is meaningful in prod — ties into EC2 bootstrap/ADR 0014, tracked under #102, not this issue.
-- Deliberately logging the submitted email on failed login is a narrower, justified exception to ADR 0033's general rule, not a reopening of it — future PII-adjacent logging decisions should still default to identifiers-only unless a similarly concrete justification applies.
+- Deliberately logging the submitted email on failed login and on registration conflicts is a narrower, justified exception to ADR 0033's general rule, not a reopening of it — future PII-adjacent logging decisions should still default to identifiers-only unless a similarly concrete justification applies. Both exceptions here share the same shape (a security-relevant event with no confirmed `userId` yet, where the identifier is the only useful correlation key) — a third case invoking "it's basically the same as these two" should still be checked against its own facts (is there already an oracle/correlation mechanism, is there a comparable abuse signal), not rubber-stamped by precedent.
+- If registration-response enumeration resistance is ever decided as a separate goal (the rejected third option above), this ADR's registration-conflict logging exception should be revisited — the rationale for logging depends on the oracle already existing in the response.
