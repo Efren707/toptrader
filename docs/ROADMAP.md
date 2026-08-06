@@ -17,9 +17,9 @@ Every MVP user story (US-1–US-9) plus the UI/UX polish pass (Milestone #12) is
    - [x] `EmailVerificationToken` entity + repository
    - [x] `RegistrationService` sends a verification email on signup (non-blocking if no `EmailSender` bean, i.e. prod today)
    - [x] `EmailVerificationService.verifyEmail(token)`
-   - [x] `EmailVerificationService.resendVerification(email)` — done: mirrors `PasswordResetService.resetRequest`'s enumeration-safe shape (identical response whether the email exists or not), skips issuing a token for already-verified users, and throws `SERVICE_UNAVAILABLE` with no `EmailSender` configured (unlike the registration-time send, which no-ops silently so registration itself never fails). Token-issuing logic was extracted out of `RegistrationService` into a new `EmailVerificationService.sendVerificationEmail(User)` method that both registration and resend now share, instead of duplicating it. Covered by new `EmailVerificationServiceTest` (service-layer only — controller-level coverage is still open, see below).
-   - [ ] `AuthController` verify/resend endpoints — **next up.**
-   - [ ] `SecurityConfig` CSRF/`permitAll()` wiring for both new endpoints
+   - [x] `EmailVerificationService.resendVerification(email)` — done: mirrors `PasswordResetService.resetRequest`'s enumeration-safe shape (identical response whether the email exists or not), skips issuing a token for already-verified users, and throws `SERVICE_UNAVAILABLE` with no `EmailSender` configured (unlike the registration-time send, which no-ops silently so registration itself never fails). Token-issuing logic was extracted out of `RegistrationService` into a new `EmailVerificationService.sendVerificationEmail(User)` method that both registration and resend now share, instead of duplicating it. Also invalidates prior outstanding tokens for the user before issuing a new one, per ADR 0037 (a follow-up fix — the first pass missed this). Covered by `EmailVerificationServiceTest` (service-layer only — controller-level coverage is still open, see below).
+   - [x] `AuthController` verify/resend endpoints — `POST /auth/verify-email` and `POST /auth/resend-verification`, same `204`/no-body shape as `forgot-password`/`reset-password`. New `VerifyEmailRequest`/`ResendVerificationRequest` records.
+   - [ ] `SecurityConfig` CSRF/`permitAll()` wiring for both new endpoints — **next up.**
    - [ ] `RateLimitGroup.EMAIL_VERIFICATION`
    - [ ] Backend tests for verify/resend flow
    - [ ] Frontend: register success verification notice
