@@ -21,8 +21,8 @@ Every MVP user story (US-1–US-9) plus the UI/UX polish pass (Milestone #12) is
    - [x] `AuthController` verify/resend endpoints — `POST /auth/verify-email` and `POST /auth/resend-verification`, same `204`/no-body shape as `forgot-password`/`reset-password`. New `VerifyEmailRequest`/`ResendVerificationRequest` records.
    - [x] `SecurityConfig` CSRF/`permitAll()` wiring for both new endpoints — `/auth/verify-email` and `/auth/resend-verification` added to both `ignoringRequestMatchers(...)` and `permitAll()`, mirroring `forgot-password`/`reset-password`; class Javadoc updated to cite ADR 0037.
    - [x] `RateLimitGroup.EMAIL_VERIFICATION` — client-IP keyed, 5/hour, covers both endpoints, mirrors `RateLimitGroup.FORGOT_PASSWORD`.
-   - [ ] Backend tests for verify/resend flow — **next up** (controller-level, e.g. `AuthControllerEmailVerificationTest` mirroring `AuthControllerPasswordResetTest`).
-   - [ ] Frontend: register success verification notice
+   - [x] Backend tests for verify/resend flow — new `AuthControllerEmailVerificationTest` (controller-level, mirrors `AuthControllerPasswordResetTest`): covers `verifyEmail`'s valid/unknown/expired/already-used/blank-token paths and `resendVerification`'s unverified/unknown-email/already-verified/invalidate-prior-token/invalid-email paths.
+   - [ ] Frontend: register success verification notice — **next up.**
    - [ ] Frontend: verify-email route/component (success/expired/invalid + resend)
    - [ ] Frontend tests + manual browser smoke test, then full suite + PR
 2. Logging and alerts in prod — zero logging framework exists yet; ADR 0008 plans the infra (logback → CloudWatch Logs, alarm → SNS email) but execution hasn't started.
