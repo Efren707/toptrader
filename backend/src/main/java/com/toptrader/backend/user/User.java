@@ -37,6 +37,9 @@ public class User {
   @Column(name = "locked_until")
   private LocalDateTime lockedUntil;
 
+  @Column(name = "email_verified_at")
+  private LocalDateTime emailVerifiedAt;
+
   @CreationTimestamp
   @Column(name = "created_at", nullable = false, updatable = false)
   private LocalDateTime createdAt;
@@ -86,6 +89,14 @@ public class User {
 
   public void setFailedAttempts(int failedAttempts) {
     this.failedAttempts = failedAttempts;
+  }
+
+  public LocalDateTime getEmailVerifiedAt() {
+    return this.emailVerifiedAt;
+  }
+
+  public void setEmailVerifiedAt(LocalDateTime localDateTime) {
+    this.emailVerifiedAt = localDateTime;
   }
 
   public LocalDateTime getLockedUntil() {

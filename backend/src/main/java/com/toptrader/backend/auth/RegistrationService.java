@@ -5,6 +5,7 @@ import com.toptrader.backend.user.UserPrincipal;
 import com.toptrader.backend.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,19 +21,24 @@ import org.springframework.web.server.ResponseStatusException;
 /** Registration flow per ADR 0004; starting cash constant per US-3 (data-model.md). */
 @Service
 public class RegistrationService {
-
   private static final BigDecimal STARTING_CASH_BALANCE = new BigDecimal("500.00");
 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
+  private final EmailVerificationService emailVerificationService;
   private final SecurityContextRepository securityContextRepository =
       new HttpSessionSecurityContextRepository();
 
-  public RegistrationService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+  public RegistrationService(
+      UserRepository userRepository,
+      PasswordEncoder passwordEncoder,
+      EmailVerificationService emailVerificationService) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
+    this.emailVerificationService = emailVerificationService;
   }
 
+  @Transactional
   public UserSummary register(
       RegisterRequest request, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
     if (userRepository.existsByEmail(request.email())) {
@@ -49,8 +55,9 @@ public class RegistrationService {
             passwordEncoder.encode(request.password()),
             STARTING_CASH_BALANCE);
     user = userRepository.save(user);
-
     establishSession(user, httpRequest, httpResponse);
+
+    this.emailVerificationService.sendVerificationEmail(user);
 
     return UserSummary.from(user);
   }

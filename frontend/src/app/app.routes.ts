@@ -23,6 +23,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/reset-password/reset-password').then((m) => m.ResetPassword),
     canActivate: [guestGuard]
   },
+  {
+    path: 'verify-email',
+    loadComponent: () => import('./features/auth/verify-email/verify-email').then((m) => m.VerifyEmail),
+  },
   { 
     path: '',
     loadComponent: () => import('./shared/layout/layout').then((m) => m.Layout),

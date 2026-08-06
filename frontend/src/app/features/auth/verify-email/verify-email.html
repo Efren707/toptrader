@@ -1,0 +1,56 @@
+<div class="page">
+  <div class="masthead">
+    <div class="wordmark">TOP<span>TRADER</span></div>
+  </div>
+
+  <div class="layout">
+    <app-card class="auth-panel">
+      @switch (status()) {
+        @case ('verifying') {
+          <p class="eyebrow">Verify email</p>
+          <h1>Verifying your email…</h1>
+          <p class="lede">Hang tight, this only takes a moment.</p>
+        }
+        @case ('success') {
+          <p class="eyebrow">Verify email</p>
+          <h1>Email verified</h1>
+          <p class="form-success">Your email address has been verified.</p>
+          <p class="auth-switch"><a routerLink="/dashboard">Go to dashboard</a></p>
+        }
+        @case ('failed') {
+          <p class="eyebrow">Verify email</p>
+          <h1>Couldn't verify your email</h1>
+          <p class="lede">
+            This verification link is invalid or has expired. Enter your email below and we'll
+            send you a new one.
+          </p>
+
+          <form [formGroup]="resendForm" (ngSubmit)="submitResend()">
+            @if (resendError(); as message) {
+              <p class="form-error">{{ message }}</p>
+            }
+
+            @if (resendConfirmed()) {
+              <p class="form-success">
+                If that email is registered and not yet verified, we've sent a new link.
+              </p>
+            }
+
+            <app-input
+              label="Email"
+              type="email"
+              formControlName="email"
+              [errorMessage]="errorFor('email')"
+            />
+
+            <app-button type="submit" [fullWidth]="true" [disabled]="resendSubmitting()">
+              {{ resendSubmitting() ? 'Sending…' : 'Resend verification email' }}
+            </app-button>
+          </form>
+
+          <p class="auth-switch"><a routerLink="/login">Return to login</a></p>
+        }
+      }
+    </app-card>
+  </div>
+</div>

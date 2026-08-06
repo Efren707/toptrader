@@ -31,6 +31,14 @@ export interface ResetPasswordRequest {
   password: string;
 }
 
+export interface VerifyEmailRequest {
+  rawToken: string;
+}
+
+export interface ResendVerificationRequest {
+  email: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
@@ -74,4 +82,13 @@ export class AuthService {
   resetPassword(request: ResetPasswordRequest): Observable<void> {
     return this.http.post<void>(`${environment.apiUrl}/auth/reset-password`, request)
   }
+
+  verifyEmail(request: VerifyEmailRequest): Observable<void> {
+    return this.http.post<void>(`${environment.apiUrl}/auth/verify-email`, request);
+  }
+  
+  resendVerification(request: ResendVerificationRequest): Observable<void> {
+    return this.http.post<void>(`${environment.apiUrl}/auth/resend-verification`, request);
+  }
+  
 }
