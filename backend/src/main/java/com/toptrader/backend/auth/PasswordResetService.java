@@ -13,6 +13,8 @@ import java.util.Base64;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.session.SessionInformation;
@@ -23,6 +25,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class PasswordResetService {
+
+  private static final Logger log = LoggerFactory.getLogger(PasswordResetService.class);
 
   private static final int RESET_TOKEN_TTL_MINUTES = 30;
 
@@ -50,6 +54,7 @@ public class PasswordResetService {
 
   public void resetRequest(String email) {
     if (emailSender.isEmpty()) {
+      log.atWarn().addKeyValue("reason", "Email sender unavailable").log("Password reset failed");
       throw new ResponseStatusException(
           HttpStatus.SERVICE_UNAVAILABLE, "Password reset is temporarily unavailable.");
     }
@@ -74,6 +79,10 @@ public class PasswordResetService {
               user.get().getEmail(),
               "Reset your TopTrader password",
               "Use this link to reset your password: " + resetLink);
+
+      log.atInfo()
+          .addKeyValue("userId", user.get().getId())
+          .log("Password reset request succeeded");
     }
   }
 
@@ -88,6 +97,9 @@ public class PasswordResetService {
             && maybeToken.get().getExpiresAt().isAfter(LocalDateTime.now());
 
     if (!valid) {
+      log.atWarn()
+          .addKeyValue("reason", "Invalid or expired reset token.")
+          .log("Password reset failed");
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid or expired reset token.");
     }
 
@@ -107,6 +119,7 @@ public class PasswordResetService {
     }
 
     passwordResetToken.setUsedAt(LocalDateTime.now());
+    log.atInfo().addKeyValue("userId", user.getId()).log("Password reset succeeded");
     passwordResetTokenRepository.save(passwordResetToken);
   }
 
