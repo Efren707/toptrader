@@ -9,6 +9,8 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class TradeService {
+  private static final Logger log = LoggerFactory.getLogger(TradeService.class);
+
   private final HoldingRepository holdingRepository;
   private final TransactionRepository transactionRepository;
   private final UserRepository userRepository;
@@ -40,6 +44,11 @@ public class TradeService {
     Integer quantity = tradeRequest.quantity();
 
     if (quantity == null || quantity < 1) {
+      log.atWarn()
+          .addKeyValue("userId", userId)
+          .addKeyValue("ticker", ticker)
+          .addKeyValue("reason", "Invalid quantity amount")
+          .log("Buy stock failed");
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Quantity must be greater than zero");
     }
@@ -54,6 +63,11 @@ public class TradeService {
     BigDecimal total = quote.price().multiply(BigDecimal.valueOf(quantity));
 
     if (total.compareTo(user.getCashBalance()) > 0) {
+      log.atWarn()
+          .addKeyValue("userId", userId)
+          .addKeyValue("ticker", ticker)
+          .addKeyValue("reason", "Insufficient funds")
+          .log("Buy stock failed");
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cash balance not enough");
     }
 
@@ -84,6 +98,12 @@ public class TradeService {
     this.transactionRepository.save(transaction);
     TransactionResponse transactionResponse = toTransactionResponse(transaction);
 
+    log.atInfo()
+        .addKeyValue("userId", userId)
+        .addKeyValue("ticker", quote.ticker())
+        .addKeyValue("tradeId", transaction.getId())
+        .log("Buy stock succeeded");
+
     return new TradeResult(transactionResponse, user.getCashBalance(), holdingResponse);
   }
 
@@ -94,6 +114,11 @@ public class TradeService {
     Integer quantity = tradeRequest.quantity();
 
     if (quantity == null || quantity < 1) {
+      log.atWarn()
+          .addKeyValue("userId", userId)
+          .addKeyValue("ticker", ticker)
+          .addKeyValue("reason", "Invalid quantity amount")
+          .log("Sell stock failed");
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Quantity must be greater than zero");
     }
@@ -108,10 +133,20 @@ public class TradeService {
     Holding holding = this.holdingRepository.findByUserAndTicker(user, quote.ticker()).orElse(null);
 
     if (holding == null) {
+      log.atWarn()
+          .addKeyValue("userId", userId)
+          .addKeyValue("ticker", ticker)
+          .addKeyValue("reason", "Holding not found")
+          .log("Sell stock failed");
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Holding not found");
     }
 
     if (holding.getQuantity() < quantity) {
+      log.atWarn()
+          .addKeyValue("userId", userId)
+          .addKeyValue("ticker", ticker)
+          .addKeyValue("reason", "Insufficient holding quantity")
+          .log("Sell stock failed");
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Quantity must be less than current holding quantity");
     }
@@ -137,6 +172,12 @@ public class TradeService {
             user, quote.ticker(), Transaction.Side.SELL, quantity, quote.price(), total);
     this.transactionRepository.save(transaction);
     TransactionResponse transactionResponse = toTransactionResponse(transaction);
+
+    log.atInfo()
+        .addKeyValue("userId", userId)
+        .addKeyValue("ticker", quote.ticker())
+        .addKeyValue("tradeId", transaction.getId())
+        .log("Sell stock succeeded");
 
     return new TradeResult(transactionResponse, user.getCashBalance(), holdingResponse);
   }

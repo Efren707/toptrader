@@ -1,9 +1,13 @@
 package com.toptrader.backend.web;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -20,6 +24,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 /** Adds per-field validation detail to the RFC 7807 body (ADR 0012's single error shape). */
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+  private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
   @Override
   protected ResponseEntity<Object> handleMethodArgumentNotValid(
@@ -67,5 +72,26 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     ProblemDetail problemDetail =
         ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, "Access denied.");
     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(problemDetail);
+  }
+
+  /**
+   * Catches anything not already handled above (e.g. a stray NPE), logs it, and hides detail from
+   * the client.
+   */
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<Object> handleUnexpected(Exception ex, HttpServletRequest request) {
+    String correlationId = UUID.randomUUID().toString();
+    log.atError()
+        .setCause(ex)
+        .addKeyValue("correlationId", correlationId)
+        .addKeyValue("path", request.getRequestURI())
+        .log("Unhandled exception");
+
+    ProblemDetail problemDetail =
+        ProblemDetail.forStatusAndDetail(
+            HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred.");
+    problemDetail.setProperty("correlationId", correlationId);
+
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problemDetail);
   }
 }

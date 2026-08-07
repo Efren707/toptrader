@@ -12,6 +12,8 @@ import java.util.Base64;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class EmailVerificationService {
+
+  private static final Logger log = LoggerFactory.getLogger(EmailVerificationService.class);
+
   private final EmailVerificationTokenRepository emailVerificationTokenRepository;
   private final UserRepository userRepository;
   private final Optional<EmailSender> emailSender;
@@ -48,6 +53,9 @@ public class EmailVerificationService {
             && maybeToken.get().getExpiresAt().isAfter(LocalDateTime.now());
 
     if (!valid) {
+      log.atWarn()
+          .addKeyValue("reason", "Invalid or expired email verification token.")
+          .log("Email verification failed");
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Invalid or expired email verification token.");
     }
@@ -58,6 +66,7 @@ public class EmailVerificationService {
     userRepository.save(user);
 
     emailVerificationToken.setUsedAt(LocalDateTime.now());
+    log.atInfo().addKeyValue("userId", user.getId()).log("Email verification succeeded");
     emailVerificationTokenRepository.save(emailVerificationToken);
   }
 
@@ -88,6 +97,9 @@ public class EmailVerificationService {
 
   public void resendVerification(String email) {
     if (emailSender.isEmpty()) {
+      log.atWarn()
+          .addKeyValue("reason", "Email sender unavailable")
+          .log("Resend email verification failed");
       throw new ResponseStatusException(
           HttpStatus.SERVICE_UNAVAILABLE, "Email Sender is currently unavailable.");
     }
@@ -97,6 +109,9 @@ public class EmailVerificationService {
     if (user.isPresent() && user.get().getEmailVerifiedAt() == null) {
       invalidateOutstandingTokens(user.get());
       sendVerificationEmail(user.get());
+      log.atInfo()
+          .addKeyValue("userId", user.get().getId())
+          .log("Email verification resend succeeded");
     }
   }
 
