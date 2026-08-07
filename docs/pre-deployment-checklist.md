@@ -18,7 +18,7 @@ Compiled from a full audit (docs/ADRs vs. actual backend/frontend/CI code) on 20
 - [x] Authorization guard — `@EnableMethodSecurity` + `@PreAuthorize` ownership checks on all `TradeService` methods, [ADR 0035](./adr/0035-authorization-guard.md), PR [#86](https://github.com/Efren707/toptrader/pull/86)
 - [x] Password-reset flow — [ADR 0036](./adr/0036-password-reset-flow.md), PR [#89](https://github.com/Efren707/toptrader/pull/89). **Known gap, tracked not silent:** prod isn't end-to-end usable until a real SES-backed `EmailSender` is built as part of AWS deployment sequencing.
 - [x] Email verification at signup — split out from password reset per ADR 0036's scope note, [ADR 0037](./adr/0037-email-verification-at-signup.md), PR [#95](https://github.com/Efren707/toptrader/pull/95). **Known gap:** same SES-sender dependency as password reset above.
-- [x] Logging framework in backend — narrowed from its original scope (CloudWatch/alarm split to #102, see below), [ADR 0038](./adr/0038-backend-logging-framework.md), PR open pending merge (#97).
+- [x] Logging framework in backend — narrowed from its original scope (CloudWatch/alarm split to #102, see below), closes #97, [ADR 0038](./adr/0038-backend-logging-framework.md), PR [#104](https://github.com/Efren707/toptrader/pull/104) open pending merge.
 
 ## Still open
 
