@@ -18,13 +18,14 @@ Compiled from a full audit (docs/ADRs vs. actual backend/frontend/CI code) on 20
 - [x] Authorization guard — `@EnableMethodSecurity` + `@PreAuthorize` ownership checks on all `TradeService` methods, [ADR 0035](./adr/0035-authorization-guard.md), PR [#86](https://github.com/Efren707/toptrader/pull/86)
 - [x] Password-reset flow — [ADR 0036](./adr/0036-password-reset-flow.md), PR [#89](https://github.com/Efren707/toptrader/pull/89). **Known gap, tracked not silent:** prod isn't end-to-end usable until a real SES-backed `EmailSender` is built as part of AWS deployment sequencing.
 - [x] Email verification at signup — split out from password reset per ADR 0036's scope note, [ADR 0037](./adr/0037-email-verification-at-signup.md), PR [#95](https://github.com/Efren707/toptrader/pull/95). **Known gap:** same SES-sender dependency as password reset above.
-- [x] Logging framework in backend — narrowed from its original scope (CloudWatch/alarm split to #102, see below), closes #97, [ADR 0038](./adr/0038-backend-logging-framework.md), PR [#104](https://github.com/Efren707/toptrader/pull/104) open pending merge.
+- [x] Logging framework in backend — narrowed from its original scope (CloudWatch/alarm split to #102, see below), closes #97, [ADR 0038](./adr/0038-backend-logging-framework.md), PR [#104](https://github.com/Efren707/toptrader/pull/104) merged.
+- [x] Rollback strategy — application-only scope, automated last-known-good jar swap on failed post-deploy smoke test; database schema stays fix-forward per ADR 0011/0019's expand/contract discipline. Non-AWS providers with built-in rollback (Heroku, GCP Cloud Run, etc.) considered and declined — AWS reaffirmed per `vision.md`. Closes #98, [ADR 0039](./adr/0039-rollback-strategy.md). Implementation split to #105 (see below).
 
 ## Still open
 
 Tracked as GitHub Issues under the [Pre-Deployment Hardening milestone](https://github.com/Efren707/toptrader/milestone/13) — each needs a decision (fix, or accept as a documented trade-off) before it closes:
 
-- [ ] [#98](https://github.com/Efren707/toptrader/issues/98) Rollback strategy
 - [ ] [#102](https://github.com/Efren707/toptrader/issues/102) CloudWatch log shipping + StatusCheckFailed alarm — split out of #97, blocked on EC2 provisioning (deployment-sequencing work, not before)
+- [ ] [#105](https://github.com/Efren707/toptrader/issues/105) Implement automated rollback (last-known-good jar swap) — split out of #98, blocked on EC2 provisioning + the deploy workflow existing (same blocker as #102)
 
 Full detail/evidence as of the 2026-07-31 re-audit: see the security review plan at the time it was written (`.claude/plans/before-moving-on-to-inherited-haven.md`, local to this machine, not repo-tracked).
