@@ -8,7 +8,7 @@ Working agreement applies as usual: one section at a time, check in before decid
 
 ## Status
 
-In progress — section 1 done.
+In progress — sections 1-2 done.
 
 ## Sections
 
@@ -23,9 +23,9 @@ GitHub Issue: [#107](https://github.com/Efren707/toptrader/issues/107)
 
 ### 2. Network & security groups
 
-- [ ] Confirm default VPC is in use (no custom subnets/route tables/NAT — ADR 0014)
-- [ ] EC2 security group: app port inbound restricted to CloudFront's managed origin-facing prefix list; SSH on a non-default port, open to `0.0.0.0/0` with fail2ban (GitHub-hosted runners have no static IP to allowlist)
-- [ ] RDS security group: inbound 5432 only from the EC2 security group (SG-to-SG reference, not a CIDR range), `publicly accessible = No`
+- [x] Confirm default VPC is in use (no custom subnets/route tables/NAT — ADR 0014) — region **us-east-2**, default VPC `vpc-05baaee7f9cc06301`
+- [x] EC2 security group: app port inbound restricted to CloudFront's managed origin-facing prefix list; SSH on a non-default port, open to `0.0.0.0/0` with fail2ban (GitHub-hosted runners have no static IP to allowlist) — `toptrader-ec2-sg` (`sg-0e1cba638b3f1b191`): 8080/TCP from prefix list `com.amazonaws.global.cloudfront.origin-facing`, SSH on port **3333** from `0.0.0.0/0`, default (all traffic) outbound
+- [x] RDS security group: inbound 5432 only from the EC2 security group (SG-to-SG reference, not a CIDR range), `publicly accessible = No` — `toptrader-rds-sg` (`sg-00b6c9363c90dbec6`): 5432/TCP from `toptrader-ec2-sg`, default (all traffic) outbound; `publicly accessible = No` to be set at RDS provisioning (section 3)
 
 GitHub Issue: [#108](https://github.com/Efren707/toptrader/issues/108)
 
