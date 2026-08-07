@@ -99,7 +99,7 @@ Each spike produces a recommendation + trade-offs for review, then an ADR.
 - [x] Developer setup guide outline — `docs/guides/developer-setup-guide-outline.md`
 - [x] Contribution/workflow guide outline — `docs/guides/contribution-workflow-guide-outline.md`
 - [x] README structure finalized (as outline; `README.md` itself unchanged until deploy) — `docs/guides/readme-structure-outline.md`
-- [x] Demo account & showcase readiness outline — mechanism and content decided ahead of time, [docs/tasks/planning/demo-account.md](../planning/demo-account.md) (moved out of `docs/guides/` once the remaining work became execution-blocked-on-deploy rather than a pure reference outline). Everything plannable ahead of deploy is done; the remaining execution (screenshots, live demo link, the actual seed migration) is blocked until deploy and tracked in [docs/tasks/planning/aws-infrastructure-implementation.md](../planning/aws-infrastructure-implementation.md)'s cutover section, not here.
+- [x] Demo account & showcase readiness outline — mechanism and content decided ahead of time, [docs/tasks/planning/demo-account.md](../planning/demo-account.md) (moved out of `docs/guides/` once the remaining work became execution-blocked-on-deploy rather than a pure reference outline). Everything plannable ahead of deploy is done; the remaining execution (screenshots, live demo link, the actual seed migration) is blocked until deploy and tracked in [docs/tasks/in-progress/aws-infrastructure-implementation.md](../in-progress/aws-infrastructure-implementation.md)'s cutover section, not here.
 
 ## Phase 6 — MVP Scope Freeze & Execution Handoff — ✅ Done
 

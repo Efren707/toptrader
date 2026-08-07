@@ -8,16 +8,16 @@ Working agreement applies as usual: one section at a time, check in before decid
 
 ## Status
 
-Not started. First action once picked up: this file moves from `docs/tasks/planning/` to `docs/tasks/in-progress/`.
+In progress — section 1 done.
 
 ## Sections
 
 ### 1. Domain & AWS account foundation
 
-- [ ] Register the real domain (Route 53) — resolves the placeholder prod `apiUrl` in `frontend/src/environments/environment.ts` (`https://api.toptrader.example`, doesn't match the real domain used elsewhere in the docs, `https://api.toptrader.com`)
-- [ ] Create the Route 53 hosted zone
-- [ ] Non-root IAM user/role for manual provisioning (not using the AWS root account day-to-day)
-- [ ] AWS Budgets: $15 warning / $25 critical thresholds, both emailing (ADR 0014), needs a verified recipient email
+- [x] Register the real domain (Route 53) — `toptrader.com`/`.app`/`.io`/`.net` were all taken; registered **`toptrader.dev`** instead. Resolved the placeholder prod `apiUrl` in `frontend/src/environments/environment.ts` and every other `toptrader.com`/`.example` doc reference to match.
+- [x] Create the Route 53 hosted zone (auto-created by Route 53 on domain registration)
+- [x] Non-root IAM user/role for manual provisioning (not using the AWS root account day-to-day) — `toptrader-admin` IAM user, console access, `AdministratorAccess` policy
+- [x] AWS Budgets: $15 warning / $25 critical thresholds, both emailing (ADR 0014) — single $25 monthly cost budget with alerts at 60%/100%
 
 GitHub Issue: [#107](https://github.com/Efren707/toptrader/issues/107)
 

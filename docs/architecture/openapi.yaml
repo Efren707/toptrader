@@ -8,8 +8,8 @@ info:
     (withCredentials) on every subsequent request. All errors use RFC 7807
     application/problem+json.
 servers:
-  - url: https://api.toptrader.example
-    description: Production (placeholder domain, see ADR 0005)
+  - url: https://api.toptrader.dev
+    description: Production (see ADR 0005)
 
 security:
   - sessionAuth: []

@@ -31,7 +31,7 @@ Dependabot wins on effort-to-value for a solo project; the others were rejected 
 - **Security Misconfiguration (A05)**: `server.error.include-stacktrace=never` and `spring.jpa.show-sql=false` in prod; Actuator locked down as above.
 - **Vulnerable/Outdated Components (A06)**: GitHub Dependabot alerts + version-update PRs, weekly schedule, `maven` + `npm` ecosystems. (Amended 2026-07-29: also `github-actions`, to catch outdated/vulnerable pinned Action versions in `.github/workflows/`.)
 - **Identification/Authentication Failures (A07)**: confirm Spring Security's default session-fixation protection (`sessionFixation().migrateSession()`) stays enabled; use Spring Security's default `/logout` endpoint (invalidates the `HttpSession` server-side, not just a client-side cookie clear) rather than a hand-rolled logout.
-- **CORS**: explicit allowed origin (`https://app.toptrader.com` in prod, `localhost:4200` in a dev profile — never a wildcard, which Spring rejects anyway when `allowCredentials(true)` is set), `allowCredentials(true)` for the session cookie, explicit allowed methods/headers including `X-XSRF-TOKEN`.
+- **CORS**: explicit allowed origin (`https://app.toptrader.dev` in prod, `localhost:4200` in a dev profile — never a wildcard, which Spring rejects anyway when `allowCredentials(true)` is set), `allowCredentials(true)` for the session cookie, explicit allowed methods/headers including `X-XSRF-TOKEN`.
 - **CSRF**: kept enabled, cookie + header pattern as described above.
 - **Dependency scanning**: Dependabot, as decided above.
 - **Actuator**: only `/actuator/health` exposed publicly, `show-details=never`, all other endpoints excluded.
@@ -40,7 +40,7 @@ Dependabot wins on effort-to-value for a solo project; the others were rejected 
 ## Consequences
 
 - The IDOR integration tests become part of the core test suite expectations referenced in `nfr.md`'s Maintainability section ("meaningful automated test coverage... for core trading logic") — this ADR extends that expectation to access-control tests specifically, not just trading math.
-- CORS origins are environment-specific, so local dev (`localhost:4200`) and prod (`app.toptrader.com`, per ADR 0005's domain) need separate Spring profiles or config — a detail for Phase 3/4 implementation, not resolved here.
+- CORS origins are environment-specific, so local dev (`localhost:4200`) and prod (`app.toptrader.dev`, per ADR 0005's domain) need separate Spring profiles or config — a detail for Phase 3/4 implementation, not resolved here.
 - Angular's `HttpClientXsrfModule` needs to be wired up in the frontend app config to complete the CSRF cookie+header pairing — noted for Phase 3 frontend architecture.
 - Dependabot version-update PRs will need a lightweight solo-dev triage habit (review and merge or dismiss) to stay useful rather than becoming noise — a process note, not a blocker.
 - This ADR does not cover rate-limiting/abuse protection beyond the login lockout already decided in ADR 0004 — general API rate-limiting remains explicitly out of MVP scope per `user-stories.md`. (Amended 2026-07-30: general API rate-limiting is now decided in ADR 0034, ahead of production deployment.)
