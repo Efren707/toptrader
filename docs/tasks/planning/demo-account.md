@@ -1,6 +1,6 @@
-# Demo / Showcase Readiness — Outline
+# Demo Account & Showcase Readiness
 
-> Status: Partially decided. This item can only be finished once the app is built and deployed (see the "Blocked" section) — this doc captures what could be decided ahead of time so there's less to figure out later. **Revisit this doc once the app is deployed to prod** to finish the blocked items below.
+> Status: Partially decided. This item can only be finished once the app is built and deployed (see the "Blocked" section) — this doc captures what could be decided ahead of time so there's less to figure out later. Tracked from [docs/tasks/planning/aws-infrastructure-implementation.md](./aws-infrastructure-implementation.md)'s cutover section (section 8) — **revisit this doc once the app is deployed to prod** to finish the blocked items below.
 
 ## Decided now
 
@@ -15,6 +15,6 @@ A Flyway seed migration (versioned, e.g. `V<n>__seed_demo_account.sql`), using a
 
 ## Blocked until the app is deployed
 
-- **README screenshots/GIF** — needs a working UI to capture. Revisit the [README structure outline](./readme-structure-outline.md)'s screenshots section once there's something to screenshot.
+- **README screenshots/GIF** — needs a working UI to capture. Revisit the [README structure outline](../../guides/readme-structure-outline.md)'s screenshots section once there's something to screenshot.
 - **Live demo link callout** — needs a real prod URL (per `deployment-architecture.md`) to link to. Revisit the README structure outline's status-line section at the same time.
 - **Writing the actual seed migration** — the mechanism and content shape are decided above, but the SQL itself depends on the final `users`/`holdings`/`transactions` schema as implemented (not just as designed in `data-model.md`) — write it once the backend + schema exist.

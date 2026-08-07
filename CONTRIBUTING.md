@@ -63,7 +63,7 @@ Pulling the above together, a feature/fix is done when:
 
 ## 7. Issue and project tracking
 
-Work is tracked via GitHub Issues + a Projects board, with Milestones mapped to roadmap phases (and later, MVP build-order features and pre-deployment hardening work). Every non-trivial unit of work — a user story, a bug, or a pre-deployment/security/ops item — gets an Issue on the relevant Milestone before it's built, closed by the PR that implements it (`Closes #NN`). This applies to hardening/checklist work too, not just user-facing features: file an Issue instead of adding a paragraph straight to `docs/pre-deployment-checklist.md`. Use the issue templates under `.github/ISSUE_TEMPLATE/`:
+Work is tracked via GitHub Issues + a Projects board, with Milestones mapped to roadmap phases (and later, MVP build-order features and pre-deployment hardening work). Every non-trivial unit of work — a user story, a bug, or a pre-deployment/security/ops item — gets an Issue on the relevant Milestone before it's built, closed by the PR that implements it (`Closes #NN`). This applies to hardening/checklist work too, not just user-facing features: file an Issue instead of adding a paragraph straight to a status doc under `docs/tasks/` (see [ADR 0040](./docs/adr/0040-work-tracking-docs-lifecycle.md) for how those docs are organized). Use the issue templates under `.github/ISSUE_TEMPLATE/`:
 
 - **Bug report** — something broken
 - **Feature request** — new, user-facing functionality
