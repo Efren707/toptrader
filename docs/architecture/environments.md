@@ -11,8 +11,8 @@
 | Database | Dockerized Postgres (`docker compose up -d`), image version matching RDS major version | RDS PostgreSQL, db.t4g.micro, Single-AZ, `publicly accessible = No` |
 | Schema migrations | Flyway, runs at app startup against local Postgres | Flyway, runs at app startup against RDS |
 | Config/secrets source | Gitignored `application-local.yml` (from committed `.example` template), each developer supplies their own Finnhub key + session-signing value | SSM Parameter Store, unified `/toptrader/prod/*` path for every prod config key (`SecureString` for secrets, `String` for non-sensitive values, ADR 0018), fetched by the EC2 instance role during deploy (ADR 0015) |
-| Frontend origin (CORS) | `http://localhost:4200` | `https://app.toptrader.com` |
-| Backend URL | `http://localhost:8080` | `https://api.toptrader.com` (CloudFront → EC2, HTTP inside AWS's network) |
+| Frontend origin (CORS) | `http://localhost:4200` | `https://app.toptrader.dev` |
+| Backend URL | `http://localhost:8080` | `https://api.toptrader.dev` (CloudFront → EC2, HTTP inside AWS's network) |
 | TLS | None (plain HTTP, loopback only) | ACM cert terminated at CloudFront edge |
 | Logging | Console / local file, dev-friendly format | Local logback file, unified CloudWatch agent ships it to CloudWatch Logs, 14-30 day retention |
 | Error responses | Stack traces may be visible (dev convenience) | `server.error.include-stacktrace=never`, `spring.jpa.show-sql=false` |

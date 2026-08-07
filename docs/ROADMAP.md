@@ -5,7 +5,7 @@
 
 ## Current focus
 
-MVP (US-1–US-9), the UI/UX polish pass, and pre-deployment hardening are all done. Work now proceeds through the **[AWS Deployment Infrastructure milestone](https://github.com/Efren707/toptrader/milestone/14)**, one section at a time — see [docs/tasks/planning/aws-infrastructure-implementation.md](./tasks/planning/aws-infrastructure-implementation.md) for the section-by-section breakdown, status, and everything blocked on it (including the demo/showcase-readiness work in its cutover section).
+MVP (US-1–US-9), the UI/UX polish pass, and pre-deployment hardening are all done. Work now proceeds through the **[AWS Deployment Infrastructure milestone](https://github.com/Efren707/toptrader/milestone/14)**, one section at a time — see [docs/tasks/in-progress/aws-infrastructure-implementation.md](./tasks/in-progress/aws-infrastructure-implementation.md) for the section-by-section breakdown, status, and everything blocked on it (including the demo/showcase-readiness work in its cutover section).
 
 ## Working agreement
 

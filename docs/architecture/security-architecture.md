@@ -20,16 +20,16 @@
 ## Transport & network
 
 - HTTPS everywhere in the deployed environment — no plaintext HTTP endpoints (`nfr.md`), TLS terminated at CloudFront on both the `app.` and `api.` subdomains (ADR 0005).
-- CORS: explicit allowed origin (`https://app.toptrader.com` prod / `localhost:4200` dev — never a wildcard), `allowCredentials(true)`, explicit allowed methods/headers including `X-XSRF-TOKEN` (ADR 0007).
+- CORS: explicit allowed origin (`https://app.toptrader.dev` prod / `localhost:4200` dev — never a wildcard), `allowCredentials(true)`, explicit allowed methods/headers including `X-XSRF-TOKEN` (ADR 0007).
 - **Security headers (new in this doc)** — applied via a CloudFront Response Headers Policy (AWS-managed, free, covers both the S3 frontend and the CloudFront-fronted backend) rather than hand-rolled in app code:
   - `Strict-Transport-Security: max-age=63072000; includeSubDomains`
   - `X-Content-Type-Options: nosniff`
   - `Referrer-Policy: strict-origin-when-cross-origin`
   - `Content-Security-Policy` — finalized and verified against the actual production build output (2026-07-30):
     ```
-    default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.toptrader.com; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'
+    default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.toptrader.dev; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'
     ```
-    No `'unsafe-inline'`, hashes, or nonces are needed. Angular CLI's production build inlines "critical CSS" by default (via Beasties), which emits an inline `<style>` block and a `<link ... onload="...">` attribute in `index.html` — both would be blocked under this policy, leaving the site unstyled. This is disabled via `"optimization": { "styles": { "inlineCritical": false } }` in `frontend/angular.json`'s production configuration, verified empirically (build output inspected, then the app loaded under an enforced version of this policy against the real backend with zero console violations). `connect-src` uses the real prod API origin from `docs/architecture/environments.md`, not `frontend/src/environments/environment.ts`'s current placeholder value — that file needs updating to the real domain once it's registered, tracked separately from this decision.
+    No `'unsafe-inline'`, hashes, or nonces are needed. Angular CLI's production build inlines "critical CSS" by default (via Beasties), which emits an inline `<style>` block and a `<link ... onload="...">` attribute in `index.html` — both would be blocked under this policy, leaving the site unstyled. This is disabled via `"optimization": { "styles": { "inlineCritical": false } }` in `frontend/angular.json`'s production configuration, verified empirically (build output inspected, then the app loaded under an enforced version of this policy against the real backend with zero console violations). `connect-src` uses the real prod API origin from `docs/architecture/environments.md`, matching `frontend/src/environments/environment.ts`.
 
 ## CSRF
 

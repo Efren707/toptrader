@@ -9,7 +9,7 @@ flowchart TB
     end
 
     subgraph dns[Domain]
-        R53["Route 53<br/>app.toptrader.example / api.toptrader.example"]
+        R53["Route 53<br/>app.toptrader.dev / api.toptrader.dev"]
     end
 
     subgraph aws["AWS"]

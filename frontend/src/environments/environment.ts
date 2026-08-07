@@ -1,3 +1,3 @@
 export const environment = {
-  apiUrl: 'https://api.toptrader.example',
+  apiUrl: 'https://api.toptrader.dev',
 };
