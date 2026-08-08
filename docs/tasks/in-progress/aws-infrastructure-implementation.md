@@ -8,7 +8,7 @@ Working agreement applies as usual: one section at a time, check in before decid
 
 ## Status
 
-In progress — sections 1-3 done (Flyway verification carried into section 4, see note there), section 4 next.
+In progress — sections 1-4 done, section 5 next.
 
 ## Sections
 
@@ -39,11 +39,11 @@ GitHub Issue: [#109](https://github.com/Efren707/toptrader/issues/109)
 
 ### 4. Backend compute — EC2
 
-- [ ] Provision EC2 t4g.micro, default public subnet
-- [ ] Confirm Flyway migrations (V1–V4) apply cleanly on first Spring Boot startup against RDS (carried over from section 3)
-- [ ] Spring Boot jar running under `systemd`, restart-on-failure
-- [ ] systemd health-check timer polling `/actuator/health` with auto-restart (ADR 0008)
-- [ ] IAM instance role: `ssm:GetParameters`/`GetParametersByPath` + `kms:Decrypt` (on `aws/ssm`), scoped to `/toptrader/prod/*`
+- [x] Provision EC2 t4g.micro, default public subnet — instance ID `i-0918607b17b50cbe8`, region **us-east-2**, AZ **us-east-2b**, Amazon Linux 2023 (arm64, kernel-6.1), `toptrader-ec2-sg` attached, public IP assigned; `sshd` reconfigured to listen on port 3333 (matching the security group) after a temporary port-22-from-my-IP bootstrap rule, which was removed once confirmed
+- [x] Confirm Flyway migrations (V1–V4) apply cleanly on first Spring Boot startup against RDS (carried over from section 3) — verified via a one-off manual `java -jar` run with the `prod` profile and RDS connection env vars; all 4 migrations applied and the app started cleanly
+- [x] Spring Boot jar running under `systemd`, restart-on-failure — `toptrader.service` unit, runs as the non-root `toptrader` system user (`/opt/toptrader`); `ExecStartPre` fetches all 5 `/toptrader/prod/*` SSM parameters into `/opt/toptrader/app.env` on every start (ADR 0041, refines ADR 0015's deploy-time-only fetch), `Restart=on-failure`/`RestartSec=5` (ADR 0008); verified `/actuator/health` returns `UP` and a `kill -9` on the process is auto-restarted with a fresh PID
+- [x] systemd health-check timer polling `/actuator/health` with auto-restart (ADR 0008) — `toptrader-healthcheck.timer` fires every 1 min (2 min initial delay), running `health-check.sh` (3 retries, 5s apart, then `systemctl restart toptrader.service` on repeated failure); verified two successful timer firings with no restart triggered while healthy
+- [x] IAM instance role: `ssm:GetParameters`/`GetParametersByPath` + `kms:Decrypt` (on `aws/ssm`), scoped to `/toptrader/prod/*` — customer-managed policy `toptrader-ssm-read-policy` + role `toptrader-ec2-role`, attached to the instance; verified with `aws sts get-caller-identity` (resolves to the assumed role) and both `get-parameter --with-decryption` and `get-parameters-by-path` against the 5 parameters created under `/toptrader/prod/*` (`spring-datasource-url`/`-username`/`-password`, `finnhub-api-key`, `frontend-origin`) — `session-signing-secret` intentionally skipped per ADR 0032 (flagged as dead config)
 
 Follow-on once this section is done: **#102** (CloudWatch agent + `StatusCheckFailed` → SNS alarm) becomes unblocked.
 

@@ -69,6 +69,23 @@ End-to-end flow, consolidating ADR 0006 and ADR 0009:
 - **Local dev secrets**: gitignored `application-local.yml` + a committed `.example` template (ADR 0009) — Docker Compose runs Postgres only.
 - No secret is ever logged; `spring.jpa.show-sql=false` and stack traces off in prod (above) double as guardrails against accidental leakage into logs.
 
+### What's safe to document publicly (new in this doc)
+
+This is a public repo, and recording real infra decisions/values in `docs/` is intentional — it's part of the resume-project deliverable, not something to work around. None of the following grants access on its own; the network/IAM controls enforce that server-side regardless of who can see the value:
+
+- Resource IDs: VPC ID, security group IDs, EC2 instance IDs, RDS instance identifier
+- Region/AZ, domain name, public IPs/DNS, subdomains
+- Security group rules, port numbers, CIDR ranges, managed prefix lists
+- Instance types, AMI choice, architecture decisions, cost estimates
+- IAM *policy shape* (e.g. "role scoped to `/toptrader/prod/*`") — the design, not credentials
+
+### What must never be committed
+
+- AWS access key ID + secret access key for any IAM user, especially `toptrader-admin` (`AdministratorAccess` — full account compromise if leaked)
+- The SSH private key (`toptrader-ec2-key.pem`)
+- RDS master password, Finnhub API key, session-signing secret, root account credentials
+- The AWS account ID — not a secret exactly, but low-sensitivity with no reason to publish it gratuitously; ARNs/`aws sts get-caller-identity` output that embed it shouldn't be pasted into docs, commit messages, or PR descriptions. Resource IDs alone (used throughout this project's docs) don't embed the account number.
+
 ## Dependency management (OWASP A06)
 
 - GitHub Dependabot, weekly schedule, `maven` + `npm` ecosystems, free on the public repo (ADR 0007). Requires a lightweight solo-dev triage habit to stay useful.
