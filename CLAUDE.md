@@ -42,6 +42,10 @@ The user is writing the implementation code themselves, as the hands-on learning
 - **Only fully implement/write code when the user explicitly asks for it** (e.g., "just write it," "implement this one for me"). Absent that, default to guidance.
 - This mode applies to feature/bugfix implementation code. Docs, ADRs, and roadmap upkeep are unaffected — Claude still writes/updates those directly as usual.
 
+## AWS/infra information handling
+
+Public repo — before writing AWS details into any doc, commit message, or PR, check `docs/architecture/security-architecture.md`'s "Secrets management" section for the full public/private line. Short version: resource IDs, regions/AZs, IPs/DNS, ports, instance types, and cost figures are fine to document (already the norm in `docs/tasks/in-progress/aws-infrastructure-implementation.md`). Never commit AWS access keys, the SSH private key, the RDS master password, or any application secret (Finnhub key, session-signing secret) — those stay out of the repo entirely (env vars / SSM / gitignored local files only), not just out of docs.
+
 ## Repo conventions
 
 - Public GitHub repo (`Efren707/toptrader`), MIT licensed.
