@@ -8,7 +8,7 @@ Working agreement applies as usual: one section at a time, check in before decid
 
 ## Status
 
-In progress — sections 1-2 done.
+In progress — sections 1-2 done, section 3 in progress (RDS provisioned, Flyway migration verification pending).
 
 ## Sections
 
@@ -31,8 +31,8 @@ GitHub Issue: [#108](https://github.com/Efren707/toptrader/issues/108)
 
 ### 3. Database — RDS
 
-- [ ] Provision RDS PostgreSQL, db.t4g.micro, Single-AZ
-- [ ] Confirm free-tier terms for the actual AWS account used (legacy vs. post-July-2025 account — ADR 0005 note)
+- [x] Provision RDS PostgreSQL, db.t4g.micro, Single-AZ — instance identifier `toptrader`, region **us-east-2c**, Postgres 17 (matches local dev's `docker-compose.yml`), gp3 20 GiB, encrypted (default `aws/rds` KMS key), initial DB name `toptrader`, `toptrader-rds-sg` attached, public access No, master credentials self-managed (not AWS Secrets Manager — ADR 0006 already rejected Secrets Manager's per-secret fee), deletion protection off for now (revisit at section 8 cutover)
+- [x] Confirm free-tier terms for the actual AWS account used (legacy vs. post-July-2025 account — ADR 0005 note) — account predates July 2025, but its 12-month free tier window has already elapsed, so RDS costs apply immediately (matches ADR 0005's ~$18-20/mo estimate, which was already post-free-tier)
 - [ ] Verify Flyway migrations (ADR 0011) run automatically against this instance at Spring Boot startup
 
 GitHub Issue: [#109](https://github.com/Efren707/toptrader/issues/109)
