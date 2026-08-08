@@ -39,7 +39,7 @@ GitHub Issue: [#109](https://github.com/Efren707/toptrader/issues/109)
 
 ### 4. Backend compute — EC2
 
-- [ ] Provision EC2 t4g.micro, default public subnet
+- [x] Provision EC2 t4g.micro, default public subnet — instance ID `i-0918607b17b50cbe8`, region **us-east-2**, AZ **us-east-2b**, Amazon Linux 2023 (arm64, kernel-6.1), `toptrader-ec2-sg` attached, public IP assigned; `sshd` reconfigured to listen on port 3333 (matching the security group) after a temporary port-22-from-my-IP bootstrap rule, which was removed once confirmed
 - [ ] Confirm Flyway migrations (V1–V4) apply cleanly on first Spring Boot startup against RDS (carried over from section 3)
 - [ ] Spring Boot jar running under `systemd`, restart-on-failure
 - [ ] systemd health-check timer polling `/actuator/health` with auto-restart (ADR 0008)
