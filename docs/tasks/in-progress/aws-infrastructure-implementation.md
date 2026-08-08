@@ -8,7 +8,7 @@ Working agreement applies as usual: one section at a time, check in before decid
 
 ## Status
 
-In progress — sections 1-2 done.
+In progress — sections 1-3 done (Flyway verification carried into section 4, see note there), section 4 next.
 
 ## Sections
 
@@ -31,15 +31,16 @@ GitHub Issue: [#108](https://github.com/Efren707/toptrader/issues/108)
 
 ### 3. Database — RDS
 
-- [ ] Provision RDS PostgreSQL, db.t4g.micro, Single-AZ
-- [ ] Confirm free-tier terms for the actual AWS account used (legacy vs. post-July-2025 account — ADR 0005 note)
-- [ ] Verify Flyway migrations (ADR 0011) run automatically against this instance at Spring Boot startup
+- [x] Provision RDS PostgreSQL, db.t4g.micro, Single-AZ — instance identifier `toptrader`, region **us-east-2c**, Postgres 17 (matches local dev's `docker-compose.yml`), gp3 20 GiB, encrypted (default `aws/rds` KMS key), initial DB name `toptrader`, `toptrader-rds-sg` attached, public access No, master credentials self-managed (not AWS Secrets Manager — ADR 0006 already rejected Secrets Manager's per-secret fee), deletion protection off for now (revisit at section 8 cutover)
+- [x] Confirm free-tier terms for the actual AWS account used (legacy vs. post-July-2025 account — ADR 0005 note) — account predates July 2025, but its 12-month free tier window has already elapsed, so RDS costs apply immediately (matches ADR 0005's ~$18-20/mo estimate, which was already post-free-tier)
+- [x] Verify Flyway migrations (ADR 0011) run automatically against this instance at Spring Boot startup — deferred to section 4: `toptrader-rds-sg` only trusts inbound 5432 from `toptrader-ec2-sg`, so this can't be checked from outside AWS until EC2 exists; the jar's first startup there (systemd) is the verification, not a separate step
 
 GitHub Issue: [#109](https://github.com/Efren707/toptrader/issues/109)
 
 ### 4. Backend compute — EC2
 
 - [ ] Provision EC2 t4g.micro, default public subnet
+- [ ] Confirm Flyway migrations (V1–V4) apply cleanly on first Spring Boot startup against RDS (carried over from section 3)
 - [ ] Spring Boot jar running under `systemd`, restart-on-failure
 - [ ] systemd health-check timer polling `/actuator/health` with auto-restart (ADR 0008)
 - [ ] IAM instance role: `ssm:GetParameters`/`GetParametersByPath` + `kms:Decrypt` (on `aws/ssm`), scoped to `/toptrader/prod/*`
