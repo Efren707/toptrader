@@ -5,6 +5,7 @@ on:
     branches: [main]
   push:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   gitleaks:
@@ -35,7 +36,7 @@ jobs:
 
   backend-ci:
     needs: changes
-    if: needs.changes.outputs.backend == 'true'
+    if: needs.changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -69,10 +70,10 @@ jobs:
       - name: Build
         run: ./mvnw -B package -DskipTests
       - name: Rename jar for deploy
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: cp target/backend-*.jar app.jar
       - name: Upload build artifact
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         uses: actions/upload-artifact@v4
         with:
           name: backend-jar
@@ -80,7 +81,7 @@ jobs:
 
   frontend-ci:
     needs: changes
-    if: needs.changes.outputs.frontend == 'true'
+    if: needs.changes.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -100,7 +101,7 @@ jobs:
       - name: Build
         run: npm run build
       - name: Upload build artifact
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         uses: actions/upload-artifact@v4
         with:
           name: frontend-dist
@@ -108,12 +109,18 @@ jobs:
 
   deploy-frontend:
     needs: [changes, frontend-ci]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && needs.frontend-ci.result == 'success'
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && needs.frontend-ci.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
     steps:
+      - name: TEMP debug OIDC token claims
+        run: |
+          TOKEN=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" | jq -r '.value')
+          PAYLOAD=$(echo -n "$TOKEN" | cut -d '.' -f2 | tr '_-' '/+')
+          case $((${#PAYLOAD} % 4)) in 2) PAYLOAD="$PAYLOAD==";; 3) PAYLOAD="$PAYLOAD=";; esac
+          echo "$PAYLOAD" | base64 -d | jq .
       - uses: actions/download-artifact@v4
         with:
           name: frontend-dist
@@ -129,13 +136,14 @@ jobs:
 
   deploy-backend:
     needs: [changes, backend-ci]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && needs.backend-ci.result == 'success'
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && needs.backend-ci.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
         with:
           name: backend-jar
           path: .
+      - run: mv app.jar app.jar.new
       - name: Copy jar to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -143,7 +151,7 @@ jobs:
           port: 3333
           username: deploy
           key: ${{ secrets.EC2_DEPLOY_SSH_KEY }}
-          source: app.jar
+          source: app.jar.new
           target: /opt/toptrader
           overwrite: true
       - name: Restart and smoke test
@@ -154,6 +162,7 @@ jobs:
           username: deploy
           key: ${{ secrets.EC2_DEPLOY_SSH_KEY }}
           script: |
+            mv /opt/toptrader/app.jar.new /opt/toptrader/app.jar
             sudo systemctl restart toptrader.service
             for i in $(seq 1 10); do
               if curl -sf http://localhost:8080/actuator/health | grep -q '"status":"UP"'; then
