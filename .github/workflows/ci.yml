@@ -145,6 +145,7 @@ jobs:
           key: ${{ secrets.EC2_DEPLOY_SSH_KEY }}
           source: app.jar
           target: /opt/toptrader
+          overwrite: true
       - name: Restart and smoke test
         uses: appleboy/ssh-action@v1.2.0
         with:
