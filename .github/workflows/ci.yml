@@ -68,6 +68,15 @@ jobs:
         run: ./mvnw -B test
       - name: Build
         run: ./mvnw -B package -DskipTests
+      - name: Rename jar for deploy
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: cp target/backend-*.jar app.jar
+      - name: Upload build artifact
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-jar
+          path: backend/app.jar
 
   frontend-ci:
     needs: changes
@@ -117,3 +126,40 @@ jobs:
         run: aws s3 sync dist s3://${{ secrets.FRONTEND_S3_BUCKET }} --delete
       - name: Invalidate CloudFront cache
         run: aws cloudfront create-invalidation --distribution-id ${{ secrets.FRONTEND_CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+
+  deploy-backend:
+    needs: [changes, backend-ci]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && needs.backend-ci.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: backend-jar
+          path: .
+      - name: Copy jar to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ec2-18-226-207-9.us-east-2.compute.amazonaws.com
+          port: 3333
+          username: deploy
+          key: ${{ secrets.EC2_DEPLOY_SSH_KEY }}
+          source: app.jar
+          target: /opt/toptrader
+      - name: Restart and smoke test
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ec2-18-226-207-9.us-east-2.compute.amazonaws.com
+          port: 3333
+          username: deploy
+          key: ${{ secrets.EC2_DEPLOY_SSH_KEY }}
+          script: |
+            sudo systemctl restart toptrader.service
+            for i in $(seq 1 10); do
+              if curl -sf http://localhost:8080/actuator/health | grep -q '"status":"UP"'; then
+                echo "Healthy after ${i} attempt(s)"
+                exit 0
+              fi
+              sleep 3
+            done
+            echo "Service did not become healthy within 30s"
+            exit 1
