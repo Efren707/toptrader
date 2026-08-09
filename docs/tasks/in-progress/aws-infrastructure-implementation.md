@@ -8,7 +8,7 @@ Working agreement applies as usual: one section at a time, check in before decid
 
 ## Status
 
-In progress — sections 1-5 done, section 6 next.
+In progress — sections 1-6 done, section 7 next.
 
 ## Sections
 
@@ -59,8 +59,8 @@ GitHub Issue: [#111](https://github.com/Efren707/toptrader/issues/111)
 
 ### 6. Frontend hosting — S3
 
-- [ ] S3 bucket for the Angular production build
-- [ ] Wire the bucket to its CloudFront distribution (section 5)
+- [x] S3 bucket for the Angular production build — `toptrader-frontend` (already created empty in section 5 so CloudFront's OAC had a real origin to reference); finished configuring it here: versioning **enabled** (gives the frontend a manual rollback path — restore a prior object version — mirroring ADR 0039's backend last-known-good-jar rollback, which never covered the frontend; no lifecycle rule to expire old versions set up yet), default encryption **SSE-S3** (AWS-managed keys, free — same cost-minimizing lean as RDS's self-managed master password in section 3), Block Public Access **all four settings on** (bucket is OAC-only, never public)
+- [x] Wire the bucket to its CloudFront distribution (section 5) — the OAC/bucket-policy wiring itself was already done in section 5; verified here by building the Angular production bundle (`npm run build` → `dist/frontend/browser/`) and uploading it via the S3 console, then confirming CloudFront (`toptrader-frontend`, distribution `EBJQ07VSB22PM`, domain `dbunvnda6gcb6.cloudfront.net`) serves it correctly — including the 403/404 → `/index.html` SPA routing rewrite from section 5 on a direct (non-client-side) navigation to an in-app route. Hit one upload gotcha worth remembering: dragging the `browser` folder itself into the S3 console nests everything under a `browser/` prefix instead of the bucket root, which the OAC/default-root-object setup requires at the root — S3 also masks the resulting missing-object error as `403 AccessDenied` rather than `404 NoSuchKey` (no `ListBucket` in the OAC policy), which looks like a permissions problem but isn't one. Fix is uploading the folder's *contents*, not the folder. A blank-but-styled page on direct navigation to `/login` is expected pre-cutover (`checkSession()`'s `APP_INITIALIZER`, `app.config.ts:31-34`, fails ungracefully on the currently-unreachable `api.toptrader.dev` per `auth.service.ts:69-74`) — already tracked as a to-do in section 8, not a section 6 issue.
 
 GitHub Issue: [#112](https://github.com/Efren707/toptrader/issues/112)
 
