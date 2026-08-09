@@ -8,7 +8,7 @@ Working agreement applies as usual: one section at a time, check in before decid
 
 ## Status
 
-In progress — sections 1-4 done, section 5 next.
+In progress — sections 1-5 done, section 6 next.
 
 ## Sections
 
@@ -51,9 +51,9 @@ GitHub Issue: [#110](https://github.com/Efren707/toptrader/issues/110)
 
 ### 5. CDN & TLS
 
-- [ ] ACM certs for `app.` and `api.` subdomains
-- [ ] CloudFront distribution #1: fronts S3 (frontend, `app.` subdomain)
-- [ ] CloudFront distribution #2: fronts EC2 (backend, `api.` subdomain), origin protocol HTTP-only (stays inside AWS's network — ADR 0014, no cert to manage on EC2)
+- [x] ACM certs for `app.` and `api.` subdomains — single cert, `us-east-1` (CloudFront's hard region requirement, not where the rest of the infra lives), two SANs (`app.toptrader.dev`, `api.toptrader.dev`), DNS validation via Route 53, "allow export" left disabled — certificate ID `da270cdb-bdd9-4f79-850e-1ea2dad4d236`
+- [x] CloudFront distribution #1: fronts S3 (frontend, `app.` subdomain) — `toptrader-frontend`, distribution ID `EBJQ07VSB22PM`; S3 origin `toptrader-frontend` bucket (created empty ahead of section 6 so OAC could reference a real origin) via Origin Access Control, bucket policy scoped to this exact distribution's ARN (`StringEquals` on `AWS:SourceArn`, not the broader `ArnLike` wildcard the console initially proposed); viewer protocol redirect-to-HTTPS, default root object `index.html`, custom error responses 403→200 and 404→200 both mapped to `/index.html` for Angular client-side routing; CloudFront **Free flat-rate plan** (ADR 0042) with WAF enabled in block mode (not monitor-only) and the `toptrader.dev` Route 53 hosted zone attached to this distribution's plan for its cost-bundling benefit
+- [x] CloudFront distribution #2: fronts EC2 (backend, `api.` subdomain), origin protocol HTTP-only (stays inside AWS's network — ADR 0014, no cert to manage on EC2) — `toptrader-backend`, distribution ID `E2QV9MPC8DTN65`; custom ("Other") origin at the EC2 instance's Elastic IP DNS name (`ec2-18-226-207-9.us-east-2.compute.amazonaws.com` — ADR 0043 records why an Elastic IP was allocated first), port 8080, HTTP only; cache behavior manually configured (not "use recommended settings," which defaults toward static-asset assumptions that don't fit a session-based API) — all HTTP methods allowed, `CachingDisabled` managed policy, `AllViewerExceptHostHeader` managed origin request policy so cookies/headers/query strings reach the backend unmodified; same Free flat-rate plan + WAF block-mode choice as distribution #1
 
 GitHub Issue: [#111](https://github.com/Efren707/toptrader/issues/111)
 
