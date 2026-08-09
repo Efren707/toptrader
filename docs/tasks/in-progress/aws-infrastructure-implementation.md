@@ -66,9 +66,10 @@ GitHub Issue: [#112](https://github.com/Efren707/toptrader/issues/112)
 
 ### 7. CI/CD deploy wiring
 
-- [ ] Frontend: OIDC-federated IAM role (repo/branch-scoped trust policy), `aws s3 sync` + CloudFront invalidation via GitHub Actions (ADR 0006)
+- [x] Frontend: OIDC-federated IAM role (repo/branch-scoped trust policy), `aws s3 sync` + CloudFront invalidation via GitHub Actions (ADR 0006) — GitHub OIDC identity provider added once at the account level (`token.actions.githubusercontent.com`, audience `sts.amazonaws.com`); IAM role `toptrader-frontend-deploy-role` with a web-identity trust policy scoped to `repo:Efren707/toptrader:ref:refs/heads/main` (console's GitHub org/repo/branch fields generated this, no hand-edited JSON), inline policy `toptrader-frontend-deploy-policy` scoped to `s3:ListBucket` on the `toptrader-frontend` bucket, `s3:PutObject`/`GetObject`/`DeleteObject` on its objects, and `cloudfront:CreateInvalidation` on distribution `EBJQ07VSB22PM` only; role ARN, bucket name, and distribution ID stored as GitHub repo secrets (`AWS_FRONTEND_DEPLOY_ROLE_ARN`, `FRONTEND_S3_BUCKET`, `FRONTEND_CLOUDFRONT_DISTRIBUTION_ID`) per ADR 0006. New `deploy-frontend` job in `.github/workflows/ci.yml`, gated on push-to-`main` and `frontend-ci` having actually succeeded (not skipped); downloads the `frontend-dist` artifact `frontend-ci` uploads rather than rebuilding, so what's deployed is exactly what passed lint/test/build.
 - [ ] Backend: SSH-key GitHub secret, SCP the built jar + `systemctl restart` (ADR 0006)
-- [ ] SSM Parameter Store secrets pulled at deploy time: DB password, Finnhub API key, session-signing secret (ADR 0006/0015/0018)
+- [x] ~~SSM Parameter Store secrets pulled at deploy time~~ — superseded by ADR 0041 (section 4): the `toptrader.service` unit's `ExecStartPre` fetches `/toptrader/prod/*` on every start, so the deploy script needs no SSM logic at all
+- [ ] Post-deploy smoke test: curl `/actuator/health` with retry/backoff after restart, fail the deploy job if unhealthy (ADR 0017) — scoped into this section rather than deferred to #105, since #105's rollback needs this signal to trigger off
 - [ ] Wire the deploy stage into the existing lint→test→build pipeline, gated on merge to `main` only (ADR 0016/0017)
 
 Follow-on once this section is done: **#105** (automated last-known-good jar swap on failed post-deploy smoke test, ADR 0039) becomes unblocked.

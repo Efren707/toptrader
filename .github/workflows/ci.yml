@@ -90,3 +90,30 @@ jobs:
         run: npx ng test --watch=false
       - name: Build
         run: npm run build
+      - name: Upload build artifact
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist/frontend/browser
+
+  deploy-frontend:
+    needs: [changes, frontend-ci]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && needs.frontend-ci.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: dist
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_FRONTEND_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-2
+      - name: Sync to S3
+        run: aws s3 sync dist s3://${{ secrets.FRONTEND_S3_BUCKET }} --delete
+      - name: Invalidate CloudFront cache
+        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.FRONTEND_CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
