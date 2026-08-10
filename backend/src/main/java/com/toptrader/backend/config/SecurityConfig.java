@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -40,6 +41,9 @@ public class SecurityConfig {
   @Value("${toptrader.frontend-origin:http://localhost:4200}")
   private String frontendOrigin;
 
+  @Value("${toptrader.csrf-cookie-domain:}")
+  private String csrfCookieDomain;
+
   @Bean
   public PasswordEncoder passwordEncoder() {
     String encodingId = "argon2";
@@ -53,6 +57,7 @@ public class SecurityConfig {
     http.csrf(
             csrf ->
                 csrf.spa()
+                    .csrfTokenRepository(csrfTokenRepository())
                     .ignoringRequestMatchers(
                         "/auth/register",
                         "/auth/login",
@@ -102,6 +107,14 @@ public class SecurityConfig {
                 exceptions.authenticationEntryPoint(
                     new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
     return http.build();
+  }
+
+  private CookieCsrfTokenRepository csrfTokenRepository() {
+    CookieCsrfTokenRepository repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+    if (!csrfCookieDomain.isBlank()) {
+      repository.setCookieCustomizer(cookie -> cookie.domain(csrfCookieDomain));
+    }
+    return repository;
   }
 
   private CorsConfigurationSource corsConfigurationSource() {
