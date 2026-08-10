@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.MvcResult;
  * that value actually reaches the XSRF-TOKEN cookie's Domain attribute — the setting that lets the
  * cookie be read across the app./api. subdomain split in prod.
  */
-@SpringBootTest(properties = "toptrader.csrf-cookie-domain=.toptrader.dev")
+@SpringBootTest(properties = "toptrader.csrf-cookie-domain=toptrader.dev")
 @AutoConfigureMockMvc
 class SecurityConfigCsrfCookieDomainTest {
 
@@ -31,6 +31,6 @@ class SecurityConfigCsrfCookieDomainTest {
     Cookie csrfCookie = result.getResponse().getCookie("XSRF-TOKEN");
 
     assertThat(csrfCookie).isNotNull();
-    assertThat(csrfCookie.getDomain()).isEqualTo(".toptrader.dev");
+    assertThat(csrfCookie.getDomain()).isEqualTo("toptrader.dev");
   }
 }
