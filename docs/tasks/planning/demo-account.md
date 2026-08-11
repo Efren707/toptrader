@@ -1,6 +1,6 @@
 # Demo Account & Showcase Readiness
 
-> Status: Partially decided. This item can only be finished once the app is built and deployed (see the "Blocked" section) — this doc captures what could be decided ahead of time so there's less to figure out later. Tracked from [docs/tasks/in-progress/aws-infrastructure-implementation.md](../in-progress/aws-infrastructure-implementation.md)'s cutover section (section 8) — **revisit this doc once the app is deployed to prod** to finish the blocked items below.
+> Status: Partially decided, unblocked as of 2026-08-11 now that the app is live at `app.toptrader.dev`. Originally tracked from [docs/tasks/in-progress/aws-infrastructure-implementation.md](../in-progress/aws-infrastructure-implementation.md)'s cutover section (section 8); split out into its own issue since it's showcase/polish work, not cutover — tracked as [#134](https://github.com/Efren707/toptrader/issues/134). Not yet picked up.
 
 ## Decided now
 
@@ -13,7 +13,7 @@ A Flyway seed migration (versioned, e.g. `V<n>__seed_demo_account.sql`), using a
 - Matching buy (and at least one sell) transactions in the history (US-8) that produced those holdings — the seed data tells a small coherent story, not just raw rows.
 - Remaining cash left below $500 (not the full starting balance), so it reads as an account that's actually been used.
 
-## Blocked until the app is deployed
+## Now unblocked (tracked as #134)
 
 - **README screenshots/GIF** — needs a working UI to capture. Revisit the [README structure outline](../../guides/readme-structure-outline.md)'s screenshots section once there's something to screenshot.
 - **Live demo link callout** — needs a real prod URL (per `deployment-architecture.md`) to link to. Revisit the README structure outline's status-line section at the same time.
