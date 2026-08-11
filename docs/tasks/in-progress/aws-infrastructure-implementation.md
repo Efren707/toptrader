@@ -8,7 +8,7 @@ Working agreement applies as usual: one section at a time, check in before decid
 
 ## Status
 
-In progress — sections 1-7 done, section 8 in progress (DNS cutover, smoke test, and SES email sender done; Dependabot alert, session-signing-secret cleanup, demo-account, and README status line remain).
+Sections 1-8 all done. Still open under this same milestone: **#102** (CloudWatch log shipping + `StatusCheckFailed` alarm, unblocked since section 4) and **#105** (automated rollback, unblocked since section 7) — this doc stays in `in-progress/` and the milestone stays open until those close too.
 
 ## Sections
 
@@ -93,10 +93,8 @@ GitHub Issue: [#113](https://github.com/Efren707/toptrader/issues/113)
   After both fixes and a hard browser reload (stale pre-fix cookies were still cached): full checklist confirmed working live — register, login, logout, quote lookup, buy, sell, holdings/portfolio, transactions, performance view.
 - [x] Build a real SES-backed `EmailSender` — password reset / email verification are implemented but not end-to-end usable without it (ADR 0036/0037). Closes the prod gap both ADRs flagged: `SesEmailSender` (`@Profile("prod")`) implements `EmailSender` using AWS SDK v2's `ses` module (ADR 0044). SES domain identity verified for `toptrader.dev` (Easy DKIM, records auto-published to the existing Route 53 zone), production access requested and approved (out of the sandbox), new scoped `toptrader-ses-send-policy` (`ses:SendEmail`/`SendRawEmail` on just the one identity ARN) attached to the existing `toptrader-ec2-role`, new `/toptrader/prod/mail-from-address` SSM parameter exported by `fetch-secrets.sh` as `TOPTRADER_MAIL_FROM_ADDRESS`. Send failures are caught and logged (`WARN`, recipient + cause), not rethrown, keeping `resetRequest()`'s enumeration-safe response behavior intact on a transient SES failure. Verified end-to-end with a manual pre-merge deploy (built jar SCP'd directly to EC2, service restarted, real `POST /auth/forgot-password` against a real registered email) — password-reset email received in inbox with the actual reset link, confirming DKIM/IAM/SSM wiring all work together, ahead of the normal PR/CI-CD deploy path.
 - [x] Check the frontend's blank-page-on-network-error behavior in `checkSession()`'s app initializer against the real API origin (network error / wrong or unreachable API origin currently renders a blank page instead of falling back to a logged-out view) — folded into the smoke test above: direct navigation to `app.toptrader.dev` and `app.toptrader.dev/login` both loaded correctly now that `api.toptrader.dev` is reachable; no blank page observed
-- [ ] Resolve GitHub's outstanding Dependabot alert on `main` (https://github.com/Efren707/toptrader/security/dependabot/17), put off since 2026-08-05 — revisit before going live
-- [ ] Resolve the `session-signing-secret` dead-config flag from [ADR 0032](../../adr/0032-prod-config-shape.md) — present in `application-local.yml.example` but never referenced in code; no `/toptrader/prod/*` SSM parameter was provisioned for it in section 4 for the same reason. Either remove it from the docs/template, or wire it up if a real use case has emerged by cutover time
-- [ ] Pick back up [demo-account.md](./demo-account.md)'s blocked items now that there's a live URL: README screenshots/GIF, live demo link callout, write the actual seed migration
-- [ ] Update `docs/guides/readme-structure-outline.md`'s status line / README itself with the live link
+- [x] Resolve the `session-signing-secret` dead-config flag from [ADR 0032](../../adr/0032-prod-config-shape.md) — resolved as "remove" (no feature ever emerged needing it): deleted from `application-local.yml.example`, `environments.md`'s config table, and the bespoke `.gitleaks.toml` rule/allowlist entry that existed only for this key.
+- [x] Update `docs/guides/readme-structure-outline.md`'s status line / README itself with the live link — `README.md`'s status line now points at `app.toptrader.dev`. The fuller demo-account showcase content (screenshots, seed data) doesn't gate this and remains tracked separately in [demo-account.md](./demo-account.md).
 
 GitHub Issue: [#114](https://github.com/Efren707/toptrader/issues/114)
 

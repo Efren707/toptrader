@@ -1,12 +1,12 @@
 # README Structure — Outline
 
-> Status: Draft outline only. Target structure for the root `README.md` once the app exists (demo link, screenshots) — see [Demo Account & Showcase Readiness](../tasks/planning/demo-account.md) for what unlocks the sections marked "later." Current `README.md` stays as-is until that item lands; this doc just decides the shape ahead of time.
+> Status: Draft outline only. Target structure for the root `README.md` once the app exists (demo link, screenshots) — see [Demo Account & Showcase Readiness](../tasks/planning/demo-account.md) for what unlocks the sections marked "later." Section 2 (status line) is done as of 2026-08-11 (the live link doesn't depend on the fuller demo-account content); the rest of `README.md` stays as-is until that item lands.
 
 ## 1. Title + one-line pitch
 Project name and a single sentence: stock trading simulator, virtual cash, real/delayed market data — matches the current README opening.
 
 ## 2. Status line
-Right now: "in planning, built in public." Later: swap for a live demo link once deployed (per the Demo Account & Showcase Readiness item).
+Done — swapped to the live demo link (`app.toptrader.dev`) in `README.md`.
 
 ## 3. Screenshots / GIF
 Placeholder section for now (nothing to show pre-build). Once there's a working app, a few screenshots or a short GIF of the core buy/sell flow.
