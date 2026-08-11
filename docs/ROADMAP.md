@@ -5,7 +5,7 @@
 
 ## Current focus
 
-MVP (US-1–US-9), the UI/UX polish pass, and pre-deployment hardening are all done. TopTrader is now live at `app.toptrader.dev`. The **[AWS Deployment Infrastructure milestone](https://github.com/Efren707/toptrader/milestone/14)**'s sections 1-8 are all done (cutover complete) — see [docs/tasks/in-progress/aws-infrastructure-implementation.md](./tasks/in-progress/aws-infrastructure-implementation.md) for detail. The milestone itself stays open until its remaining hardening issues (#102, #105) close. Demo/showcase-readiness work (screenshots, seed migration) is split out into its own issue, [#134](https://github.com/Efren707/toptrader/issues/134), tracked against [docs/tasks/planning/demo-account.md](./tasks/planning/demo-account.md).
+MVP (US-1–US-9), the UI/UX polish pass, and pre-deployment hardening are all done. TopTrader is now live at `app.toptrader.dev`. The **[AWS Deployment Infrastructure milestone](https://github.com/Efren707/toptrader/milestone/14)**'s sections 1-8 are all done (cutover complete), and hardening issue #102 (CloudWatch log shipping + `StatusCheckFailed` alarm) is also done — see [docs/tasks/in-progress/aws-infrastructure-implementation.md](./tasks/in-progress/aws-infrastructure-implementation.md) for detail. The milestone itself stays open until its one remaining hardening issue (#105, automated rollback) closes. Demo/showcase-readiness work (screenshots, seed migration) is split out into its own issue, [#134](https://github.com/Efren707/toptrader/issues/134), tracked against [docs/tasks/planning/demo-account.md](./tasks/planning/demo-account.md).
 
 ## Working agreement
 
