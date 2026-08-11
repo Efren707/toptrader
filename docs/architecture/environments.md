@@ -32,7 +32,6 @@ Every environment-specific value the app or pipeline needs, and where it lives. 
 | DB username | No | throwaway local value, hardcoded in `docker-compose.yml` | `/toptrader/prod/db-username` (`String`) |
 | DB password | **Yes** | throwaway local value, hardcoded in `docker-compose.yml` | `/toptrader/prod/db-password` (`SecureString`) |
 | Finnhub API key | **Yes** | `application-local.yml` (gitignored) | `/toptrader/prod/finnhub-api-key` (`SecureString`) |
-| Session-signing secret | **Yes** | `application-local.yml` (gitignored) | `/toptrader/prod/session-signing-secret` (`SecureString`) |
 | App server port | No | `8080` (Spring default) | `/toptrader/prod/server-port` (`String`) |
 
 CI-time-only values (never read by the app itself, GitHub encrypted secrets per ADR 0006 — SSH private key, EC2 host, EC2 SSH port, AWS OIDC role ARN, S3 bucket name, CloudFront distribution ID) aren't repeated here; see ADR 0006 for that list.
