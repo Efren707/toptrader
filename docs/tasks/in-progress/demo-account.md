@@ -6,7 +6,7 @@ Working agreement applies as usual: one section at a time, check in before decid
 
 ## Status
 
-In progress — section 1 done (merged in [#146](https://github.com/Efren707/toptrader/pull/146), closed [#139](https://github.com/Efren707/toptrader/issues/139)), section 2 done (merged in [#147](https://github.com/Efren707/toptrader/pull/147), closed [#140](https://github.com/Efren707/toptrader/issues/140)), section 3 done (PR [#148](https://github.com/Efren707/toptrader/pull/148), closes [#141](https://github.com/Efren707/toptrader/issues/141)), section 4 next.
+In progress — section 1 done (merged in [#146](https://github.com/Efren707/toptrader/pull/146), closed [#139](https://github.com/Efren707/toptrader/issues/139)), section 2 done (merged in [#147](https://github.com/Efren707/toptrader/pull/147), closed [#140](https://github.com/Efren707/toptrader/issues/140)), section 3 done (merged in [#148](https://github.com/Efren707/toptrader/pull/148), closed [#141](https://github.com/Efren707/toptrader/issues/141)), section 4 next.
 
 ## Decided now
 
