@@ -25,6 +25,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 /** Covers the US-5 acceptance criteria (docs/requirements/acceptance-criteria.md). */
@@ -187,6 +188,29 @@ class TradeServiceTest {
   }
 
   @Test
+  void buyStock_rejectsDemoAccount_withNoStateChange() {
+    ReflectionTestUtils.setField(user, "isDemo", true);
+    when(userRepository.findByIdForUpdate(USER_ID)).thenReturn(Optional.of(user));
+    when(quoteService.getQuote("AAPL"))
+        .thenReturn(
+            new Quote(
+                "AAPL",
+                "Apple Inc.",
+                new BigDecimal("100.00"),
+                new BigDecimal("5.19"),
+                Instant.now()));
+
+    assertThatThrownBy(() -> tradeService.buyStock(USER_ID, new TradeRequest("AAPL", 5)))
+        .isInstanceOf(ResponseStatusException.class)
+        .extracting(ex -> ((ResponseStatusException) ex).getStatusCode())
+        .isEqualTo(HttpStatus.FORBIDDEN);
+
+    assertThat(user.getCashBalance()).isEqualByComparingTo("1000.00");
+    verifyNoInteractions(holdingRepository, transactionRepository);
+    verify(userRepository, never()).save(any());
+  }
+
+  @Test
   void sellStock_decreasesHolding_withoutRemovingIt_onPartialSell() {
     Holding existing = new Holding(user, "AAPL", 10, new BigDecimal("50.00"), null);
     when(userRepository.findByIdForUpdate(USER_ID)).thenReturn(Optional.of(user));
@@ -237,6 +261,29 @@ class TradeServiceTest {
 
     verify(holdingRepository).delete(existing);
     verify(holdingRepository, never()).save(any());
+  }
+
+  @Test
+  void sellStock_rejectsDemoAccount_withNoStateChange() {
+    ReflectionTestUtils.setField(user, "isDemo", true);
+    when(userRepository.findByIdForUpdate(USER_ID)).thenReturn(Optional.of(user));
+    when(quoteService.getQuote("AAPL"))
+        .thenReturn(
+            new Quote(
+                "AAPL",
+                "Apple Inc.",
+                new BigDecimal("100.00"),
+                new BigDecimal("5.19"),
+                Instant.now()));
+
+    assertThatThrownBy(() -> tradeService.sellStock(USER_ID, new TradeRequest("AAPL", 5)))
+        .isInstanceOf(ResponseStatusException.class)
+        .extracting(ex -> ((ResponseStatusException) ex).getStatusCode())
+        .isEqualTo(HttpStatus.FORBIDDEN);
+
+    assertThat(user.getCashBalance()).isEqualByComparingTo("1000.00");
+    verifyNoInteractions(holdingRepository, transactionRepository);
+    verify(userRepository, never()).save(any());
   }
 
   @Test
