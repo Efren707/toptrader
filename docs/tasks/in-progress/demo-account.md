@@ -28,14 +28,14 @@ Since the button makes the demo account trivially accessible to anyone (not just
 
 ### 1. Backend — demo-login endpoint
 
-- [ ] `V5__add_is_demo_column_to_users.sql` migration + `User.isDemo` field
-- [ ] Shared `SessionEstablisher` extracted from `LoginService`/`RegistrationService`'s duplicated session-setup logic, reused by both plus the new service
-- [ ] `DemoLoginService` + `POST /auth/demo-login` on `AuthController` — no password required, never touches `LoginService`'s failed-attempt lockout tracking
-- [ ] `SecurityConfig` CSRF exemption + `permitAll` for the new endpoint, extending ADR 0022's precedent (no existing session for CSRF to ride on; here there isn't even a credential submission)
-- [ ] `RateLimitGroup.DEMO_LOGIN` — IP-keyed, 5/hour, matching `REGISTER`'s existing shape (ADR 0034)
-- [ ] `UserSummary.isDemo` field added (backend record), so the frontend can key UX off it
-- [ ] Backend tests: `AuthControllerDemoLoginTest`
-- [ ] New ADR covering this endpoint, its CSRF exemption, rate limiting, and the read-only enforcement decision (section 2)
+- [x] `V5__add_is_demo_column_to_users.sql` migration + `User.isDemo` field
+- [x] Shared `SessionEstablisher` extracted from `LoginService`/`RegistrationService`'s duplicated session-setup logic, reused by both plus the new service
+- [x] `DemoLoginService` + `POST /auth/demo-login` on `AuthController` — no password required, never touches `LoginService`'s failed-attempt lockout tracking
+- [x] `SecurityConfig` CSRF exemption + `permitAll` for the new endpoint, extending ADR 0022's precedent (no existing session for CSRF to ride on; here there isn't even a credential submission)
+- [x] `RateLimitGroup.DEMO_LOGIN` — IP-keyed, 5/hour, matching `REGISTER`'s existing shape (ADR 0034)
+- [x] `UserSummary.isDemo` field added (backend record), so the frontend can key UX off it
+- [x] Backend tests: `AuthControllerDemoLoginTest`
+- [x] New ADR covering this endpoint, its CSRF exemption, rate limiting, and the read-only enforcement decision (section 2) — [ADR 0045](../../adr/0045-demo-account-login.md)
 
 GitHub Issue: [#139](https://github.com/Efren707/toptrader/issues/139)
 

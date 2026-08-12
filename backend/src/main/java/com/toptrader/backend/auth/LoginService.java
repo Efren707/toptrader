@@ -14,10 +14,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -32,12 +28,15 @@ public class LoginService {
 
   private final AuthenticationManager authenticationManager;
   private final UserRepository userRepository;
-  private final SecurityContextRepository securityContextRepository =
-      new HttpSessionSecurityContextRepository();
+  private final SessionEstablisher sessionEstablisher;
 
-  public LoginService(AuthenticationManager authenticationManager, UserRepository userRepository) {
+  public LoginService(
+      AuthenticationManager authenticationManager,
+      UserRepository userRepository,
+      SessionEstablisher sessionEstablisher) {
     this.authenticationManager = authenticationManager;
     this.userRepository = userRepository;
+    this.sessionEstablisher = sessionEstablisher;
   }
 
   public UserSummary login(
@@ -61,7 +60,7 @@ public class LoginService {
     User user = principal.getUser();
     resetFailedAttempts(user);
 
-    establishSession(authentication, httpRequest, httpResponse);
+    this.sessionEstablisher.establishSession(user, httpRequest, httpResponse);
     log.atInfo().addKeyValue("userId", user.getId()).log("Login succeeded");
     return UserSummary.from(user);
   }
@@ -94,15 +93,5 @@ public class LoginService {
     user.setFailedAttempts(0);
     user.setLockedUntil(null);
     userRepository.save(user);
-  }
-
-  private void establishSession(
-      Authentication authentication,
-      HttpServletRequest httpRequest,
-      HttpServletResponse httpResponse) {
-    SecurityContext context = SecurityContextHolder.createEmptyContext();
-    context.setAuthentication(authentication);
-    SecurityContextHolder.setContext(context);
-    securityContextRepository.saveContext(context, httpRequest, httpResponse);
   }
 }

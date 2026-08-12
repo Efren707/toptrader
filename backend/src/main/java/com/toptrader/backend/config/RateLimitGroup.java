@@ -17,6 +17,11 @@ public enum RateLimitGroup {
       RateLimitGroup::clientIp,
       5,
       Duration.ofHours(1)),
+  DEMO_LOGIN(
+      List.of(PathPatternRequestMatcher.pathPattern(HttpMethod.POST, "/auth/demo-login")),
+      RateLimitGroup::clientIp,
+      5,
+      Duration.ofHours(1)),
   FORGOT_PASSWORD(
       List.of(
           PathPatternRequestMatcher.pathPattern(HttpMethod.POST, "/auth/forgot-password"),

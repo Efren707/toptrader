@@ -44,6 +44,9 @@ public class User {
   @Column(name = "created_at", nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
+  @Column(name = "is_demo", nullable = false, updatable = false)
+  private boolean isDemo;
+
   protected User() {}
 
   public User(String email, String username, String passwordHash, BigDecimal cashBalance) {
@@ -52,6 +55,7 @@ public class User {
     this.passwordHash = passwordHash;
     this.cashBalance = cashBalance;
     this.failedAttempts = 0;
+    this.isDemo = false;
   }
 
   public Long getId() {
@@ -109,5 +113,9 @@ public class User {
 
   public LocalDateTime getCreatedAt() {
     return createdAt;
+  }
+
+  public boolean isDemo() {
+    return isDemo;
   }
 }
