@@ -1,7 +1,6 @@
 package com.toptrader.backend.auth;
 
 import com.toptrader.backend.user.User;
-import com.toptrader.backend.user.UserPrincipal;
 import com.toptrader.backend.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,13 +9,7 @@ import java.math.BigDecimal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -31,16 +24,17 @@ public class RegistrationService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final EmailVerificationService emailVerificationService;
-  private final SecurityContextRepository securityContextRepository =
-      new HttpSessionSecurityContextRepository();
+  private final SessionEstablisher sessionEstablisher;
 
   public RegistrationService(
       UserRepository userRepository,
       PasswordEncoder passwordEncoder,
-      EmailVerificationService emailVerificationService) {
+      EmailVerificationService emailVerificationService,
+      SessionEstablisher sessionEstablisher) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.emailVerificationService = emailVerificationService;
+    this.sessionEstablisher = sessionEstablisher;
   }
 
   @Transactional
@@ -68,23 +62,10 @@ public class RegistrationService {
             passwordEncoder.encode(request.password()),
             STARTING_CASH_BALANCE);
     user = userRepository.save(user);
-    establishSession(user, httpRequest, httpResponse);
+    this.sessionEstablisher.establishSession(user, httpRequest, httpResponse);
 
     this.emailVerificationService.sendVerificationEmail(user);
     log.atInfo().addKeyValue("userId", user.getId()).log("Register succeeded");
     return UserSummary.from(user);
-  }
-
-  private void establishSession(
-      User user, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
-    UserPrincipal principal = new UserPrincipal(user);
-    Authentication authentication =
-        UsernamePasswordAuthenticationToken.authenticated(
-            principal, principal.getPassword(), principal.getAuthorities());
-
-    SecurityContext context = SecurityContextHolder.createEmptyContext();
-    context.setAuthentication(authentication);
-    SecurityContextHolder.setContext(context);
-    securityContextRepository.saveContext(context, httpRequest, httpResponse);
   }
 }

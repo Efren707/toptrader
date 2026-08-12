@@ -28,8 +28,8 @@ Since the button makes the demo account trivially accessible to anyone (not just
 
 ### 1. Backend — demo-login endpoint
 
-- [ ] `V5__add_is_demo_column_to_users.sql` migration + `User.isDemo` field
-- [ ] Shared `SessionEstablisher` extracted from `LoginService`/`RegistrationService`'s duplicated session-setup logic, reused by both plus the new service
+- [x] `V5__add_is_demo_column_to_users.sql` migration + `User.isDemo` field
+- [x] Shared `SessionEstablisher` extracted from `LoginService`/`RegistrationService`'s duplicated session-setup logic, reused by both plus the new service
 - [ ] `DemoLoginService` + `POST /auth/demo-login` on `AuthController` — no password required, never touches `LoginService`'s failed-attempt lockout tracking
 - [ ] `SecurityConfig` CSRF exemption + `permitAll` for the new endpoint, extending ADR 0022's precedent (no existing session for CSRF to ride on; here there isn't even a credential submission)
 - [ ] `RateLimitGroup.DEMO_LOGIN` — IP-keyed, 5/hour, matching `REGISTER`'s existing shape (ADR 0034)
