@@ -48,6 +48,10 @@ Groundwork completed ahead of US-1, per ADR 0020's build order:
 
 13 hardening items closed: CI secret scanning & dependency hygiene, prod config lockdown, session timeout/fixation, frontend 401/403 handling, logging/PII policy, CSP directives, general API rate limiting, ticker input validation, frontend error handling gaps, authorization guard, password-reset flow, email verification at signup, backend logging framework, and rollback strategy decided. Full detail: [pre-deployment-checklist.md](./pre-deployment-checklist.md).
 
+## Milestone #14 — AWS Deployment Infrastructure — ✅ Done
+
+10 sections provisioning the real AWS stack (ADR 0005/0006/0014/0016/0017): domain/account foundation, network/security groups, RDS, EC2, CloudFront/TLS, S3 frontend hosting, CI/CD deploy wiring, cutover/smoke test, CloudWatch log shipping + `StatusCheckFailed` alarm (#102), and automated last-known-good jar rollback (#105, ADR 0039). TopTrader has been live at `app.toptrader.dev` since section 8's cutover. Full detail: [aws-infrastructure-implementation.md](./aws-infrastructure-implementation.md).
+
 ## Phase 0 — Repo & Working Agreement Setup — ✅ Done
 
 - [x] GitHub repo (public, `Efren707/toptrader`), README, `.gitignore`, MIT LICENSE
