@@ -19,16 +19,19 @@ public class AuthController {
 
   private final RegistrationService registrationService;
   private final LoginService loginService;
+  private final DemoLoginService demoLoginService;
   private final PasswordResetService passwordResetService;
   private final EmailVerificationService emailVerificationService;
 
   public AuthController(
       RegistrationService registrationService,
       LoginService loginService,
+      DemoLoginService demoLoginService,
       PasswordResetService passwordResetService,
       EmailVerificationService emailVerificationService) {
     this.registrationService = registrationService;
     this.loginService = loginService;
+    this.demoLoginService = demoLoginService;
     this.passwordResetService = passwordResetService;
     this.emailVerificationService = emailVerificationService;
   }
@@ -48,6 +51,13 @@ public class AuthController {
       HttpServletRequest httpRequest,
       HttpServletResponse httpResponse) {
     UserSummary summary = loginService.login(request, httpRequest, httpResponse);
+    return ResponseEntity.status(HttpStatus.OK).body(summary);
+  }
+
+  @PostMapping("/demo-login")
+  public ResponseEntity<UserSummary> demoLogin(
+      HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
+    UserSummary summary = demoLoginService.demoLogin(httpRequest, httpResponse);
     return ResponseEntity.status(HttpStatus.OK).body(summary);
   }
 

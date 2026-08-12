@@ -61,6 +61,7 @@ public class SecurityConfig {
                     .ignoringRequestMatchers(
                         "/auth/register",
                         "/auth/login",
+                        "/auth/demo-login",
                         "/auth/forgot-password",
                         "/auth/reset-password",
                         "/auth/verify-email",
@@ -72,6 +73,7 @@ public class SecurityConfig {
                     .requestMatchers(
                         "/auth/register",
                         "/auth/login",
+                        "/auth/demo-login",
                         "/auth/forgot-password",
                         "/auth/reset-password",
                         "/auth/verify-email",
