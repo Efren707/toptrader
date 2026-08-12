@@ -8,14 +8,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.toptrader.backend.user.User;
 import com.toptrader.backend.user.UserRepository;
 import jakarta.servlet.http.HttpSession;
-import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,18 +25,16 @@ class AuthControllerDemoLoginTest {
 
   // Must match DemoLoginService.DEMO_EMAIL exactly - can't share a constant across test/main,
   // verified by hand (same constraint noted for the V6 seed migration in
-  // docs/tasks/in-progress/demo-account.md).
+  // docs/tasks/in-progress/demo-account.md). V6 seeds this row permanently, so these tests rely
+  // on it existing rather than seeding their own copy.
   private static final String DEMO_EMAIL = "demo@toptrader.dev";
 
   @Autowired private MockMvc mockMvc;
   @Autowired private UserRepository userRepository;
-  @Autowired private PasswordEncoder passwordEncoder;
   @Autowired private JdbcTemplate jdbcTemplate;
 
   @Test
   void demoLogin_withSeededDemoUser_returns200AndEstablishesSession() throws Exception {
-    seedDemoUser();
-
     MvcResult result =
         mockMvc
             .perform(post("/auth/demo-login").header("X-Forwarded-For", "203.0.113.30"))
@@ -57,6 +53,15 @@ class AuthControllerDemoLoginTest {
 
   @Test
   void demoLogin_withoutSeededDemoUser_returns500() throws Exception {
+    // V6 seeds holdings/transactions for the demo user too, so those must go first to satisfy
+    // their foreign keys before the user row itself can be deleted.
+    jdbcTemplate.update(
+        "DELETE FROM transactions WHERE user_id = (SELECT id FROM users WHERE email = ?)",
+        DEMO_EMAIL);
+    jdbcTemplate.update(
+        "DELETE FROM holdings WHERE user_id = (SELECT id FROM users WHERE email = ?)", DEMO_EMAIL);
+    jdbcTemplate.update("DELETE FROM users WHERE email = ?", DEMO_EMAIL);
+
     mockMvc
         .perform(post("/auth/demo-login").header("X-Forwarded-For", "203.0.113.31"))
         .andExpect(status().isInternalServerError())
@@ -65,8 +70,6 @@ class AuthControllerDemoLoginTest {
 
   @Test
   void demoLogin_calledRepeatedly_neverTriggersFailedAttemptLockoutTracking() throws Exception {
-    seedDemoUser();
-
     // Stays under RateLimitGroup.DEMO_LOGIN's 5/hour cap - rate limiting itself is covered by
     // RateLimitFilterTest, this is only checking LoginService's lockout tracking isn't touched.
     for (int i = 0; i < 3; i++) {
@@ -78,15 +81,5 @@ class AuthControllerDemoLoginTest {
     User demoUser = userRepository.findByEmail(DEMO_EMAIL).orElseThrow();
     assertThat(demoUser.getFailedAttempts()).isZero();
     assertThat(demoUser.getLockedUntil()).isNull();
-  }
-
-  private void seedDemoUser() {
-    jdbcTemplate.update(
-        "INSERT INTO users (email, username, password_hash, cash_balance, is_demo) "
-            + "VALUES (?, ?, ?, ?, true)",
-        DEMO_EMAIL,
-        "demo",
-        passwordEncoder.encode("not-a-real-password"),
-        new BigDecimal("500.00"));
   }
 }

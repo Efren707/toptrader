@@ -6,7 +6,7 @@ Working agreement applies as usual: one section at a time, check in before decid
 
 ## Status
 
-In progress — section 1 done (merged in [#146](https://github.com/Efren707/toptrader/pull/146), closed [#139](https://github.com/Efren707/toptrader/issues/139)), section 2 done (PR [#147](https://github.com/Efren707/toptrader/pull/147), closes [#140](https://github.com/Efren707/toptrader/issues/140)), section 3 next.
+In progress — section 1 done (merged in [#146](https://github.com/Efren707/toptrader/pull/146), closed [#139](https://github.com/Efren707/toptrader/issues/139)), section 2 done (merged in [#147](https://github.com/Efren707/toptrader/pull/147), closed [#140](https://github.com/Efren707/toptrader/issues/140)), section 3 done (PR [#148](https://github.com/Efren707/toptrader/pull/148), closes [#141](https://github.com/Efren707/toptrader/issues/141)), section 4 next.
 
 ## Decided now
 
@@ -52,8 +52,8 @@ Depends on section 1's `is_demo` column. GitHub Issue: [#140](https://github.com
 
 ### 3. Seed migration
 
-- [ ] `V6__seed_demo_account.sql` — idempotent (`ON CONFLICT DO NOTHING` on the fixed demo email), `is_demo = TRUE`, backdated transaction timestamps so the history reads as "already happened," not "seeded seconds ago"
-- [ ] Demo email constant matches `DemoLoginService.DEMO_EMAIL` exactly — can't share a constant across SQL/Java, verified by hand
+- [x] `V6__seed_demo_account.sql` — idempotent (`ON CONFLICT DO NOTHING` on the fixed demo email), `is_demo = TRUE`, backdated transaction timestamps so the history reads as "already happened," not "seeded seconds ago"
+- [x] Demo email constant matches `DemoLoginService.DEMO_EMAIL` exactly — can't share a constant across SQL/Java, verified by hand
 
 Depends on section 1's `is_demo` column. GitHub Issue: [#141](https://github.com/Efren707/toptrader/issues/141)
 
