@@ -5,7 +5,7 @@
 
 ## Current focus
 
-MVP (US-1–US-9), the UI/UX polish pass, pre-deployment hardening, and the **[AWS Deployment Infrastructure milestone](https://github.com/Efren707/toptrader/milestone/14)** (10 sections plus hardening issues #102/#105) are all done and closed. TopTrader is live at `app.toptrader.dev` on a fully provisioned, observed (CloudWatch/SNS), and self-healing (automated jar rollback) AWS deploy pipeline — full detail archived at [docs/tasks/completed/aws-infrastructure-implementation.md](./tasks/completed/aws-infrastructure-implementation.md). **Next focus not yet decided** — demo/showcase-readiness work ([#134](https://github.com/Efren707/toptrader/issues/134), [docs/tasks/planning/demo-account.md](./tasks/planning/demo-account.md)) is one candidate, still being discussed.
+MVP (US-1–US-9), the UI/UX polish pass, pre-deployment hardening, and the **[AWS Deployment Infrastructure milestone](https://github.com/Efren707/toptrader/milestone/14)** (10 sections plus hardening issues #102/#105) are all done and closed. TopTrader is live at `app.toptrader.dev` on a fully provisioned, observed (CloudWatch/SNS), and self-healing (automated jar rollback) AWS deploy pipeline — full detail archived at [docs/tasks/completed/aws-infrastructure-implementation.md](./tasks/completed/aws-infrastructure-implementation.md). **Current focus**: the **[Demo Account & Showcase Readiness milestone](https://github.com/Efren707/toptrader/milestone/15)** — a one-click, read-only demo login plus README/showcase polish, tracked section-by-section in [docs/tasks/in-progress/demo-account.md](./tasks/in-progress/demo-account.md).
 
 ## Working agreement
 
