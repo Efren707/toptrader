@@ -4,6 +4,10 @@
 
 Working agreement applies as usual: one section at a time, check in before deciding anything not already settled below.
 
+## Status
+
+In progress — section 1 done (merged in [#146](https://github.com/Efren707/toptrader/pull/146), closed [#139](https://github.com/Efren707/toptrader/issues/139)), section 2 done (PR [#147](https://github.com/Efren707/toptrader/pull/147), closes [#140](https://github.com/Efren707/toptrader/issues/140)), section 3 next.
+
 ## Decided now
 
 ### Demo account seeding mechanism
@@ -41,8 +45,8 @@ GitHub Issue: [#139](https://github.com/Efren707/toptrader/issues/139)
 
 ### 2. Backend — read-only trading enforcement
 
-- [ ] Guard clause in `TradeService.buyStock` and `sellStock` rejecting any trade where `user.isDemo()` (403), before any mutation happens
-- [ ] `TradeServiceTest` cases for both methods confirming rejection and zero side effects (`verifyNoInteractions` on holding/transaction repos)
+- [x] Guard clause in `TradeService.buyStock` and `sellStock` rejecting any trade where `user.isDemo()` (403), before any mutation happens
+- [x] `TradeServiceTest` cases for both methods confirming rejection and zero side effects (`verifyNoInteractions` on holding/transaction repos)
 
 Depends on section 1's `is_demo` column. GitHub Issue: [#140](https://github.com/Efren707/toptrader/issues/140)
 

@@ -60,6 +60,16 @@ public class TradeService {
             .findByIdForUpdate(userId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
+    if (user.isDemo()) {
+      log.atWarn()
+          .addKeyValue("userId", userId)
+          .addKeyValue("ticker", ticker)
+          .addKeyValue("reason", "Demo account is read-only")
+          .log("Buy stock failed");
+      throw new ResponseStatusException(
+          HttpStatus.FORBIDDEN, "Demo accounts are read-only and cannot place trades");
+    }
+
     BigDecimal total = quote.price().multiply(BigDecimal.valueOf(quantity));
 
     if (total.compareTo(user.getCashBalance()) > 0) {
@@ -129,6 +139,16 @@ public class TradeService {
         this.userRepository
             .findByIdForUpdate(userId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+    if (user.isDemo()) {
+      log.atWarn()
+          .addKeyValue("userId", userId)
+          .addKeyValue("ticker", ticker)
+          .addKeyValue("reason", "Demo account is read-only")
+          .log("Sell stock failed");
+      throw new ResponseStatusException(
+          HttpStatus.FORBIDDEN, "Demo accounts are read-only and cannot place trades");
+    }
 
     Holding holding = this.holdingRepository.findByUserAndTicker(user, quote.ticker()).orElse(null);
 
