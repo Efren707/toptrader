@@ -156,14 +156,42 @@ jobs:
           username: deploy
           key: ${{ secrets.EC2_DEPLOY_SSH_KEY }}
           script: |
+            wait_healthy() {
+              for i in $(seq 1 10); do
+                if curl -sf http://localhost:8080/actuator/health | grep -q '"status":"UP"'; then
+                  echo "Healthy after ${i} attempt(s)"
+                  return 0
+                fi
+                sleep 3
+              done
+              return 1
+            }
+
+            if [ -f /opt/toptrader/app.jar ]; then
+              cp /opt/toptrader/app.jar /opt/toptrader/app.jar.bak
+            fi
             mv /opt/toptrader/app.jar.new /opt/toptrader/app.jar
             sudo systemctl restart toptrader.service
-            for i in $(seq 1 10); do
-              if curl -sf http://localhost:8080/actuator/health | grep -q '"status":"UP"'; then
-                echo "Healthy after ${i} attempt(s)"
-                exit 0
-              fi
-              sleep 3
-            done
+
+            if wait_healthy; then
+              echo "Deploy succeeded"
+              exit 0
+            fi
+
             echo "Service did not become healthy within 30s"
+
+            if [ ! -f /opt/toptrader/app.jar.bak ]; then
+              echo "No previous jar to roll back to (first deploy) - manual intervention required"
+              exit 1
+            fi
+
+            echo "Rolling back to last-known-good jar"
+            mv /opt/toptrader/app.jar.bak /opt/toptrader/app.jar
+            sudo systemctl restart toptrader.service
+
+            if wait_healthy; then
+              echo "Rollback succeeded - service restored to last-known-good jar, but deploy is still marked as failed"
+            else
+              echo "Rollback also failed to become healthy - manual intervention required"
+            fi
             exit 1
