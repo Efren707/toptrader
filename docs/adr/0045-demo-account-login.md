@@ -5,11 +5,11 @@
 
 ## Context
 
-The [Demo Account & Showcase Readiness milestone](https://github.com/Efren707/toptrader/milestone/15) (tracked in `docs/tasks/in-progress/demo-account.md`) adds a one-click "Try Demo" login so recruiters/reviewers can explore the live app without registering. The original plan (from the `aws-infrastructure-implementation.md` cutover section this work was split out of) was README-documented credentials for reviewers to type in manually; that was revisited as unlikely to get noticed by someone skimming the live site, in favor of a button that logs a visitor in directly.
+The [Demo Account & Showcase Readiness milestone](https://github.com/Efren707/toptrader/milestone/15) (tracked in `docs/tasks/completed/demo-account.md`) adds a one-click "Try Demo" login so recruiters/reviewers can explore the live app without registering. The original plan (from the `aws-infrastructure-implementation.md` cutover section this work was split out of) was README-documented credentials for reviewers to type in manually; that was revisited as unlikely to get noticed by someone skimming the live site, in favor of a button that logs a visitor in directly.
 
 That shifts the design away from every existing auth flow in the app: `LoginService` and `RegistrationService` both end in an authenticated session, but both start from either submitted credentials (login) or a newly created account (register). A demo login starts from neither — there's no credential to check and no new account to create, since the demo account is a single, pre-existing, shared row.
 
-Making that account trivially reachable by a button (not just by someone who read a README) also means it needs a restriction a normal account doesn't: it can't be allowed to trade, or any visitor could permanently degrade the curated seed data (mixed gain/loss/flat holdings, coherent transaction history — see `docs/tasks/in-progress/demo-account.md`'s "Decided now" section) for every visitor after them.
+Making that account trivially reachable by a button (not just by someone who read a README) also means it needs a restriction a normal account doesn't: it can't be allowed to trade, or any visitor could permanently degrade the curated seed data (mixed gain/loss/flat holdings, coherent transaction history — see `docs/tasks/completed/demo-account.md`'s "Decided now" section) for every visitor after them.
 
 ## Options considered
 

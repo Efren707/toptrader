@@ -1,12 +1,12 @@
 # Demo Account & Showcase Readiness
 
-> Status: In progress as of 2026-08-11, tracked under the [Demo Account & Showcase Readiness milestone](https://github.com/Efren707/toptrader/milestone/15). Originally tracked from [docs/tasks/completed/aws-infrastructure-implementation.md](../completed/aws-infrastructure-implementation.md)'s cutover section (section 8), then split into its own issue (#134) once the app went live. #134 has since been closed and superseded by this doc's 6 sections/issues below — its original "credentials in README" item was explicitly dropped in favor of a one-click login button (section 1).
+> Status: **Done** as of 2026-08-13. Tracked under the [Demo Account & Showcase Readiness milestone](https://github.com/Efren707/toptrader/milestone/15) (closed). Originally tracked from [docs/tasks/completed/aws-infrastructure-implementation.md](./aws-infrastructure-implementation.md)'s cutover section (section 8), then split into its own issue (#134) once the app went live. #134 has since been closed and superseded by this doc's 6 sections/issues below — its original "credentials in README" item was explicitly dropped in favor of a one-click login button (section 1).
 
 Working agreement applies as usual: one section at a time, check in before deciding anything not already settled below.
 
 ## Status
 
-In progress — section 1 done (merged in [#146](https://github.com/Efren707/toptrader/pull/146), closed [#139](https://github.com/Efren707/toptrader/issues/139)), section 2 done (merged in [#147](https://github.com/Efren707/toptrader/pull/147), closed [#140](https://github.com/Efren707/toptrader/issues/140)), section 3 done (merged in [#148](https://github.com/Efren707/toptrader/pull/148), closed [#141](https://github.com/Efren707/toptrader/issues/141)), sections 4-6 complete on `feature/demo-try-button`, opened as [#149](https://github.com/Efren707/toptrader/pull/149), closing [#142](https://github.com/Efren707/toptrader/issues/142), [#143](https://github.com/Efren707/toptrader/issues/143), and [#144](https://github.com/Efren707/toptrader/issues/144).
+Done — all 6 sections complete and merged: section 1 in [#146](https://github.com/Efren707/toptrader/pull/146) (closed [#139](https://github.com/Efren707/toptrader/issues/139)), section 2 in [#147](https://github.com/Efren707/toptrader/pull/147) (closed [#140](https://github.com/Efren707/toptrader/issues/140)), section 3 in [#148](https://github.com/Efren707/toptrader/pull/148) (closed [#141](https://github.com/Efren707/toptrader/issues/141)), sections 4-6 in [#149](https://github.com/Efren707/toptrader/pull/149) (closed [#142](https://github.com/Efren707/toptrader/issues/142), [#143](https://github.com/Efren707/toptrader/issues/143), [#144](https://github.com/Efren707/toptrader/issues/144)). Milestone closed 2026-08-13.
 
 ## Decided now
 
