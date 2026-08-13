@@ -75,10 +75,17 @@
             <p class="cost-value">{{ 0 | currency }}</p>
           }
         </div>
-  
-        <app-button type="submit" [fullWidth]="true">
-          Review order
-        </app-button>
+        
+        @if (readOnly()){
+          <p class="read-only-note">
+            This is a shared demo account, so trading is disabled. Create your own free
+            account to start buying and selling.
+          </p>
+        } @else {
+          <app-button type="submit" [fullWidth]="true">
+            Review order
+          </app-button>
+        }
   
       </form>
 

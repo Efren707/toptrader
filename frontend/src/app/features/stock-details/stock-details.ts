@@ -61,6 +61,10 @@ export class StockDetails implements OnInit {
     return (holding.marketValue / total) * 100;
   });
 
+  protected readonly readOnly = computed(() =>
+    (this.authService.currentUser()?.isDemo ? true : false)
+  );
+
   ngOnInit(): void {
     this.fetchHoldingsData();
     this.route.paramMap.subscribe((params) => {
