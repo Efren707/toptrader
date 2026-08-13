@@ -47,6 +47,9 @@ public class User {
   @Column(name = "is_demo", nullable = false, updatable = false)
   private boolean isDemo;
 
+  @Column(name = "avatar_key")
+  private String avatarKey;
+
   protected User() {}
 
   public User(String email, String username, String passwordHash, BigDecimal cashBalance) {
@@ -56,6 +59,7 @@ public class User {
     this.cashBalance = cashBalance;
     this.failedAttempts = 0;
     this.isDemo = false;
+    this.avatarKey = null;
   }
 
   public Long getId() {
@@ -66,8 +70,16 @@ public class User {
     return email;
   }
 
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
   public String getUsername() {
     return username;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
   }
 
   @JsonIgnore
@@ -117,5 +129,13 @@ public class User {
 
   public boolean isDemo() {
     return isDemo;
+  }
+
+  public String getAvatarKey() {
+    return avatarKey;
+  }
+
+  public void setAvatarKey(String avatarKey) {
+    this.avatarKey = avatarKey;
   }
 }

@@ -7,11 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -19,6 +15,7 @@ public class AuthController {
 
   private final RegistrationService registrationService;
   private final LoginService loginService;
+  private final UpdateProfileService updateProfileService;
   private final DemoLoginService demoLoginService;
   private final PasswordResetService passwordResetService;
   private final EmailVerificationService emailVerificationService;
@@ -26,11 +23,13 @@ public class AuthController {
   public AuthController(
       RegistrationService registrationService,
       LoginService loginService,
+      UpdateProfileService updateProfileService,
       DemoLoginService demoLoginService,
       PasswordResetService passwordResetService,
       EmailVerificationService emailVerificationService) {
     this.registrationService = registrationService;
     this.loginService = loginService;
+    this.updateProfileService = updateProfileService;
     this.demoLoginService = demoLoginService;
     this.passwordResetService = passwordResetService;
     this.emailVerificationService = emailVerificationService;
@@ -89,5 +88,17 @@ public class AuthController {
       @Valid @RequestBody ResendVerificationRequest request) {
     emailVerificationService.resendVerification(request.email());
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+  }
+
+  @PatchMapping("/me")
+  public ResponseEntity<UserSummary> updateProfile(
+      @AuthenticationPrincipal UserPrincipal principal,
+      @Valid @RequestBody UpdateProfileRequest request,
+      HttpServletRequest httpServletRequest,
+      HttpServletResponse httpServletResponse) {
+    UserSummary summary =
+        this.updateProfileService.updateProfile(
+            principal.getUser().getId(), request, httpServletRequest, httpServletResponse);
+    return ResponseEntity.status(HttpStatus.OK).body(summary);
   }
 }

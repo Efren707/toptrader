@@ -15,6 +15,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   boolean existsByUsername(String username);
 
+  boolean existsByEmailAndIdNot(String email, Long userId);
+
+  boolean existsByUsernameAndIdNot(String username, Long userId);
+
   /**
    * Locks the row for the life of the caller's transaction, so concurrent trades against the same
    * user serialize instead of racing on cash_balance.

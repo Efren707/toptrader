@@ -6,7 +6,7 @@ Working agreement applies as usual: one section at a time, check in before decid
 
 ## Status
 
-Not started — all 5 issues created under the milestone, no implementation begun yet.
+In progress — section 1 (backend profile data model & edit-profile endpoint) complete. Sections 2-5 not started.
 
 ## Decided now
 
@@ -32,16 +32,16 @@ The shared demo account (`isDemo=true`) is rejected with 403 from both edit-prof
 
 ### 1. Backend — profile data model & edit-profile endpoint
 
-- [ ] `V7__add_avatar_key_to_users.sql` — nullable `avatar_key VARCHAR` column on `users`
-- [ ] `User.java` — `avatarKey` field + getter/setter; add missing setters for `username`/`email`
-- [ ] `UserSummary` (backend record) gains `avatarKey`, mapped in `from(User)`
-- [ ] New `UpdateProfileRequest` record (username, email, password, avatarKey — partial update)
-- [ ] `PATCH /auth/me` on `AuthController`, `@AuthenticationPrincipal UserPrincipal`, session-authenticated (not CSRF-exempt)
-- [ ] Username/email uniqueness checks (409 on collision), same as `RegistrationService`
-- [ ] Email change: update immediately, reset `emailVerifiedAt` to `null`, send new verification email (reuse ADR 0037 verify/resend flow)
-- [ ] Password or email change invalidates the user's other active sessions (reuse `PasswordResetService`'s `SessionRegistry` pattern)
-- [ ] `isDemo=true` users rejected with 403
-- [ ] Backend tests: successful update (incl. avatar), each uniqueness collision, email-change re-verification + session invalidation, password-change session invalidation, demo-account rejection
+- [x] `V7__add_avatar_key_to_users.sql` — nullable `avatar_key VARCHAR` column on `users`
+- [x] `User.java` — `avatarKey` field + getter/setter; add missing setters for `username`/`email`
+- [x] `UserSummary` (backend record) gains `avatarKey`, mapped in `from(User)`
+- [x] New `UpdateProfileRequest` record (username, email, password, avatarKey — partial update)
+- [x] `PATCH /auth/me` on `AuthController`, `@AuthenticationPrincipal UserPrincipal`, session-authenticated (not CSRF-exempt)
+- [x] Username/email uniqueness checks (409 on collision), same as `RegistrationService`
+- [x] Email change: update immediately, reset `emailVerifiedAt` to `null`, send new verification email (reuse ADR 0037 verify/resend flow)
+- [x] Password or email change invalidates the user's other active sessions (reuse `PasswordResetService`'s `SessionRegistry` pattern)
+- [x] `isDemo=true` users rejected with 403
+- [x] Backend tests: successful update (incl. avatar), each uniqueness collision, email-change re-verification + session invalidation, password-change session invalidation, demo-account rejection
 
 GitHub Issue: [#151](https://github.com/Efren707/toptrader/issues/151)
 
