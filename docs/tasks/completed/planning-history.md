@@ -52,6 +52,10 @@ Groundwork completed ahead of US-1, per ADR 0020's build order:
 
 10 sections provisioning the real AWS stack (ADR 0005/0006/0014/0016/0017): domain/account foundation, network/security groups, RDS, EC2, CloudFront/TLS, S3 frontend hosting, CI/CD deploy wiring, cutover/smoke test, CloudWatch log shipping + `StatusCheckFailed` alarm (#102), and automated last-known-good jar rollback (#105, ADR 0039). TopTrader has been live at `app.toptrader.dev` since section 8's cutover. Full detail: [aws-infrastructure-implementation.md](./aws-infrastructure-implementation.md).
 
+## Milestone #15 — Demo Account & Showcase Readiness — ✅ Done
+
+6 sections adding a one-click, read-only "Try Demo" login and README showcase polish: passwordless `POST /auth/demo-login` endpoint with a shared `SessionEstablisher` (ADR 0045), server-side read-only trading enforcement, a Flyway seed migration for the demo account's mixed gain/loss/flat holdings and transaction history, the frontend "Try Demo" login button, matching frontend read-only trading UX in `TradeForm`, and README screenshots + a Try Demo status-line callout. Full detail: [demo-account.md](./demo-account.md).
+
 ## Phase 0 — Repo & Working Agreement Setup — ✅ Done
 
 - [x] GitHub repo (public, `Efren707/toptrader`), README, `.gitignore`, MIT LICENSE
@@ -103,7 +107,7 @@ Each spike produces a recommendation + trade-offs for review, then an ADR.
 - [x] Developer setup guide outline — `docs/guides/developer-setup-guide-outline.md`
 - [x] Contribution/workflow guide outline — `docs/guides/contribution-workflow-guide-outline.md`
 - [x] README structure finalized (as outline; `README.md` itself unchanged until deploy) — `docs/guides/readme-structure-outline.md`
-- [x] Demo account & showcase readiness outline — mechanism and content decided ahead of time, [docs/tasks/planning/demo-account.md](../planning/demo-account.md) (moved out of `docs/guides/` once the remaining work became execution-blocked-on-deploy rather than a pure reference outline). Everything plannable ahead of deploy is done; the remaining execution (screenshots, live demo link, the actual seed migration) is blocked until deploy and tracked in [docs/tasks/in-progress/aws-infrastructure-implementation.md](../in-progress/aws-infrastructure-implementation.md)'s cutover section, not here.
+- [x] Demo account & showcase readiness outline — mechanism and content decided ahead of time, [docs/tasks/planning/demo-account.md](./demo-account.md) (moved out of `docs/guides/` once the remaining work became execution-blocked-on-deploy rather than a pure reference outline). Everything plannable ahead of deploy is done; the remaining execution (screenshots, live demo link, the actual seed migration) is blocked until deploy and tracked in [docs/tasks/in-progress/aws-infrastructure-implementation.md](./aws-infrastructure-implementation.md)'s cutover section, not here.
 
 ## Phase 6 — MVP Scope Freeze & Execution Handoff — ✅ Done
 
