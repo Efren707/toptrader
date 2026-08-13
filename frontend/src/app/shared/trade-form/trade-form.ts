@@ -1,4 +1,4 @@
-import { Component, inject, signal, input, output, computed } from '@angular/core';
+import { Component, effect, inject, signal, input, output, computed } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -28,6 +28,7 @@ export class TradeForm {
   readonly price = input.required<number>();
   readonly cashBalance = input.required<number>();
   readonly hasHolding = input<boolean>(false); 
+  readonly readOnly = input<boolean>(false); 
   
   protected readonly TradeSide = TradeSide; 
   protected readonly side = signal<TradeSide>(TradeSide.BUY); 
@@ -47,7 +48,21 @@ export class TradeForm {
     initialValue: this.form.getRawValue().quantity,
   });
 
+  constructor() {
+    effect(() => {
+      if (this.readOnly()) {
+        this.form.controls.quantity.disable();
+      } else {
+        this.form.controls.quantity.enable();
+      }
+    });
+  }
+
   protected submit(): void {
+    if (this.readOnly()) {
+      return;
+    }
+
     this.submitted.set(true);
 
     if (this.form.invalid) {

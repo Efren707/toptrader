@@ -6,7 +6,7 @@ Working agreement applies as usual: one section at a time, check in before decid
 
 ## Status
 
-In progress — section 1 done (merged in [#146](https://github.com/Efren707/toptrader/pull/146), closed [#139](https://github.com/Efren707/toptrader/issues/139)), section 2 done (merged in [#147](https://github.com/Efren707/toptrader/pull/147), closed [#140](https://github.com/Efren707/toptrader/issues/140)), section 3 done (merged in [#148](https://github.com/Efren707/toptrader/pull/148), closed [#141](https://github.com/Efren707/toptrader/issues/141)), section 4 complete on `feature/demo-try-button` (not yet merged — holding the PR until section 5 is done so both land together), section 5 next.
+In progress — section 1 done (merged in [#146](https://github.com/Efren707/toptrader/pull/146), closed [#139](https://github.com/Efren707/toptrader/issues/139)), section 2 done (merged in [#147](https://github.com/Efren707/toptrader/pull/147), closed [#140](https://github.com/Efren707/toptrader/issues/140)), section 3 done (merged in [#148](https://github.com/Efren707/toptrader/pull/148), closed [#141](https://github.com/Efren707/toptrader/issues/141)), sections 4 and 5 complete on `feature/demo-try-button` (not yet merged — holding the PR until section 6 is done so all three land together), section 6 next.
 
 ## Decided now
 
@@ -67,9 +67,9 @@ Depends on section 1's endpoint. GitHub Issue: [#142](https://github.com/Efren70
 
 ### 5. Frontend — read-only trading UX
 
-- [ ] `TradeForm` gets a new `readOnly` input (same pattern as its existing `hasHolding` input) — when true, disables the trade controls and shows a static "Demo account is read-only" note instead of a submit button
-- [ ] Wired from the stock details page via `authService.currentUser()?.isDemo`
-- [ ] `trade-form.spec.ts` covers the disabled state
+- [x] `TradeForm` gets a new `readOnly` input (same pattern as its existing `hasHolding` input) — when true, disables the trade controls and shows a static "Demo account is read-only" note instead of a submit button
+- [x] Wired from the stock details page via `authService.currentUser()?.isDemo`
+- [x] `trade-form.spec.ts` covers the disabled state
 
 This is UX polish, not the actual enforcement (that's section 2, server-side) — defense in depth. GitHub Issue: [#143](https://github.com/Efren707/toptrader/issues/143)
 

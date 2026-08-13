@@ -187,4 +187,34 @@ describe('TradeForm', () => {
     expect(quantityInput().value).toBe('');
     expect(fixture.nativeElement.textContent).not.toContain('Bought');
   });
+
+  it('shows a read-only note instead of the submit button when readOnly is true', () => {
+    fixture.componentRef.setInput('readOnly', true);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.read-only-note')?.textContent).toContain(
+      'trading is disabled',
+    );
+    expect(fixture.nativeElement.querySelector('button[type="submit"]')).toBeNull();
+    expect(quantityInput().disabled).toBe(true);
+  });
+
+  it('does not move to the confirm step when the form is submitted while readOnly', () => {
+    fixture.componentRef.setInput('readOnly', true);
+    fixture.detectChanges();
+
+    const input = quantityInput();
+    input.value = '3';
+    input.dispatchEvent(new Event('input'));
+    fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).not.toContain('Order Summary');
+    expectNoBuyRequest();
+  });
+
+  it('shows the submit button and no read-only note when readOnly is false', () => {
+    expect(fixture.nativeElement.querySelector('.read-only-note')).toBeNull();
+    expect(buttonByText('Review order')).toBeTruthy();
+  });
 });
