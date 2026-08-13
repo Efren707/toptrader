@@ -2,7 +2,13 @@
 
 A stock trading simulator — virtual cash, live/delayed market data, buy/sell simulated trades. Built with Spring Boot, PostgreSQL, and Angular; deployed on AWS.
 
-> Status: **Live** at [app.toptrader.dev](https://app.toptrader.dev) — register an account and try it out. Built in public with full documentation of the requirements, architecture, and decision-making process — see [`/docs`](./docs).
+> Status: **Live** at [app.toptrader.dev](https://app.toptrader.dev) — click **Try Demo** for an instant, read-only walkthrough, or register your own account. Built in public with full documentation of the requirements, architecture, and decision-making process — see [`/docs`](./docs).
+
+## Screenshots
+
+![TopTrader dashboard](./docs/assets/screenshots/dashboard.png)
+
+![Buy/sell flow](./docs/assets/screenshots/buy-flow.png)
 
 ## Documentation
 

@@ -6,7 +6,7 @@ Working agreement applies as usual: one section at a time, check in before decid
 
 ## Status
 
-In progress — section 1 done (merged in [#146](https://github.com/Efren707/toptrader/pull/146), closed [#139](https://github.com/Efren707/toptrader/issues/139)), section 2 done (merged in [#147](https://github.com/Efren707/toptrader/pull/147), closed [#140](https://github.com/Efren707/toptrader/issues/140)), section 3 done (merged in [#148](https://github.com/Efren707/toptrader/pull/148), closed [#141](https://github.com/Efren707/toptrader/issues/141)), sections 4 and 5 complete on `feature/demo-try-button` (not yet merged — holding the PR until section 6 is done so all three land together), section 6 next.
+In progress — section 1 done (merged in [#146](https://github.com/Efren707/toptrader/pull/146), closed [#139](https://github.com/Efren707/toptrader/issues/139)), section 2 done (merged in [#147](https://github.com/Efren707/toptrader/pull/147), closed [#140](https://github.com/Efren707/toptrader/issues/140)), section 3 done (merged in [#148](https://github.com/Efren707/toptrader/pull/148), closed [#141](https://github.com/Efren707/toptrader/issues/141)), sections 4-6 complete on `feature/demo-try-button` — PR pending.
 
 ## Decided now
 
@@ -75,7 +75,7 @@ This is UX polish, not the actual enforcement (that's section 2, server-side) �
 
 ### 6. README & showcase readiness
 
-- [ ] README screenshots/GIF of the core buy/sell flow — see the [README structure outline](../../guides/readme-structure-outline.md)'s screenshots section
-- [ ] Live demo link callout / "Try Demo" mention on the README status line
+- [x] README screenshots/GIF of the core buy/sell flow — see the [README structure outline](../../guides/readme-structure-outline.md)'s screenshots section
+- [x] Live demo link callout / "Try Demo" mention on the README status line
 
 Not blocked on sections 1-5, but makes most sense to capture screenshots once the Try Demo button exists. GitHub Issue: [#144](https://github.com/Efren707/toptrader/issues/144)
