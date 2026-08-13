@@ -18,6 +18,7 @@ describe('Performance', () => {
     email: 'test@example.com',
     username: 'testuser',
     cashBalance: 200,
+    isDemo: false,
   };
 
   function setup(): void {

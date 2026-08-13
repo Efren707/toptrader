@@ -9,6 +9,7 @@ export interface UserSummary {
   email: string;
   username: string;
   cashBalance: number;
+  isDemo: boolean;
 }
 
 export interface RegisterRequest {
@@ -54,6 +55,12 @@ export class AuthService {
   login(request: LoginRequest): Observable<UserSummary> {
     return this.http
       .post<UserSummary>(`${environment.apiUrl}/auth/login`, request)
+      .pipe(tap((user) => this.currentUser.set(user)));
+  }
+
+  demoLogin(): Observable<UserSummary> {
+    return this.http
+      .post<UserSummary>(`${environment.apiUrl}/auth/demo-login`, null)
       .pipe(tap((user) => this.currentUser.set(user)));
   }
 

@@ -20,6 +20,7 @@ describe('StockDetails', () => {
     email: 'test@example.com',
     username: 'testuser',
     cashBalance: 1000,
+    isDemo: false,
   };
 
   const mockQuote: Quote = {

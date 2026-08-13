@@ -6,7 +6,7 @@ Working agreement applies as usual: one section at a time, check in before decid
 
 ## Status
 
-In progress — section 1 done (merged in [#146](https://github.com/Efren707/toptrader/pull/146), closed [#139](https://github.com/Efren707/toptrader/issues/139)), section 2 done (merged in [#147](https://github.com/Efren707/toptrader/pull/147), closed [#140](https://github.com/Efren707/toptrader/issues/140)), section 3 done (merged in [#148](https://github.com/Efren707/toptrader/pull/148), closed [#141](https://github.com/Efren707/toptrader/issues/141)), section 4 next.
+In progress — section 1 done (merged in [#146](https://github.com/Efren707/toptrader/pull/146), closed [#139](https://github.com/Efren707/toptrader/issues/139)), section 2 done (merged in [#147](https://github.com/Efren707/toptrader/pull/147), closed [#140](https://github.com/Efren707/toptrader/issues/140)), section 3 done (merged in [#148](https://github.com/Efren707/toptrader/pull/148), closed [#141](https://github.com/Efren707/toptrader/issues/141)), section 4 complete on `feature/demo-try-button` (not yet merged — holding the PR until section 5 is done so both land together), section 5 next.
 
 ## Decided now
 
@@ -59,9 +59,9 @@ Depends on section 1's `is_demo` column. GitHub Issue: [#141](https://github.com
 
 ### 4. Frontend — "Try Demo" login button
 
-- [ ] `AuthService.demoLogin()` + `isDemo` added to the frontend `UserSummary` interface
-- [ ] Login page: new "Try Demo" button (secondary variant, own loading state so it doesn't cross-disable with the regular submit button), navigates to `/dashboard` on success, surfaces errors the same way the existing login form does
-- [ ] `login.spec.ts` covers the new button's success/error paths
+- [x] `AuthService.demoLogin()` + `isDemo` added to the frontend `UserSummary` interface
+- [x] Login page: new "Try Demo" button (secondary variant, own loading state so it doesn't cross-disable with the regular submit button), navigates to `/dashboard` on success, surfaces errors the same way the existing login form does
+- [x] `login.spec.ts` covers the new button's success/error paths
 
 Depends on section 1's endpoint. GitHub Issue: [#142](https://github.com/Efren707/toptrader/issues/142)
 

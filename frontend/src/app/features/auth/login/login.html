@@ -36,6 +36,22 @@
         </form>
 
         <p class="auth-switch">Not registered?<a routerLink="/register">Create an account</a></p>
+
+        <div class="demo-divider"><span>or</span></div>
+
+        <div class="demo-panel">
+          <p class="demo-copy">
+            Skip the signup — step into a live portfolio and see TopTrader in action.
+          </p>
+          <app-button
+            variant="secondary"
+            [fullWidth]="true"
+            [disabled]="submittingDemo()"
+            (pressed)="submitDemo()"
+          >
+            {{ submittingDemo() ? 'Logging in…' : 'Try Demo' }}
+          </app-button>
+        </div>
     </app-card>
 
     <app-card class="pitch-panel">

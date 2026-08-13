@@ -26,6 +26,7 @@ export class Login {
   });
 
   protected readonly submitting = signal(false);
+  protected readonly submittingDemo = signal(false);
   protected readonly formError = signal<string | null>(null);
 
   protected submit(): void {
@@ -43,6 +44,21 @@ export class Login {
       },
       error: (error: ApiError) => {
         this.submitting.set(false);
+        this.formError.set(error.detail);
+      },
+    });
+    
+  }
+
+  protected submitDemo(): void {
+    this.submittingDemo.set(true);
+
+    this.authService.demoLogin().subscribe({
+      next: () => {
+        this.router.navigate(['/dashboard']);
+      },
+      error: (error: ApiError) => {
+        this.submittingDemo.set(false);
         this.formError.set(error.detail);
       },
     });
