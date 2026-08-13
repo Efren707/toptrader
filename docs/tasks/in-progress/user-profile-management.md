@@ -10,8 +10,8 @@ Not started — all 5 issues created under the milestone, no implementation begu
 
 ## Decided now
 
-### Avatar: preset picker, not upload
-A fixed set of preset icon assets shipped with the frontend; the user picks one, stored as `users.avatar_key`. No new AWS infra, no upload UI. Avatar is folded into the edit-profile work (data model + endpoint + page) from the start rather than bolted on afterward, to avoid reworking the endpoint/form twice. See [ADR 0046](../../adr/0046-profile-avatar-preset-picker.md).
+### Avatar: preset picker, not upload — DiceBear-generated SVGs
+A fixed set of preset icon assets shipped with the frontend; the user picks one, stored as `users.avatar_key`. No new AWS infra, no upload UI. Avatar is folded into the edit-profile work (data model + endpoint + page) from the start rather than bolted on afterward, to avoid reworking the endpoint/form twice. Asset source: **DiceBear** (open-source, MIT/CC0-licensed styles), pre-generated once via a local script into static SVGs — no runtime dependency on DiceBear in the shipped app. A specific Figma community icon pack was considered and rejected for now since its export/redistribution license couldn't be verified. See [ADR 0046](../../adr/0046-profile-avatar-preset-picker.md).
 
 ### Editable fields & email re-verification
 Username, email, password, and avatar are all editable from one profile page/endpoint. Username/email uniqueness re-checked the same way as registration. Email change updates immediately (login switches right away, since login is by email) and resets `email_verified_at` to `null`, triggering a new verification email via the existing ADR 0037 flow. See [ADR 0047](../../adr/0047-profile-editing-and-account-deletion.md).
@@ -60,7 +60,8 @@ Soft dependency on section 1 (shares the demo-account guard pattern; not a hard 
 - [ ] `/profile` route, inside the existing `authGuard`-protected `Layout` children group
 - [ ] Frontend `UserSummary` interface gains `avatarKey`
 - [ ] New `features/profile/` component: reactive form (username, email, password) following `register.ts`'s pattern (`FormBuilder.nonNullable.group`, `submitting`/`formError` signals, `ApiError.fieldErrors` mapped onto controls)
-- [ ] Preset avatar picker UI rendering the fixed icon set (e.g. `frontend/src/assets/avatars/`)
+- [ ] Generate the preset avatar set: `@dicebear/core` + a chosen collection (e.g. `adventurer`) as a dev-only dependency, a short local script exports ~12-16 seeds as static SVGs into `frontend/src/assets/avatars/`, committed to the repo (no runtime DiceBear dependency)
+- [ ] Preset avatar picker UI rendering the generated icon set, served via `<img src>`/static asset reference (not inline raw SVG)
 - [ ] `AuthService.updateProfile(...)` calling `PATCH /auth/me`, updates `currentUser` signal on success (`tap()` pattern)
 - [ ] Success/error feedback via `NotificationService` / `ApiError.detail`
 - [ ] `profile.spec.ts` covers success/validation/error paths
