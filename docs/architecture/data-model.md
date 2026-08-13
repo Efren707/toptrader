@@ -14,6 +14,7 @@ erDiagram
         varchar email UK
         varchar username UK
         varchar password_hash
+        varchar avatar_key
         numeric cash_balance
         int failed_attempts
         timestamp locked_until
@@ -62,9 +63,8 @@ There is deliberately no `stocks`/`quotes` table — ticker is a plain string on
 - **Balances are stored, not derived.** `users.cash_balance` and `holdings.quantity`/`average_cost_basis` are maintained as running totals, updated in the same DB transaction as each `transactions` insert, with row-level locking to prevent lost updates under concurrent buy/sell requests (satisfies the NFR's "no lost updates or overspending from race conditions" requirement). This keeps portfolio reads (US-7) cheap — no need to replay full transaction history on every page load — while `transactions` remains the immutable source-of-truth audit log the NFR requires.
 - **Bigint auto-increment primary keys**, not UUIDs. Authorization is already enforced server-side on every request (NFR), so there's no reliance on IDs being non-guessable; bigint keeps joins/indexes simple and small.
 - **$500 starting cash is an app-level constant**, not a stored `starting_cash` column — it's the same for every MVP user (no deposit feature yet) and doubles as the P&L baseline in US-9. Revisit when the post-MVP "deposit additional cash" story lands, since P&L will then need to track net deposits rather than a fixed constant.
-- **`username` is a display-only handle**, unique and required at registration, but login remains email+password only — no change needed to ADR 0004's auth flow or the US-2 acceptance criteria.
+- **`username` is a display-only handle**, unique and required at registration, but login remains email+password only — no change needed to ADR 0004's auth flow or the US-2 acceptance criteria. `username` and `email` are user-editable post-registration (US-15); see [ADR 0047](../adr/0047-profile-editing-and-account-deletion.md) for the uniqueness/re-verification/session-invalidation rules that govern edits.
+- **`avatar_key`** is a nullable varchar referencing a fixed, frontend-owned set of preset icons — see [ADR 0046](../adr/0046-profile-avatar-preset-picker.md). Null falls back to a default icon in the UI; the backend stores/returns the key only, it doesn't validate against the icon set.
+- **Account deletion is blocked, not cascaded**, while a user has any `holdings` or `transactions` rows — preserves the immutable-audit-log intent above rather than cascade-deleting trading history. See [ADR 0047](../adr/0047-profile-editing-and-account-deletion.md).
 - **`side` column is `varchar` + a check constraint** (`side IN ('BUY', 'SELL')`), not a Postgres native enum. Adding a value to a native enum type has historically carried transaction restrictions that don't mix well with Flyway's plain-SQL, forward-only migrations (ADR 0011); a check constraint is trivially altered in a normal migration if a third side value were ever needed.
 
-## Carried forward / not yet built
-
-- **Avatar selection** (user picks from a set of preset character avatars) — noted as a post-MVP idea in `docs/requirements/user-stories.md`. Would eventually need an `avatar_key` column (or reference table) on `users`; not part of the MVP schema.

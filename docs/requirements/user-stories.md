@@ -47,6 +47,12 @@ As a logged-in user, I want my dashboard holdings shown as a scannable list with
 **US-14 — Redesign the stock details page (layout, position stats, trade form)**
 As a logged-in user, I want the stock details page to clearly show the company's info and my position (if I own it) alongside a proper trade form with an order review step, so I can make an informed, deliberate trade without the page feeling like two bolted-together forms.
 
+**US-15 — Edit profile**
+As a logged-in user, I want to update my username, email, password, and avatar from a dedicated profile page, so that I can keep my account details current and personalize how it appears. Scoped in [ADR 0046](../adr/0046-profile-avatar-preset-picker.md) (avatar: preset picker) and [ADR 0047](../adr/0047-profile-editing-and-account-deletion.md) (editable fields, email re-verification, session invalidation, demo-account exclusion).
+
+**US-16 — Delete account**
+As a logged-in user, I want to permanently delete my account when I no longer hold any positions or transaction history, so that I can walk away from the sim cleanly. Blocked (409) while holdings or transactions exist, per [ADR 0047](../adr/0047-profile-editing-and-account-deletion.md); the demo account cannot delete itself.
+
 ## Explicitly Out of Scope for MVP
 
 - Leaderboard / comparing performance across users
@@ -67,7 +73,5 @@ In addition to leaderboard / price caching / rate-limiting from [vision.md](./vi
 
 - **Deposit additional virtual cash** — let a user add more virtual cash to their account after the initial $500, so the sim isn't a one-shot bankroll.
 - **Fractional share support** — allow buying/selling partial shares, so the $500 starting balance remains meaningfully usable across higher-priced stocks.
-- **Avatar selection** — let a user pick a profile avatar from a set of preset characters, so accounts feel more personalized (surfaced during Phase 3 data-model design; see `docs/architecture/data-model.md`).
 - **General market news feed** — surface market news on the dashboard and stock details pages; needs a new news data source, not yet picked. Floated 2026-08-05, not yet scoped.
-- **Profile page** — a dedicated page for editing account details / deleting an account. Floated 2026-08-05, not yet scoped.
 - **Single-page auth redesign** — combine login/register into one page with a client-side toggle instead of separate routes, black-background landing treatment, password-strength checkmark on the password field. Floated 2026-07-28, not yet scoped.

@@ -103,3 +103,22 @@
 - Submitting the form shows a "Review Order" step: an order summary (e.g. "You're placing a market order to buy $X.XX of TICKER. Your order will be routed to market makers. The final execution price may vary due to market volatility. Once executed, the transaction may not be undone."), a Submit [Buy/Sell] button, and a Back button to return to editing.
 - Cash balance is shown near the submit action (e.g. "$X.XX available"), sourced from `AuthService.currentUser()`.
 - Existing trade success/error states (order filled, server error) are preserved.
+
+## US-15 — Edit profile
+
+- A logged-in user can view and edit their username, email, password, and avatar from a dedicated profile page.
+- Username/email changes are rejected with a clear "already in use" error if the new value collides with another account (same check as registration).
+- Changing the email updates it immediately (login switches to the new address right away) and resets verification: `email_verified_at` is cleared and a new verification email is sent, reusing the existing verify/resend flow (ADR 0037).
+- Changing the password or email invalidates the user's other active sessions (same mechanism as password reset), so a stolen session elsewhere is forced to re-authenticate.
+- No current password re-entry is required to make any of these changes — session auth alone gates the endpoint, consistent with the rest of the app.
+- The avatar picker offers a fixed set of preset icons; the selection is saved as `avatar_key` and reflected wherever the account menu/avatar is shown (navbar).
+- The demo account cannot access this page/endpoint — attempting to do so is rejected (403) and the UI does not offer the option.
+- Field-level validation errors (invalid email format, too-short password, blank username) are shown before hitting the server, same pattern as registration.
+
+## US-16 — Delete account
+
+- A logged-in user can permanently delete their account from the profile page, behind an explicit danger-zone confirmation step (no single-click deletion).
+- If the user currently has any holdings or any transaction history, deletion is rejected (409) with a clear message directing them to liquidate their positions first — no partial deletion occurs.
+- A brand-new account with no trades (still at the $500 starting balance) can delete freely.
+- On successful deletion, the user's session is ended and they're returned to the login/register flow; their account, and their own password-reset/email-verification token rows, are removed.
+- The demo account cannot access this action — attempting to do so is rejected (403) and the UI does not offer the option.
