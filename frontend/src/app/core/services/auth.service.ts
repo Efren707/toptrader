@@ -10,6 +10,7 @@ export interface UserSummary {
   username: string;
   cashBalance: number;
   isDemo: boolean;
+  avatarKey: string | null;
 }
 
 export interface RegisterRequest {
@@ -21,6 +22,13 @@ export interface RegisterRequest {
 export interface LoginRequest {
   email: string;
   password: string;
+}
+
+export interface UpdateProfileRequest {
+  email?: string;
+  username?: string;
+  avatarKey?: string;
+  password?: string;
 }
 
 export interface ForgotPasswordRequest {
@@ -68,6 +76,12 @@ export class AuthService {
     return this.http
       .post<void>(`${environment.apiUrl}/auth/logout`, null)
       .pipe(tap(() => this.currentUser.set(null)));
+  }
+
+  updateProfile(request: UpdateProfileRequest): Observable<UserSummary> {
+    return this.http
+      .patch<UserSummary>(`${environment.apiUrl}/auth/me`, request)
+      .pipe(tap((user) => this.currentUser.set(user)));
   }
 
   checkSession(): Observable<UserSummary | null> {

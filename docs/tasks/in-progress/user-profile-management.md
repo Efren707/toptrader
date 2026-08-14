@@ -6,7 +6,7 @@ Working agreement applies as usual: one section at a time, check in before decid
 
 ## Status
 
-In progress — sections 1 (backend profile data model & edit-profile endpoint) and 2 (backend delete-account endpoint, cascade per ADR 0048) complete. Sections 3-5 (frontend) not started. No PR opened yet for either backend section — holding off until all sections are done, per issue-per-section but PR-per-milestone-ready-to-ship on this one.
+In progress — sections 1 (backend profile data model & edit-profile endpoint), 2 (backend delete-account endpoint, cascade per ADR 0048), and 3 (frontend edit-profile page incl. avatar picker) complete. Sections 4-5 (frontend delete-account flow, navbar display) not started. No PR opened yet — holding off until all sections are done, per issue-per-section but PR-per-milestone-ready-to-ship on this one.
 
 ## Decided now
 
@@ -55,17 +55,21 @@ GitHub Issue: [#151](https://github.com/Efren707/toptrader/issues/151)
 
 Soft dependency on section 1 (shares the demo-account guard pattern; not a hard blocker). GitHub Issue: [#152](https://github.com/Efren707/toptrader/issues/152)
 
-### 3. Frontend — Edit Profile page (incl. avatar picker)
+### 3. Frontend — Edit Profile page (incl. avatar picker) — complete
 
-- [ ] `/profile` route, inside the existing `authGuard`-protected `Layout` children group
-- [ ] Frontend `UserSummary` interface gains `avatarKey`
-- [ ] New `features/profile/` component: reactive form (username, email, password) following `register.ts`'s pattern (`FormBuilder.nonNullable.group`, `submitting`/`formError` signals, `ApiError.fieldErrors` mapped onto controls)
-- [ ] Generate the preset avatar set: `@dicebear/core` + a chosen collection (e.g. `adventurer`) as a dev-only dependency, a short local script exports ~12-16 seeds as static SVGs into `frontend/src/assets/avatars/`, committed to the repo (no runtime DiceBear dependency)
-- [ ] Preset avatar picker UI rendering the generated icon set, served via `<img src>`/static asset reference (not inline raw SVG)
-- [ ] `AuthService.updateProfile(...)` calling `PATCH /auth/me`, updates `currentUser` signal on success (`tap()` pattern)
-- [ ] Success/error feedback via `NotificationService` / `ApiError.detail`
-- [ ] `profile.spec.ts` covers success/validation/error paths
-- [ ] Manual smoke test in a browser
+- [x] `/profile` route, inside the existing `authGuard`-protected `Layout` children group
+- [x] Frontend `UserSummary` interface gains `avatarKey`
+- [x] New `features/profile/` component: reactive form (username, email, password) following `register.ts`'s pattern (`FormBuilder.nonNullable.group`, `submitting`/`formError` signals, `ApiError.fieldErrors` mapped onto controls). Unlike `register.ts`, every field is independently optional (partial update): blank or unchanged-from-current is omitted from the submit payload per-field (password included only when non-blank; username/email included only when non-blank *and* different from the prefilled value); if the built payload ends up empty, `submit()` skips the HTTP call entirely.
+- [x] Generate the preset avatar set: `@dicebear/core` + `@dicebear/styles` (**Critters** style — CC0-licensed, first-party DiceBear style) as dev-only dependencies; `frontend/scripts/generate-avatars.mjs` (`npm run generate:avatars`) exports 16 fixed-seed SVGs into `frontend/public/avatars/` — **not** `frontend/src/assets/avatars/` as originally planned above: this Angular project's actual static-assets root is `public/` (see `angular.json`'s `assets` config and the existing `/fonts/...` references in `styles.css`), a detail this milestone's earlier planning got wrong. No runtime DiceBear dependency in the shipped app.
+- [x] Preset avatar picker UI: clicking the avatar opens a modal overlay (backdrop + centered panel) showing all 16 presets in a grid; Cancel discards the pick, Confirm stages it into the form's `avatarKey` control only (no separate API call — it rides along with the next "Save changes" submit, same as any other field). Backdrop click (target-checked, not `stopPropagation`) and Escape both dismiss, for accessibility-lint compliance and keyboard support.
+- [x] `AuthService.updateProfile(...)` calling `PATCH /auth/me`, updates `currentUser` signal on success (`tap()` pattern)
+- [x] Success/error feedback via `NotificationService` / `ApiError.detail`, plus server field-errors (409 collisions) mapped onto the matching control
+- [x] `profile.spec.ts` covers prefill, avatar fallback/selection, empty/partial payload construction, password inclusion, client-side validation, in-flight button state, success handling, field-level and generic error handling, and all four avatar-picker interactions (17 tests)
+- [x] Manual smoke test in a browser
+
+Two related fixes surfaced while building this section, outside the original scope list above:
+- `SecurityConfig.java`'s CORS `allowedMethods` was missing `PATCH` (only had `GET/POST/PUT/DELETE/OPTIONS`), so every `PATCH /auth/me` call failed the browser's CORS preflight. Added `PATCH` to the list.
+- `shared/ui/input/input.ts`'s CVA `value`/`disabled` fields were plain (non-signal) class properties. They didn't reliably re-render after being set programmatically post-initial-render (e.g. via `form.patchValue()` clearing the password field after a successful save) — Angular wasn't consistently re-checking that nested child view for plain-field mutations, unlike signal-driven bindings (`Button`'s `[disabled]="submitting()"` worked fine by contrast). Converted both to `signal()`. This is a shared component used by every form in the app, not just this page.
 
 Depends on section 1. GitHub Issue: [#153](https://github.com/Efren707/toptrader/issues/153)
 

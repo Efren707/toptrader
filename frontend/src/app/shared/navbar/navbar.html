@@ -115,10 +115,13 @@
       <div class="account-menu">
         <ul class="account-menu-list">
           <li class="menu-item">
-            <button type="button" (click)="onTransactionsClick()">Transaction history</button>
+            <button type="button" (click)="onNavigateClick('/profile')">Profile</button>
           </li>
           <li class="menu-item">
-            <button type="button" (click)="onPerformanceClick()">Performance</button>
+            <button type="button" (click)="onNavigateClick('/transactions')">Transaction history</button>
+          </li>
+          <li class="menu-item">
+            <button type="button" (click)="onNavigateClick('/performance')">Performance</button>
           </li>
           <li class="menu-item">
             <button type="button" (click)="onLogoutClick()">Logout</button>

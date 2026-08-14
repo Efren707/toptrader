@@ -6,6 +6,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiError } from '../../core/interceptors/error.interceptor';
 
 type SearchField = 'ticker';
+type NavDestination = '/profile' | '/transactions' | '/performance';
 
 @Component({
   selector: 'app-navbar',
@@ -109,14 +110,9 @@ export class Navbar {
     this.accountDropdownActive.update((active) => !active);
   }
 
-  protected onTransactionsClick(): void {
+  protected onNavigateClick(nextPage: NavDestination): void {
     this.accountDropdownActive.set(false);
-    this.router.navigate(['/transactions']);
-  }
-
-  protected onPerformanceClick(): void {
-    this.accountDropdownActive.set(false);
-    this.router.navigate(['/performance']);
+    this.router.navigate([nextPage]);
   }
 
   protected onLogoutClick(): void {
