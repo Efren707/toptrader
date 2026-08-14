@@ -56,6 +56,10 @@ Groundwork completed ahead of US-1, per ADR 0020's build order:
 
 6 sections adding a one-click, read-only "Try Demo" login and README showcase polish: passwordless `POST /auth/demo-login` endpoint with a shared `SessionEstablisher` (ADR 0045), server-side read-only trading enforcement, a Flyway seed migration for the demo account's mixed gain/loss/flat holdings and transaction history, the frontend "Try Demo" login button, matching frontend read-only trading UX in `TradeForm`, and README screenshots + a Try Demo status-line callout. Full detail: [demo-account.md](./demo-account.md).
 
+## Milestone #16 — User Profile Management — ✅ Done
+
+5 sections adding self-service profile editing and account deletion: `PATCH /auth/me` (username/email/password/avatar, email re-verification, session invalidation, ADR 0047), `DELETE /auth/me` cascade account deletion (ADR 0048), a `/profile` page with a 16-preset DiceBear avatar picker (ADR 0046), a delete-account confirmation modal, and a reactive avatar/username display in the navbar. Merged via PR #169, closes #151-#155. Full detail: [user-profile-management.md](./user-profile-management.md).
+
 ## Phase 0 — Repo & Working Agreement Setup — ✅ Done
 
 - [x] GitHub repo (public, `Efren707/toptrader`), README, `.gitignore`, MIT LICENSE

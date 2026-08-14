@@ -1,12 +1,12 @@
 # User Profile Management
 
-> Status: In progress. Tracked under the [User Profile Management milestone](https://github.com/Efren707/toptrader/milestone/16). Originally a high-level backlog stub (`docs/tasks/planning/user-profile-management.md`), scoped out into the decisions and sections below.
+> Status: **Done** as of 2026-08-14. Tracked under the [User Profile Management milestone](https://github.com/Efren707/toptrader/milestone/16) (closed). Originally a high-level backlog stub (`docs/tasks/planning/user-profile-management.md`), scoped out into the decisions and sections below.
 
 Working agreement applies as usual: one section at a time, check in before deciding anything not already settled below.
 
 ## Status
 
-All 5 sections complete: 1 (backend profile data model & edit-profile endpoint), 2 (backend delete-account endpoint, cascade per ADR 0048), 3 (frontend edit-profile page incl. avatar picker), 4 (frontend delete-account flow), 5 (navbar avatar/username display). PR open, closing issues #151-#155.
+Done — all 5 sections complete and merged via [#169](https://github.com/Efren707/toptrader/pull/169): section 1 closed [#151](https://github.com/Efren707/toptrader/issues/151), section 2 closed [#152](https://github.com/Efren707/toptrader/issues/152), section 3 closed [#153](https://github.com/Efren707/toptrader/issues/153), section 4 closed [#154](https://github.com/Efren707/toptrader/issues/154), section 5 closed [#155](https://github.com/Efren707/toptrader/issues/155). Milestone closed 2026-08-14. (#152-#155 stayed open after the merge since the PR's "Closes #151, #152, ..." comma-list only auto-closed the first reference — same gap as the Demo Account milestone before it — closed manually.)
 
 ## Decided now
 
@@ -30,7 +30,7 @@ The shared demo account (`isDemo=true`) is rejected with 403 from both edit-prof
 
 ## Sections
 
-### 1. Backend — profile data model & edit-profile endpoint
+### 1. Backend — profile data model & edit-profile endpoint — complete
 
 - [x] `V7__add_avatar_key_to_users.sql` — nullable `avatar_key VARCHAR` column on `users`
 - [x] `User.java` — `avatarKey` field + getter/setter; add missing setters for `username`/`email`
@@ -45,7 +45,7 @@ The shared demo account (`isDemo=true`) is rejected with 403 from both edit-prof
 
 GitHub Issue: [#151](https://github.com/Efren707/toptrader/issues/151)
 
-### 2. Backend — delete-account endpoint
+### 2. Backend — delete-account endpoint — complete
 
 - [x] `DELETE /auth/me` on `AuthController`, session-authenticated
 - [x] `HoldingRepository.deleteByUser(User user)` and `TransactionRepository.deleteByUser(User user)` added (alongside the token repositories', per ADR 0047)
