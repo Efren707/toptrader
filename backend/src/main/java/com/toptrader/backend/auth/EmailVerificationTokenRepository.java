@@ -12,4 +12,6 @@ public interface EmailVerificationTokenRepository
   List<EmailVerificationToken> findByUser(User user);
 
   List<EmailVerificationToken> findByUserAndUsedAtIsNull(User user);
+
+  void deleteByUser(User user);
 }

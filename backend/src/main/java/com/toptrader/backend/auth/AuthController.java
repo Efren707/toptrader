@@ -16,6 +16,7 @@ public class AuthController {
   private final RegistrationService registrationService;
   private final LoginService loginService;
   private final UpdateProfileService updateProfileService;
+  private final DeleteAccountService deleteAccountService;
   private final DemoLoginService demoLoginService;
   private final PasswordResetService passwordResetService;
   private final EmailVerificationService emailVerificationService;
@@ -24,12 +25,14 @@ public class AuthController {
       RegistrationService registrationService,
       LoginService loginService,
       UpdateProfileService updateProfileService,
+      DeleteAccountService deleteAccountService,
       DemoLoginService demoLoginService,
       PasswordResetService passwordResetService,
       EmailVerificationService emailVerificationService) {
     this.registrationService = registrationService;
     this.loginService = loginService;
     this.updateProfileService = updateProfileService;
+    this.deleteAccountService = deleteAccountService;
     this.demoLoginService = demoLoginService;
     this.passwordResetService = passwordResetService;
     this.emailVerificationService = emailVerificationService;
@@ -100,5 +103,15 @@ public class AuthController {
         this.updateProfileService.updateProfile(
             principal.getUser().getId(), request, httpServletRequest, httpServletResponse);
     return ResponseEntity.status(HttpStatus.OK).body(summary);
+  }
+
+  @DeleteMapping("/me")
+  public ResponseEntity<Void> deleteProfile(
+      @AuthenticationPrincipal UserPrincipal principal,
+      HttpServletRequest httpServletRequest,
+      HttpServletResponse httpServletResponse) {
+    this.deleteAccountService.deleteAccount(
+        principal.getUser().getId(), httpServletRequest, httpServletResponse);
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 }

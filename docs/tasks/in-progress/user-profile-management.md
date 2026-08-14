@@ -1,12 +1,12 @@
 # User Profile Management
 
-> Status: Scoped, not yet started. Tracked under the [User Profile Management milestone](https://github.com/Efren707/toptrader/milestone/16). Originally a high-level backlog stub (`docs/tasks/planning/user-profile-management.md`), scoped out in this session into the decisions and sections below.
+> Status: In progress. Tracked under the [User Profile Management milestone](https://github.com/Efren707/toptrader/milestone/16). Originally a high-level backlog stub (`docs/tasks/planning/user-profile-management.md`), scoped out into the decisions and sections below.
 
 Working agreement applies as usual: one section at a time, check in before deciding anything not already settled below.
 
 ## Status
 
-In progress — section 1 (backend profile data model & edit-profile endpoint) complete. Sections 2-5 not started.
+In progress — sections 1 (backend profile data model & edit-profile endpoint) and 2 (backend delete-account endpoint, cascade per ADR 0048) complete. Sections 3-5 (frontend) not started. No PR opened yet for either backend section — holding off until all sections are done, per issue-per-section but PR-per-milestone-ready-to-ship on this one.
 
 ## Decided now
 
@@ -25,8 +25,8 @@ No current-password re-entry for email/password change or account deletion — s
 ### Demo account exclusion
 The shared demo account (`isDemo=true`) is rejected with 403 from both edit-profile and delete-account endpoints, mirroring the existing read-only-trading guard from ADR 0045. Without this, any visitor could rename or delete the one shared demo account.
 
-### Delete-account cascade: block, not cascade
-`DELETE /auth/me` returns 409 if the user has any holdings or transactions, preserving `transactions`' documented role as an immutable audit log. A never-traded account (still at $500, no history) can delete freely. The user's own password-reset/email-verification token rows are deleted along with the account.
+### Delete-account cascade: cascade, not block
+`DELETE /auth/me` deletes the user's holdings, transactions, and token rows (password-reset/email-verification) along with the user row itself, unconditionally (subject only to the demo-account guard) — no 409, no liquidate-first requirement. Originally scoped as block-not-cascade; reversed because blocking turned out to have no real exit for any user who had ever traded (selling holdings doesn't clear `transactions`, so the 409 never cleared). See [ADR 0048](../../adr/0048-account-deletion-cascade.md), which supersedes the relevant part of [ADR 0047](../../adr/0047-profile-editing-and-account-deletion.md).
 
 ## Sections
 
@@ -47,11 +47,11 @@ GitHub Issue: [#151](https://github.com/Efren707/toptrader/issues/151)
 
 ### 2. Backend — delete-account endpoint
 
-- [ ] `DELETE /auth/me` on `AuthController`, session-authenticated
-- [ ] 409 if the user has any holdings or transactions, with a message directing them to liquidate first
-- [ ] Successful deletion removes the user's token rows (`password_reset_tokens`/`email_verification_tokens`) and the user row, ends the session
-- [ ] `isDemo=true` users rejected with 403
-- [ ] Backend tests: block-on-holdings, block-on-transactions, successful deletion of a clean account, demo-account rejection
+- [x] `DELETE /auth/me` on `AuthController`, session-authenticated
+- [x] `HoldingRepository.deleteByUser(User user)` and `TransactionRepository.deleteByUser(User user)` added (alongside the token repositories', per ADR 0047)
+- [x] Deletion cascades unconditionally: holdings, transactions, `password_reset_tokens`, `email_verification_tokens`, then the user row, all within one `@Transactional` service method, then ends the session (per [ADR 0048](../../adr/0048-account-deletion-cascade.md))
+- [x] `isDemo=true` users rejected with 403
+- [x] Backend tests: cascade delete (holdings/transactions/tokens/user, in order), session termination (all sessions incl. current expired, `SecurityContext` cleared, session cookie cleared), demo-account rejection
 
 Soft dependency on section 1 (shares the demo-account guard pattern; not a hard blocker). GitHub Issue: [#152](https://github.com/Efren707/toptrader/issues/152)
 
@@ -75,8 +75,7 @@ Depends on section 1. GitHub Issue: [#153](https://github.com/Efren707/toptrader
 - [ ] Two-step confirm flow following `trade-form.ts`'s pattern (`confirming` signal, inline Cancel/Confirm panel, `submitting` disables both buttons)
 - [ ] `AuthService.deleteAccount()` calling `DELETE /auth/me`
 - [ ] On success: clear `currentUser`, redirect to `/login` (matches existing `logout()` flow)
-- [ ] 409 (holdings/transactions exist) surfaced as a clear, specific message, not a generic error
-- [ ] Spec covers confirm/cancel/success/409 paths
+- [ ] Spec covers confirm/cancel/success paths
 - [ ] Manual smoke test in a browser
 
 Depends on section 2 and section 3 (shares the `/profile` route/component). GitHub Issue: [#154](https://github.com/Efren707/toptrader/issues/154)
