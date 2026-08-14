@@ -6,7 +6,7 @@ Working agreement applies as usual: one section at a time, check in before decid
 
 ## Status
 
-In progress — sections 1 (backend profile data model & edit-profile endpoint), 2 (backend delete-account endpoint, cascade per ADR 0048), 3 (frontend edit-profile page incl. avatar picker), and 4 (frontend delete-account flow) complete. Section 5 (navbar avatar/username display) not started. No PR opened yet — holding off until all sections are done, per issue-per-section but PR-per-milestone-ready-to-ship on this one.
+All 5 sections complete: 1 (backend profile data model & edit-profile endpoint), 2 (backend delete-account endpoint, cascade per ADR 0048), 3 (frontend edit-profile page incl. avatar picker), 4 (frontend delete-account flow), 5 (navbar avatar/username display). PR open, closing issues #151-#155.
 
 ## Decided now
 
@@ -85,12 +85,14 @@ Depends on section 1. GitHub Issue: [#153](https://github.com/Efren707/toptrader
 
 Depends on section 2 and section 3 (shares the `/profile` route/component). GitHub Issue: [#154](https://github.com/Efren707/toptrader/issues/154)
 
-### 5. Frontend — Navbar avatar/username display
+### 5. Frontend — Navbar avatar/username display — complete
 
-- [ ] Account-menu trigger shows the user's avatar (fallback default icon when `avatarKey` is null) + username, replacing the current icon-only trigger
-- [ ] Fix the non-reactive username read (`navbar.ts:20`, currently a one-time signal snapshot) so an in-session profile edit reflects immediately
-- [ ] Add a "Profile" entry to the account-menu dropdown, navigating to `/profile`
-- [ ] `navbar.spec.ts` covers the new trigger content and the Profile link
-- [ ] Manual smoke test in a browser
+- [x] Account-menu trigger shows the user's avatar (falls back to the `nova` preset when `avatarKey` is null, matching `profile.ts`'s own fallback) + username, replacing the previous icon-only trigger
+- [x] Fixed the non-reactive username read (was `navbar.ts:21`'s one-time signal snapshot) — now holds a direct reference to `authService.currentUser` itself so the template re-reads it on every change-detection pass, reflecting an in-session profile edit immediately
+- [x] "Profile" entry in the account-menu dropdown, navigating to `/profile` (this already existed in the markup from earlier section work; this section added its test coverage)
+- [x] `navbar.spec.ts` covers avatar src (incl. `nova` fallback), username display, the reactivity fix (user changes without recreating the component), and the Profile link
+- [x] Manual smoke test in a browser
+
+Also removed the account-button's border and added a rotating chevron icon (points down/up with dropdown state) alongside the avatar/username, as a small polish pass on top of the section's original scope.
 
 Depends on section 3 (so `/profile` exists to link to) and section 1 (`avatarKey` on `UserSummary`). GitHub Issue: [#155](https://github.com/Efren707/toptrader/issues/155)
