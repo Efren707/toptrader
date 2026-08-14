@@ -21,6 +21,7 @@ describe('StockDetails', () => {
     username: 'testuser',
     cashBalance: 1000,
     isDemo: false,
+    avatarKey: null,
   };
 
   const mockQuote: Quote = {

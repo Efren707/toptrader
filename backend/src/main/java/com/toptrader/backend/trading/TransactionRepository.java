@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
   List<Transaction> findByUserOrderByExecutedAtDesc(User user);
+
+  void deleteByUser(User user);
 }

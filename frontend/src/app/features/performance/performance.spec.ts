@@ -19,6 +19,7 @@ describe('Performance', () => {
     username: 'testuser',
     cashBalance: 200,
     isDemo: false,
+    avatarKey: null,
   };
 
   function setup(): void {

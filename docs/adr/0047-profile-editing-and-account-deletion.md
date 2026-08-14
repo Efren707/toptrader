@@ -35,7 +35,7 @@ Both the edit-profile and delete-account endpoints reject `isDemo=true` users wi
 ### Delete-account cascade
 - *Hard cascade delete* (delete the user row and cascade-delete `holdings`/`transactions`) - rejected. Conflicts directly with `data-model.md`'s documented intent for `transactions` as an immutable audit log.
 - *Soft-delete / anonymize* (mark the row deleted, scrub PII, keep historical rows) - rejected for this pass. A reasonable future evolution, but it widens every existing read path (every query touching `users` would need to account for deleted-but-present rows) for a need not yet demonstrated.
-- *Block deletion while holdings or transactions exist* (chosen) - `DELETE /auth/me` returns `409 Conflict` if the user has any `holdings` or `transactions` rows, with a message directing them to liquidate first. A brand-new, never-traded account (still at the $500 starting balance, no transaction history) can delete freely. The user's own `password_reset_tokens`/`email_verification_tokens` rows are deleted as part of account deletion — they carry no audit significance, unlike `transactions`.
+- *Block deletion while holdings or transactions exist* (chosen) - `DELETE /auth/me` returns `409 Conflict` if the user has any `holdings` or `transactions` rows, with a message directing them to liquidate first. A brand-new, never-traded account (still at the $500 starting balance, no transaction history) can delete freely. The user's own `password_reset_tokens`/`email_verification_tokens` rows are deleted as part of account deletion — they carry no audit significance, unlike `transactions`. **Superseded by [ADR 0048](./0048-account-deletion-cascade.md)** — blocking turned out to have no real exit for any user who had ever traded (selling holdings doesn't clear `transactions`), so deletion now cascades instead.
 
 ## Decision (summary)
 
@@ -45,7 +45,7 @@ Both the edit-profile and delete-account endpoints reject `isDemo=true` users wi
 - Password or email change invalidates the user's other active sessions via `SessionRegistry`, reusing `PasswordResetService`'s existing pattern.
 - No current-password re-entry is required for any of these actions — session auth alone, consistent with the rest of the app.
 - Both endpoints reject `isDemo=true` users with 403.
-- `DELETE /auth/me` returns 409 if the user has any holdings or transactions; otherwise deletes the user row along with their own token rows.
+- `DELETE /auth/me` returns 409 if the user has any holdings or transactions; otherwise deletes the user row along with their own token rows. **Superseded by [ADR 0048](./0048-account-deletion-cascade.md)** — see that ADR for the cascade-delete behavior that replaced this.
 
 ## Consequences
 

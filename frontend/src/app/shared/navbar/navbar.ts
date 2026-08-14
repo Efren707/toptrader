@@ -6,6 +6,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiError } from '../../core/interceptors/error.interceptor';
 
 type SearchField = 'ticker';
+type NavDestination = '/profile' | '/transactions' | '/performance';
 
 @Component({
   selector: 'app-navbar',
@@ -17,7 +18,7 @@ export class Navbar {
   private readonly fb = inject(FormBuilder);
   private readonly quoteService = inject(QuoteService);
   private readonly authService = inject(AuthService);
-  protected readonly username = this.authService.currentUser()?.username;
+  protected readonly currentUser = this.authService.currentUser; 
   private readonly router = inject(Router);
   protected readonly searchForm = viewChild<ElementRef<HTMLElement>>('searchForm');
   protected readonly accountMenu = viewChild<ElementRef<HTMLElement>>('accountMenu');
@@ -105,18 +106,21 @@ export class Navbar {
     this.submitted.set(false);
   }
 
+  protected avatarSrc(): string {
+    return this.avatarSrcFor(this.currentUser()?.avatarKey || 'nova');
+  }
+
+  protected avatarSrcFor(key: string): string {
+    return `/avatars/${key}.svg`;
+  }
+
   protected onAccountClick(): void {
     this.accountDropdownActive.update((active) => !active);
   }
 
-  protected onTransactionsClick(): void {
+  protected onNavigateClick(nextPage: NavDestination): void {
     this.accountDropdownActive.set(false);
-    this.router.navigate(['/transactions']);
-  }
-
-  protected onPerformanceClick(): void {
-    this.accountDropdownActive.set(false);
-    this.router.navigate(['/performance']);
+    this.router.navigate([nextPage]);
   }
 
   protected onLogoutClick(): void {

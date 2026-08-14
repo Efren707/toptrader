@@ -1,0 +1,131 @@
+<main class="content">
+  <div class="profile-header">
+    <p class="welcome">Profile</p>
+  </div>
+
+  <app-card class="profile-card">
+    <form class="profile-layout" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="avatar-column">
+        <button type="button" class="avatar-trigger" (click)="openAvatarPicker()">
+          <img class="avatar-image" [src]="avatarSrc()" alt="Your avatar" width="96" height="96" />
+          <p class="avatar-prompt">Click to change your avatar</p>
+        </button>
+      </div>
+
+      <div class="fields-column">
+        @if (formError(); as message) {
+          <p class="form-error">{{ message }}</p>
+        }
+
+        <app-input
+          label="Username"
+          formControlName="username"
+          [errorMessage]="errorFor('username')"
+        />
+        <app-input
+          label="Email"
+          type="email"
+          formControlName="email"
+          [errorMessage]="errorFor('email')"
+        />
+        <app-input
+          label="New password"
+          type="password"
+          formControlName="password"
+          hint="Leave blank to keep your current password. Minimum 8 characters."
+          [errorMessage]="errorFor('password')"
+        />
+
+        <app-button type="submit" [fullWidth]="true" [disabled]="submitting()">
+          {{ submitting() ? 'Saving…' : 'Save changes' }}
+        </app-button>
+
+        <app-button
+          class="delete-trigger"
+          variant="danger"
+          [fullWidth]="true"
+          (pressed)="deleteAccount()"
+        >
+          Delete account
+        </app-button>
+      </div>
+    </form>
+  </app-card>
+
+  @if (confirming()) {
+    <div
+      class="delete-account-backdrop"
+      tabindex="0"
+      (click)="onDeleteBackdropClick($event)"
+      (keydown.escape)="cancel()"
+    >
+      <div class="delete-account-panel">
+        <p class="delete-account-title">Delete account</p>
+        <p class="delete-account-description">
+          This permanently removes your holdings, transaction history, and login. This cannot be
+          undone.
+        </p>
+
+        @if (deleteAccountError(); as message) {
+          <p class="form-error">{{ message }}</p>
+        }
+
+        <div class="delete-account-actions">
+          <app-button
+            variant="secondary"
+            [fullWidth]="true"
+            [disabled]="submittingDeleteAccount()"
+            (pressed)="cancel()"
+          >
+            Cancel
+          </app-button>
+          <app-button
+            variant="danger"
+            [fullWidth]="true"
+            [disabled]="submittingDeleteAccount()"
+            (pressed)="confirmedDeleteAccount()"
+          >
+            {{ submittingDeleteAccount() ? 'Deleting…' : 'Yes, delete my account' }}
+          </app-button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (pickerOpen()) {
+    <div
+      class="avatar-picker-backdrop"
+      tabindex="0"
+      (click)="onBackdropClick($event)"
+      (keydown.escape)="cancelAvatarPick()"
+    >
+      <div class="avatar-picker-panel">
+        <p class="avatar-picker-title">Choose an avatar</p>
+
+        <div class="avatar-grid">
+          @for (key of avatarOptions; track key) {
+            <button
+              type="button"
+              class="avatar-option"
+              [class.selected]="pendingAvatarKey() === key"
+              [attr.aria-pressed]="pendingAvatarKey() === key"
+              [attr.aria-label]="key"
+              (click)="selectAvatarOption(key)"
+            >
+              <img [src]="avatarSrcFor(key)" [alt]="key" width="56" height="56" />
+            </button>
+          }
+        </div>
+
+        <div class="avatar-picker-actions">
+          <app-button variant="secondary" [fullWidth]="true" (pressed)="cancelAvatarPick()">
+            Cancel
+          </app-button>
+          <app-button [fullWidth]="true" (pressed)="confirmAvatarPick()">
+            Confirm
+          </app-button>
+        </div>
+      </div>
+    </div>
+  }
+</main>

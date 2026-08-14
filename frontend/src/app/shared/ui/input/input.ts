@@ -1,4 +1,4 @@
-import { Component, forwardRef, input } from '@angular/core';
+import { Component, forwardRef, input, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 export type InputType = 'text' | 'email' | 'password';
@@ -26,8 +26,8 @@ export class Input implements ControlValueAccessor {
   errorMessage = input('');
 
   protected readonly id = `app-input-${nextId++}`;
-  protected value = '';
-  protected disabled = false;
+  protected readonly value = signal('');
+  protected readonly disabled = signal(false);
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function -- CVA default no-ops, overwritten by registerOn*
   private onChange: (value: string) => void = () => {};
@@ -35,7 +35,7 @@ export class Input implements ControlValueAccessor {
   private onTouched: () => void = () => {};
 
   writeValue(value: string): void {
-    this.value = value ?? '';
+    this.value.set(value ?? '');
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -47,12 +47,13 @@ export class Input implements ControlValueAccessor {
   }
 
   setDisabledState(isDisabled: boolean): void {
-    this.disabled = isDisabled;
+    this.disabled.set(isDisabled);
   }
 
   protected handleInput(event: Event): void {
-    this.value = (event.target as HTMLInputElement).value;
-    this.onChange(this.value);
+    const value = (event.target as HTMLInputElement).value;
+    this.value.set(value);
+    this.onChange(value);
   }
 
   protected handleBlur(): void {

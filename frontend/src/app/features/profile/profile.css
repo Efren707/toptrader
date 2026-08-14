@@ -1,0 +1,197 @@
+.profile-header {
+  margin-bottom: 2rem;
+}
+
+.welcome {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.profile-card {
+  padding: 2rem;
+}
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: 14rem minmax(0, 1fr);
+  gap: 3rem;
+  align-items: start;
+}
+
+@media (max-width: 40rem) {
+  .profile-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.avatar-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  padding-top: 0.5rem;
+}
+
+.avatar-trigger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.avatar-image {
+  width: 12rem;
+  height: 12rem;
+  border-radius: 50%;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-strong);
+  transition: border-color 0.12s ease;
+}
+
+.avatar-trigger:hover .avatar-image {
+  border-color: var(--color-text-faint);
+}
+
+.avatar-prompt {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  margin: 0;
+}
+
+.avatar-trigger:hover .avatar-prompt {
+  color: var(--color-text);
+}
+
+.fields-column {
+  min-width: 0;
+}
+
+.delete-trigger {
+  display: block;
+  margin-top: 0.75rem;
+}
+
+.form-error {
+  font-size: 0.8125rem;
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+  border: 1px solid color-mix(in srgb, var(--color-danger) 40%, transparent);
+  border-radius: var(--radius-md);
+  padding: 0.65rem 0.85rem;
+  margin: 0 0 1.25rem;
+}
+
+/* ---------- delete account modal ---------- */
+.delete-account-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 1.5rem;
+}
+
+.delete-account-panel {
+  width: 100%;
+  max-width: 24rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  text-align: center;
+}
+
+.delete-account-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-danger);
+  margin: 0 0 0.75rem;
+}
+
+.delete-account-description {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin: 0 0 1.25rem;
+}
+
+.delete-account-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+/* ---------- avatar picker modal ---------- */
+.avatar-picker-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 1.5rem;
+}
+
+.avatar-picker-panel {
+  width: 100%;
+  max-width: 24rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+}
+
+.avatar-picker-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 1.25rem;
+}
+
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.avatar-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  background: none;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.avatar-option img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--color-surface-raised);
+}
+
+.avatar-option:hover {
+  border-color: var(--color-border-strong);
+}
+
+.avatar-option.selected {
+  border-color: var(--color-text);
+}
+
+.avatar-picker-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+}

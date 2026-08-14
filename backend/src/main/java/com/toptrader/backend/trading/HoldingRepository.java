@@ -9,4 +9,6 @@ public interface HoldingRepository extends JpaRepository<Holding, Long> {
   Optional<Holding> findByUserAndTicker(User user, String ticker);
 
   List<Holding> findByUser(User user);
+
+  void deleteByUser(User user);
 }
