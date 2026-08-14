@@ -6,7 +6,7 @@ Working agreement applies as usual: one section at a time, check in before decid
 
 ## Status
 
-In progress — sections 1 (backend profile data model & edit-profile endpoint), 2 (backend delete-account endpoint, cascade per ADR 0048), and 3 (frontend edit-profile page incl. avatar picker) complete. Sections 4-5 (frontend delete-account flow, navbar display) not started. No PR opened yet — holding off until all sections are done, per issue-per-section but PR-per-milestone-ready-to-ship on this one.
+In progress — sections 1 (backend profile data model & edit-profile endpoint), 2 (backend delete-account endpoint, cascade per ADR 0048), 3 (frontend edit-profile page incl. avatar picker), and 4 (frontend delete-account flow) complete. Section 5 (navbar avatar/username display) not started. No PR opened yet — holding off until all sections are done, per issue-per-section but PR-per-milestone-ready-to-ship on this one.
 
 ## Decided now
 
@@ -73,14 +73,15 @@ Two related fixes surfaced while building this section, outside the original sco
 
 Depends on section 1. GitHub Issue: [#153](https://github.com/Efren707/toptrader/issues/153)
 
-### 4. Frontend — Delete Account flow
+### 4. Frontend — Delete Account flow — complete
 
-- [ ] Danger-zone section on the `/profile` page, styled with `--color-danger`/`--color-danger-soft` tokens
-- [ ] Two-step confirm flow following `trade-form.ts`'s pattern (`confirming` signal, inline Cancel/Confirm panel, `submitting` disables both buttons)
-- [ ] `AuthService.deleteAccount()` calling `DELETE /auth/me`
-- [ ] On success: clear `currentUser`, redirect to `/login` (matches existing `logout()` flow)
-- [ ] Spec covers confirm/cancel/success paths
-- [ ] Manual smoke test in a browser
+- [x] "Delete account" trigger on the `/profile` page, below "Save changes" in the edit-profile form
+- [x] Two-step confirm flow, but as a modal (backdrop + centered panel, `confirming` signal) rather than the originally-planned inline danger-zone card — matches the avatar picker's existing modal pattern on the same page (backdrop click / Escape both dismiss) instead of introducing a second, inline-panel interaction style; `submittingDeleteAccount` (separate from the edit-form's `submitting`, since the two actions are independent) disables both Cancel/Confirm during the request
+- [x] `AuthService.deleteAccount()` calling `DELETE /auth/me`, `tap()`-clears `currentUser` on success (mirrors `logout()`)
+- [x] On success: redirect to `/login` (matches existing `logout()` flow); on failure (e.g. demo-account 403): error shown in the modal, panel stays open for retry
+- [x] Added a `danger` variant to the shared `Button` component (outlined red, fills on hover) for the delete trigger and the modal's confirm button — first use of a third button variant, styled via the component itself rather than a CSS override, since Angular's emulated view encapsulation blocks parent stylesheets from reaching into a child component's own template
+- [x] `profile.spec.ts` covers opening the modal, cancel (no API call), confirm success (redirect + notification), and confirm failure (error shown, buttons re-enabled)
+- [x] Manual smoke test in a browser
 
 Depends on section 2 and section 3 (shares the `/profile` route/component). GitHub Issue: [#154](https://github.com/Efren707/toptrader/issues/154)
 

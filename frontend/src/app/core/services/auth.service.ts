@@ -84,6 +84,12 @@ export class AuthService {
       .pipe(tap((user) => this.currentUser.set(user)));
   }
 
+  deleteAccount(): Observable<void> {
+    return this.http
+      .delete<void>(`${environment.apiUrl}/auth/me`)
+      .pipe(tap(() => this.currentUser.set(null)));
+  }
+
   checkSession(): Observable<UserSummary | null> {
     return this.http.get<UserSummary>(`${environment.apiUrl}/auth/session`).pipe(
       tap((user) => this.currentUser.set(user)),

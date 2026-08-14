@@ -39,9 +39,58 @@
         <app-button type="submit" [fullWidth]="true" [disabled]="submitting()">
           {{ submitting() ? 'Saving…' : 'Save changes' }}
         </app-button>
+
+        <app-button
+          class="delete-trigger"
+          variant="danger"
+          [fullWidth]="true"
+          (pressed)="deleteAccount()"
+        >
+          Delete account
+        </app-button>
       </div>
     </form>
   </app-card>
+
+  @if (confirming()) {
+    <div
+      class="delete-account-backdrop"
+      tabindex="0"
+      (click)="onDeleteBackdropClick($event)"
+      (keydown.escape)="cancel()"
+    >
+      <div class="delete-account-panel">
+        <p class="delete-account-title">Delete account</p>
+        <p class="delete-account-description">
+          This permanently removes your holdings, transaction history, and login. This cannot be
+          undone.
+        </p>
+
+        @if (deleteAccountError(); as message) {
+          <p class="form-error">{{ message }}</p>
+        }
+
+        <div class="delete-account-actions">
+          <app-button
+            variant="secondary"
+            [fullWidth]="true"
+            [disabled]="submittingDeleteAccount()"
+            (pressed)="cancel()"
+          >
+            Cancel
+          </app-button>
+          <app-button
+            variant="danger"
+            [fullWidth]="true"
+            [disabled]="submittingDeleteAccount()"
+            (pressed)="confirmedDeleteAccount()"
+          >
+            {{ submittingDeleteAccount() ? 'Deleting…' : 'Yes, delete my account' }}
+          </app-button>
+        </div>
+      </div>
+    </div>
+  }
 
   @if (pickerOpen()) {
     <div

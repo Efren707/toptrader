@@ -6,6 +6,7 @@ import { ApiError } from '../../core/interceptors/error.interceptor';
 import { Button } from '../../shared/ui/button/button';
 import { Card } from '../../shared/ui/card/card';
 import { Input } from '../../shared/ui/input/input';
+import { Router } from '@angular/router';
 
 type UpdateProfileField = 'email' | 'username' | 'avatarKey' | 'password';
 
@@ -38,6 +39,7 @@ export class Profile {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
+  private readonly router = inject(Router);
 
   private currentUser = this.authService.currentUser();
 
@@ -54,6 +56,10 @@ export class Profile {
   protected readonly avatarOptions = AVAILABLE_AVATARS;
   protected readonly pickerOpen = signal(false);
   protected readonly pendingAvatarKey = signal<string | null>(null);
+
+  protected readonly confirming = signal(false);
+  protected readonly submittingDeleteAccount = signal(false);
+  protected readonly deleteAccountError = signal<string | null>(null);
 
   protected avatarSrc(): string {
     return this.avatarSrcFor(this.form.controls.avatarKey.value || 'nova');
@@ -133,6 +139,38 @@ export class Profile {
         } else {
           this.formError.set(error.detail);
         }
+      },
+    });
+  }
+
+  protected deleteAccount(): void {
+    this.deleteAccountError.set(null);
+    this.confirming.set(true);
+  }
+
+  protected onDeleteBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.cancel();
+    }
+  }
+
+  protected cancel(): void {
+    this.confirming.set(false);
+    this.deleteAccountError.set(null);
+  }
+
+  protected confirmedDeleteAccount(): void {
+    this.deleteAccountError.set(null);
+    this.submittingDeleteAccount.set(true);
+
+    this.authService.deleteAccount().subscribe({
+      next: () => {
+        this.notificationService.show('Account deleted successfully');
+        this.router.navigate(['/login']);
+      },
+      error: (error: ApiError) => {
+        this.submittingDeleteAccount.set(false);
+        this.deleteAccountError.set(error.detail);
       },
     });
   }

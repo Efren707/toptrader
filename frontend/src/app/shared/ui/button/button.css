@@ -46,3 +46,17 @@
   border-color: var(--color-text-faint);
   color: var(--color-text);
 }
+
+.btn-danger {
+  background: transparent;
+  border: 1px solid var(--color-danger);
+  color: var(--color-danger);
+  transition:
+    background 0.12s ease,
+    color 0.12s ease;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--color-danger);
+  color: var(--color-bg);
+}

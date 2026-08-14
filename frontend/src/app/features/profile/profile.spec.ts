@@ -1,6 +1,7 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter, Router } from '@angular/router';
 
 import { errorInterceptor } from '../../core/interceptors/error.interceptor';
 import { AuthService, UserSummary } from '../../core/services/auth.service';
@@ -12,6 +13,7 @@ describe('Profile', () => {
   let fixture: ComponentFixture<Profile>;
   let httpTesting: HttpTestingController;
   let notificationService: NotificationService;
+  let router: Router;
 
   const mockUser: UserSummary = {
     id: 1,
@@ -30,6 +32,8 @@ describe('Profile', () => {
     component = fixture.componentInstance;
     httpTesting = TestBed.inject(HttpTestingController);
     notificationService = TestBed.inject(NotificationService);
+    router = TestBed.inject(Router);
+    vi.spyOn(router, 'navigate').mockResolvedValue(true);
     fixture.detectChanges();
   }
 
@@ -39,6 +43,7 @@ describe('Profile', () => {
       providers: [
         provideHttpClient(withInterceptors([errorInterceptor])),
         provideHttpClientTesting(),
+        provideRouter([]),
       ],
     }).compileComponents();
   });
@@ -81,6 +86,22 @@ describe('Profile', () => {
 
   function pickerConfirmButton(): HTMLButtonElement {
     return fixture.nativeElement.querySelectorAll('.avatar-picker-actions button')[1];
+  }
+
+  function deleteAccountButton(): HTMLButtonElement {
+    return fixture.nativeElement.querySelector('.delete-trigger button');
+  }
+
+  function deleteCancelButton(): HTMLButtonElement {
+    return fixture.nativeElement.querySelectorAll('.delete-account-actions button')[0];
+  }
+
+  function deleteConfirmButton(): HTMLButtonElement {
+    return fixture.nativeElement.querySelectorAll('.delete-account-actions button')[1];
+  }
+
+  function expectDeleteRequest() {
+    return httpTesting.expectOne((req) => req.url.endsWith('/auth/me') && req.method === 'DELETE');
   }
 
   function setValue(input: HTMLInputElement, value: string): void {
@@ -286,5 +307,65 @@ describe('Profile', () => {
     const req = expectUpdateRequest();
     expect(req.request.body).toEqual({ avatarKey: 'ember' });
     req.flush({ ...mockUser, avatarKey: 'ember' });
+  });
+
+  it('opens the confirm modal when "Delete account" is clicked', () => {
+    setup();
+    expect(fixture.nativeElement.querySelector('.delete-account-backdrop')).toBeFalsy();
+
+    deleteAccountButton().click();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.delete-account-backdrop')).toBeTruthy();
+  });
+
+  it('dismisses the confirm modal without calling the API on cancel', () => {
+    setup();
+    deleteAccountButton().click();
+    fixture.detectChanges();
+
+    deleteCancelButton().click();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.delete-account-backdrop')).toBeFalsy();
+    httpTesting.expectNone((req) => req.url.endsWith('/auth/me'));
+  });
+
+  it('deletes the account and redirects to login on confirm', () => {
+    setup();
+    deleteAccountButton().click();
+    fixture.detectChanges();
+
+    deleteConfirmButton().click();
+    fixture.detectChanges();
+
+    expect(deleteConfirmButton().disabled).toBe(true);
+
+    expectDeleteRequest().flush(null);
+    fixture.detectChanges();
+
+    expect(notificationService.message()).toContain('deleted successfully');
+    expect(router.navigate).toHaveBeenCalledWith(['/login']);
+  });
+
+  it('shows an error and re-enables the buttons when delete fails', () => {
+    setup();
+    deleteAccountButton().click();
+    fixture.detectChanges();
+
+    deleteConfirmButton().click();
+    fixture.detectChanges();
+
+    expectDeleteRequest().flush(
+      { detail: 'Demo accounts cannot be deleted', errors: {} },
+      { status: 403, statusText: 'Forbidden' },
+    );
+    fixture.detectChanges();
+
+    expect(
+      fixture.nativeElement.querySelector('.delete-account-panel .form-error')?.textContent,
+    ).toContain('Demo accounts cannot be deleted');
+    expect(deleteConfirmButton().disabled).toBe(false);
+    expect(router.navigate).not.toHaveBeenCalled();
   });
 });
