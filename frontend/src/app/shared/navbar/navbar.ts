@@ -18,7 +18,7 @@ export class Navbar {
   private readonly fb = inject(FormBuilder);
   private readonly quoteService = inject(QuoteService);
   private readonly authService = inject(AuthService);
-  protected readonly username = this.authService.currentUser()?.username;
+  protected readonly currentUser = this.authService.currentUser; 
   private readonly router = inject(Router);
   protected readonly searchForm = viewChild<ElementRef<HTMLElement>>('searchForm');
   protected readonly accountMenu = viewChild<ElementRef<HTMLElement>>('accountMenu');
@@ -104,6 +104,14 @@ export class Navbar {
     this.quote.set(null); 
     this.notFound.set(false);
     this.submitted.set(false);
+  }
+
+  protected avatarSrc(): string {
+    return this.avatarSrcFor(this.currentUser()?.avatarKey || 'nova');
+  }
+
+  protected avatarSrcFor(key: string): string {
+    return `/avatars/${key}.svg`;
   }
 
   protected onAccountClick(): void {

@@ -3,6 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 
+import { AuthService, UserSummary } from '../../core/services/auth.service';
 import { Navbar } from './navbar';
 
 describe('Navbar', () => {
@@ -10,6 +11,16 @@ describe('Navbar', () => {
   let fixture: ComponentFixture<Navbar>;
   let httpTesting: HttpTestingController;
   let router: Router;
+  let authService: AuthService;
+
+  const mockUser: UserSummary = {
+    id: 1,
+    email: 'trader@example.com',
+    username: 'trader',
+    cashBalance: 500,
+    isDemo: false,
+    avatarKey: 'comet',
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -21,7 +32,9 @@ describe('Navbar', () => {
     component = fixture.componentInstance;
     httpTesting = TestBed.inject(HttpTestingController);
     router = TestBed.inject(Router);
+    authService = TestBed.inject(AuthService);
     vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    authService.currentUser.set(mockUser);
     fixture.detectChanges();
   });
 
@@ -31,6 +44,14 @@ describe('Navbar', () => {
 
   function accountButton(): HTMLButtonElement {
     return fixture.nativeElement.querySelector('.account-button');
+  }
+
+  function accountAvatar(): HTMLImageElement {
+    return fixture.nativeElement.querySelector('.account-button img');
+  }
+
+  function accountUsername(): string {
+    return fixture.nativeElement.querySelector('.account-button span')?.textContent?.trim() ?? '';
   }
 
   function menuButtonByText(text: string): HTMLButtonElement {
@@ -54,6 +75,38 @@ describe('Navbar', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('shows the current user\'s avatar and username in the account trigger', () => {
+    expect(accountAvatar().src).toContain('/avatars/comet.svg');
+    expect(accountUsername()).toBe('trader');
+  });
+
+  it('falls back to the default avatar when avatarKey is null', () => {
+    authService.currentUser.set({ ...mockUser, avatarKey: null });
+    fixture.detectChanges();
+
+    expect(accountAvatar().src).toContain('/avatars/nova.svg');
+  });
+
+  it('updates the displayed username when the current user changes, without recreating the component', () => {
+    expect(accountUsername()).toBe('trader');
+
+    authService.currentUser.set({ ...mockUser, username: 'newname' });
+    fixture.detectChanges();
+
+    expect(accountUsername()).toBe('newname');
+  });
+
+  it('navigates to profile and closes the dropdown when "Profile" is clicked', () => {
+    accountButton().click();
+    fixture.detectChanges();
+
+    menuButtonByText('Profile').click();
+    fixture.detectChanges();
+
+    expect(router.navigate).toHaveBeenCalledWith(['/profile']);
+    expect(fixture.nativeElement.querySelector('.account-menu')).toBeFalsy();
   });
 
   it('opens the account dropdown on click and closes it again on a second click', () => {
