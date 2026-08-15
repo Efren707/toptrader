@@ -14,24 +14,37 @@
       <p class="status">You don't hold any positions yet.</p>
     } @else {
       <div class="holdings-list">
-        <p class="holdings-title">Current positions</p>
+        <div class="holdings-header">
+          <span class="col-ticker">Ticker</span>
+          <span class="col-shares">Shares</span>
+          <span class="col-avg-cost">Avg. Cost</span>
+          <span class="col-market-value">Market Value</span>
+          <span class="col-pl">Unrealized P/L</span>
+          <span class="col-price">Current Price</span>
+          <span class="col-change">Percent Change</span>
+        </div>
         @for (holding of holdings(); track holding.ticker) {
           <button type="button" class="holding-row" (click)="onHoldingClick(holding.ticker)">
-            <div class="holding-left">
-              <p class="ticker">{{ holding.ticker }}</p>
-              <p class="quantity">{{ holding.quantity }}</p>
-            </div>
+            <span class="col-ticker ticker">{{ holding.ticker }}</span>
+            <span class="col-shares quantity">{{ holding.quantity }}</span>
+            <span class="col-avg-cost">{{ holding.averageCostBasis | currency }}</span>
+            <span class="col-market-value">{{ holding.marketValue | currency }}</span>
 
-            <div class="holding-right">
-              <p class="current-price">{{ holding.currentPrice | currency }}</p>
+            <span
+              class="col-pl"
+              [class.positive]="holding.unrealizedGainLoss >= 0"
+              [class.negative]="holding.unrealizedGainLoss < 0">
+              {{ holding.unrealizedGainLoss > 0 ? '+' : '' }}{{ holding.unrealizedGainLoss | currency }}
+            </span>
 
-              <p
-                class="percentChange"
-                [class.positive]="holding.percentChange >= 0"
-                [class.negative]="holding.percentChange < 0">
-                {{ holding.percentChange > 0 ? '+' : '' }}{{ holding.percentChange | number:'1.2-2' }}%
-              </p>
-            </div>
+            <span class="col-price current-price">{{ holding.currentPrice | currency }}</span>
+
+            <span
+              class="col-change percentChange"
+              [class.positive]="holding.percentChange >= 0"
+              [class.negative]="holding.percentChange < 0">
+              {{ holding.percentChange > 0 ? '+' : '' }}{{ holding.percentChange | number:'1.2-2' }}%
+            </span>
           </button>
         }
       </div>
