@@ -36,33 +36,44 @@
 .holdings-list {
   display: flex;
   flex-direction: column;
-  width: 25rem;
-  max-width: 100%;
+  width: 100%;
 }
 
-.holdings-title {
+.holdings-header,
+.holding-row {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-areas: "ticker shares avgcost marketvalue pl price change";
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.holdings-header > *,
+.holding-row > * {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.holdings-header {
+  padding: 0 0.6rem 0.6rem;
   font-family: var(--font-mono);
   font-size: 0.6875rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--color-text-faint);
   font-weight: 500;
-  margin: 0 0 0.75rem;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .holding-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2.5rem;
-  width: 100%;
   padding: 0.85rem 0.6rem;
   border: none;
   border-bottom: 1px solid var(--color-border);
   background: none;
   font: inherit;
   color: inherit;
-  text-align: left;
   cursor: pointer;
 }
 
@@ -74,20 +85,39 @@
   border-bottom: none;
 }
 
-.holding-left,
-.holding-right {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
+.col-ticker {
+  grid-area: ticker;
+  text-align: left;
 }
 
-.holding-right {
-  align-items: flex-end;
+.col-shares {
+  grid-area: shares;
+  text-align: right;
 }
 
-.holding-left p,
-.holding-right p {
-  margin: 0;
+.col-avg-cost {
+  grid-area: avgcost;
+  text-align: right;
+}
+
+.col-market-value {
+  grid-area: marketvalue;
+  text-align: right;
+}
+
+.col-pl {
+  grid-area: pl;
+  text-align: right;
+}
+
+.col-price {
+  grid-area: price;
+  text-align: right;
+}
+
+.col-change {
+  grid-area: change;
+  text-align: right;
 }
 
 .ticker {
@@ -95,20 +125,14 @@
   font-size: 1rem;
 }
 
-.quantity {
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-}
-
-.current-price {
-  font-weight: 600;
-  font-size: 1rem;
+.holding-row .quantity,
+.holding-row .col-avg-cost,
+.holding-row .col-market-value,
+.holding-row .col-pl,
+.holding-row .current-price,
+.holding-row .percentChange {
   font-family: var(--font-mono);
-}
-
-.percentChange {
-  font-size: 0.75rem;
-  font-family: var(--font-mono);
+  font-size: 0.875rem;
 }
 
 .positive {
@@ -117,4 +141,43 @@
 
 .negative {
   color: var(--color-danger);
+}
+
+@media (max-width: 40rem) {
+  .holdings-header {
+    display: none;
+  }
+
+  .holding-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "ticker price"
+      "shares change";
+    column-gap: 2.5rem;
+    row-gap: 0.15rem;
+  }
+
+  .col-avg-cost,
+  .col-market-value,
+  .col-pl {
+    display: none;
+  }
+
+  .col-shares {
+    text-align: left;
+  }
+
+  .quantity {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  .current-price {
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .percentChange {
+    font-size: 0.75rem;
+  }
 }
