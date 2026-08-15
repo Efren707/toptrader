@@ -1,8 +1,8 @@
 # Friends
 
-> Status: **Scoped**, not yet started. Tracked under the [Friends milestone](https://github.com/Efren707/toptrader/milestone/17) (6 issues, #173-#178). Will move to `docs/tasks/in-progress/` (per [ADR 0040](../../adr/0040-work-tracking-docs-lifecycle.md)) the moment work on Section 1 begins. Originally a high-level backlog stub, scoped into the decisions and sections below on 2026-08-14.
+> Status: **In progress**. Tracked under the [Friends milestone](https://github.com/Efren707/toptrader/milestone/17) (6 issues, #173-#178). Originally a high-level backlog stub, scoped into the decisions and sections below on 2026-08-14; moved to `docs/tasks/in-progress/` (per [ADR 0040](../../adr/0040-work-tracking-docs-lifecycle.md)) when work on Section 1 began.
 >
-> **Next up: Section 1** ([#173](https://github.com/Efren707/toptrader/issues/173), below) — friendship data model, migration, and the send/cancel request endpoints. Nothing else is blocked on a decision; every section below is ready to implement as-is.
+> **Now up: Section 1** ([#173](https://github.com/Efren707/toptrader/issues/173), below) — friendship data model, migration, and the send/cancel request endpoints. Nothing else is blocked on a decision; every section below is ready to implement as-is.
 
 Working agreement applies as usual: one section at a time, check in before deciding anything not already settled below.
 
@@ -55,9 +55,9 @@ Following the `user-profile-management.md` precedent: this stays a Milestone + I
 
 ### 1. Backend — data model & send/cancel request endpoints
 
-- [ ] `V8__create_friendships_table.sql` — `friendships` table: `requester_id`/`addressee_id` (FK → `users`, `ON DELETE CASCADE`), `status` enum (`PENDING`/`ACCEPTED`), timestamps, `CHECK (requester_id <> addressee_id)`, plus a unique index on `(LEAST(requester_id, addressee_id), GREATEST(requester_id, addressee_id))` to enforce the unordered-pair uniqueness at the DB level
-- [ ] `Friendship` entity (`@ManyToOne` to `User` for both `requester`/`addressee`, `@Enumerated(EnumType.STRING)` status, plain record DTOs elsewhere per ADR 0023 — no Lombok)
-- [ ] `FriendshipRepository` — needs a pair-lookup method covering both orderings (`(requester=A AND addressee=B) OR (requester=B AND addressee=A)`), used by send (duplicate/crossed-request check) and by search (status annotation)
+- [x] `V8__create_friendships_table.sql` — `friendships` table: `requester_id`/`addressee_id` (FK → `users`, `ON DELETE CASCADE`), `status` enum (`PENDING`/`ACCEPTED`), timestamps, `CHECK (requester_id <> addressee_id)`, plus a unique index on `(LEAST(requester_id, addressee_id), GREATEST(requester_id, addressee_id))` to enforce the unordered-pair uniqueness at the DB level
+- [x] `Friendship` entity (`@ManyToOne` to `User` for both `requester`/`addressee`, `@Enumerated(EnumType.STRING)` status, plain record DTOs elsewhere per ADR 0023 — no Lombok)
+- [x] `FriendshipRepository` — needs a pair-lookup method covering both orderings (`(requester=A AND addressee=B) OR (requester=B AND addressee=A)`), used by send (duplicate/crossed-request check) and by search (status annotation)
 - [ ] `POST /friends/requests` — body `{ addresseeId }`; requester = authenticated principal
   - 201 + created row on success
   - 400 if `addresseeId` equals the caller's own id (self-request)
@@ -66,6 +66,7 @@ Following the `user-profile-management.md` precedent: this stays a Milestone + I
   - If a `PENDING` row already exists in the *same* direction (caller already requested this user): 409, idempotent no-op
   - If a `PENDING` row already exists in the *opposite* direction (target already requested caller): flip that row to `ACCEPTED` instead of creating a new one (crossed-request auto-accept, ADR 0049) — 200, not 201, since no new row was created
   - If already `ACCEPTED`: 409
+  - `FriendshipService.sendFriendRequest` implements all of the above; still needed: `FriendshipController` wiring (incl. the 200-vs-201 status pick in the controller, per the note in ADR 0049) and `FriendshipRequest`/`FriendshipResponse` DTOs are in place
 - [ ] `DELETE /friends/requests/{id}` — cancel own pending outgoing request; 204 on success, 404 if not found or not `PENDING`
 - [ ] New `FRIEND_REQUEST` entry in `RateLimitGroup` (per ADR 0034) — `POST /friends/requests`, user-keyed, 20/hour; update `security-architecture.md`'s rate-limiting table to match
 - [ ] Backend tests: send success, self-request (400), nonexistent target (404), demo-account guard (403), duplicate same-direction (409), crossed-request auto-accept (200 + status ACCEPTED), already-friends (409), cancel success (204), cancel someone else's request (403, via `FriendshipAuthorization.isRequester`), cancel non-pending/nonexistent (404), rate-limit exceeded (429)
