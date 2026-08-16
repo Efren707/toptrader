@@ -42,4 +42,24 @@ public class FriendshipController {
     this.friendshipService.cancelFriendRequest(friendshipId);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
+
+  @PostMapping("/requests/{friendshipId}/accept")
+  public ResponseEntity<FriendshipResponse> acceptFriendRequest(@PathVariable Long friendshipId) {
+    FriendshipResponse friendshipResponse =
+        this.friendshipService.acceptFriendRequest(friendshipId);
+    return ResponseEntity.status(HttpStatus.OK).body(friendshipResponse);
+  }
+
+  @PostMapping("/requests/{friendshipId}/decline")
+  public ResponseEntity<Void> declineFriendRequest(@PathVariable Long friendshipId) {
+    this.friendshipService.declineFriendRequest(friendshipId);
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+  }
+
+  @DeleteMapping("/{userId}")
+  public ResponseEntity<Void> deleteFriend(
+      @AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable Long userId) {
+    this.friendshipService.removeFriend(userPrincipal.getUser().getId(), userId);
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+  }
 }

@@ -2,7 +2,7 @@
 
 > Status: **In progress**. Tracked under the [Friends milestone](https://github.com/Efren707/toptrader/milestone/17) (6 issues, #173-#178). Originally a high-level backlog stub, scoped into the decisions and sections below on 2026-08-14; moved to `docs/tasks/in-progress/` (per [ADR 0040](../../adr/0040-work-tracking-docs-lifecycle.md)) when work on Section 1 began.
 >
-> **Now up: Section 1** ([#173](https://github.com/Efren707/toptrader/issues/173), below) — friendship data model, migration, and the send/cancel request endpoints. Nothing else is blocked on a decision; every section below is ready to implement as-is.
+> **Now up: Section 3** ([#175](https://github.com/Efren707/toptrader/issues/175), below) — search & list endpoints. Nothing else is blocked on a decision; every section below is ready to implement as-is.
 
 Working agreement applies as usual: one section at a time, check in before deciding anything not already settled below.
 
@@ -75,12 +75,12 @@ GitHub Issue: [#173](https://github.com/Efren707/toptrader/issues/173)
 
 ### 2. Backend — respond-to-request & remove-friend endpoints
 
-- [ ] `POST /friends/requests/{id}/accept` — only the addressee; flips `status` to `ACCEPTED`, sets `responded_at`; 200 + updated row; 404 if not found/not `PENDING`; 403 if caller isn't the addressee or is the demo account
-- [ ] `POST /friends/requests/{id}/decline` — only the addressee; deletes the row; 204; same 404/403 cases as accept
-- [ ] `DELETE /friends/{userId}` — remove an accepted friend, addressed by the *other user's id* (not the friendship row id); either party may call it; looks up the `ACCEPTED` row for (caller, userId) via the pair-lookup method from section 1; 204; 404 if no `ACCEPTED` row exists between the two; 403 if caller is the demo account
-- [ ] `FriendshipAuthorization` bean (per ADR 0049) — `isAddressee(friendshipId, principal)`, `isRequester(friendshipId, principal)`, wired into `@PreAuthorize` on the service methods for accept/decline/cancel; the remove endpoint doesn't need a bean check since it's looked up directly by (caller, userId) rather than by friendship id, so "either party" falls out of the lookup itself
-- [ ] Friendship IDOR/authorization test — a dedicated `FriendshipServiceAuthorizationTest` (mirroring `TradeServiceAuthorizationTest`) asserting user A gets 403 trying to accept/decline/cancel a friendship they're not the addressee/requester of, per `security-architecture.md`'s "one IDOR test per resource type" requirement
-- [ ] Backend tests: accept success, accept by non-addressee (403, exercises `FriendshipAuthorization.isAddressee`), accept non-pending/nonexistent (404), decline success + same auth/404 cases, remove success, remove a non-friend (404), remove while still `PENDING` (404, not yet friends), demo-account guard on accept/decline/remove — mirrors `TradeServiceAuthorizationTest`'s pattern for the deny-path tests
+- [x] `POST /friends/requests/{id}/accept` — only the addressee; flips `status` to `ACCEPTED`, sets `responded_at`; 200 + updated row; 404 if not found/not `PENDING`; 403 if caller isn't the addressee or is the demo account
+- [x] `POST /friends/requests/{id}/decline` — only the addressee; deletes the row; 204; same 404/403 cases as accept
+- [x] `DELETE /friends/{userId}` — remove an accepted friend, addressed by the *other user's id* (not the friendship row id); either party may call it; looks up the `ACCEPTED` row for (caller, userId) via the pair-lookup method from section 1; 204; 404 if no `ACCEPTED` row exists between the two; 403 if caller is the demo account
+- [x] `FriendshipAuthorization` bean (per ADR 0049) — `isAddressee(friendshipId, principal)`, `isRequester(friendshipId, principal)`, wired into `@PreAuthorize` on the service methods for accept/decline/cancel; the remove endpoint doesn't need a bean check since it's looked up directly by (caller, userId) rather than by friendship id, so "either party" falls out of the lookup itself
+- [x] Friendship IDOR/authorization test — a dedicated `FriendshipServiceAuthorizationTest` (mirroring `TradeServiceAuthorizationTest`) asserting user A gets 403 trying to accept/decline/cancel a friendship they're not the addressee/requester of, per `security-architecture.md`'s "one IDOR test per resource type" requirement
+- [x] Backend tests: accept success, accept by non-addressee (403, exercises `FriendshipAuthorization.isAddressee`), accept non-pending/nonexistent (404), decline success + same auth/404 cases, remove success, remove a non-friend (404), remove while still `PENDING` (404, not yet friends), demo-account guard on accept/decline/remove — mirrors `TradeServiceAuthorizationTest`'s pattern for the deny-path tests
 
 Depends on section 1. GitHub Issue: [#174](https://github.com/Efren707/toptrader/issues/174)
 

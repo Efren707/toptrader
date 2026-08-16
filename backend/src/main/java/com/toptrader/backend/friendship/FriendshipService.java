@@ -102,6 +102,94 @@ public class FriendshipService {
     this.friendshipRepository.delete(friendship);
   }
 
+  @PreAuthorize("@friendshipAuthorization.isAddressee(#friendshipId, authentication.principal)")
+  @Transactional
+  public FriendshipResponse acceptFriendRequest(Long friendshipId) {
+    Friendship friendship =
+        this.friendshipRepository
+            .findById(friendshipId)
+            .orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Friendship not found"));
+
+    if (friendship.getAddressee().isDemo()) {
+      log.atWarn()
+          .addKeyValue("friendshipId", friendshipId)
+          .addKeyValue("reason", "Demo account is read-only")
+          .log("Friend request acceptance failed");
+      throw new ResponseStatusException(
+          HttpStatus.FORBIDDEN, "Demo accounts cannot accept friend requests");
+    }
+
+    if (friendship.getStatus() != Friendship.Status.PENDING) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Friendship not found");
+    }
+
+    friendship.setStatus(Friendship.Status.ACCEPTED);
+    friendship.setRespondedAt(LocalDateTime.now());
+    this.friendshipRepository.save(friendship);
+    return toResponse(friendship);
+  }
+
+  @PreAuthorize("@friendshipAuthorization.isAddressee(#friendshipId, authentication.principal)")
+  @Transactional
+  public void declineFriendRequest(Long friendshipId) {
+    Friendship friendship =
+        this.friendshipRepository
+            .findById(friendshipId)
+            .orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Friendship not found"));
+
+    if (friendship.getAddressee().isDemo()) {
+      log.atWarn()
+          .addKeyValue("friendshipId", friendshipId)
+          .addKeyValue("reason", "Demo account is read-only")
+          .log("Friend request decline failed");
+      throw new ResponseStatusException(
+          HttpStatus.FORBIDDEN, "Demo accounts cannot decline friend requests");
+    }
+
+    if (friendship.getStatus() != Friendship.Status.PENDING) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Friendship not found");
+    }
+
+    this.friendshipRepository.delete(friendship);
+  }
+
+  @PreAuthorize("#userId == authentication.principal.user.id")
+  @Transactional
+  public void removeFriend(Long userId, Long friendId) {
+    User requester =
+        this.userRepository
+            .findByIdForUpdate(userId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+    if (requester.isDemo()) {
+      log.atWarn()
+          .addKeyValue("userId", userId)
+          .addKeyValue("reason", "Demo account is read-only")
+          .log("Remove friend failed");
+      throw new ResponseStatusException(
+          HttpStatus.FORBIDDEN, "Demo accounts cannot remove friends");
+    }
+
+    User addressee =
+        this.userRepository
+            .findById(friendId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+    Friendship friendship =
+        this.friendshipRepository
+            .findByUserPair(requester, addressee)
+            .orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Friendship not found"));
+
+    if (friendship.getStatus() != Friendship.Status.ACCEPTED) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Friendship not found");
+    }
+
+    this.friendshipRepository.delete(friendship);
+  }
+
   private FriendshipResponse toResponse(Friendship friendship) {
     return new FriendshipResponse(
         friendship.getId(),

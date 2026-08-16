@@ -187,4 +187,167 @@ class FriendshipServiceTest {
         .isEqualTo(HttpStatus.FORBIDDEN);
     verify(friendshipRepository, never()).delete(any());
   }
+
+  // acceptFriendRequest
+
+  @Test
+  void acceptFriendRequest_acceptsPendingFriendship() {
+    Friendship friendship = new Friendship(requester, addressee, Friendship.Status.PENDING);
+    when(friendshipRepository.findById(FRIENDSHIP_ID)).thenReturn(Optional.of(friendship));
+
+    FriendshipResponse response = friendshipService.acceptFriendRequest(FRIENDSHIP_ID);
+
+    assertThat(response.status()).isEqualTo(Friendship.Status.ACCEPTED);
+    assertThat(friendship.getStatus()).isEqualTo(Friendship.Status.ACCEPTED);
+    assertThat(friendship.getRespondedAt()).isNotNull();
+    verify(friendshipRepository).save(friendship);
+  }
+
+  @Test
+  void acceptFriendRequest_nonexistent_throwsNotFound() {
+    when(friendshipRepository.findById(FRIENDSHIP_ID)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> friendshipService.acceptFriendRequest(FRIENDSHIP_ID))
+        .isInstanceOf(ResponseStatusException.class)
+        .extracting(ex -> ((ResponseStatusException) ex).getStatusCode())
+        .isEqualTo(HttpStatus.NOT_FOUND);
+  }
+
+  @Test
+  void acceptFriendRequest_notPending_throwsNotFound() {
+    Friendship friendship = new Friendship(requester, addressee, Friendship.Status.ACCEPTED);
+    when(friendshipRepository.findById(FRIENDSHIP_ID)).thenReturn(Optional.of(friendship));
+
+    assertThatThrownBy(() -> friendshipService.acceptFriendRequest(FRIENDSHIP_ID))
+        .isInstanceOf(ResponseStatusException.class)
+        .extracting(ex -> ((ResponseStatusException) ex).getStatusCode())
+        .isEqualTo(HttpStatus.NOT_FOUND);
+    verify(friendshipRepository, never()).save(any());
+  }
+
+  @Test
+  void acceptFriendRequest_asDemoAddressee_throwsForbidden() {
+    ReflectionTestUtils.setField(addressee, "isDemo", true);
+    Friendship friendship = new Friendship(requester, addressee, Friendship.Status.PENDING);
+    when(friendshipRepository.findById(FRIENDSHIP_ID)).thenReturn(Optional.of(friendship));
+
+    assertThatThrownBy(() -> friendshipService.acceptFriendRequest(FRIENDSHIP_ID))
+        .isInstanceOf(ResponseStatusException.class)
+        .extracting(ex -> ((ResponseStatusException) ex).getStatusCode())
+        .isEqualTo(HttpStatus.FORBIDDEN);
+    verify(friendshipRepository, never()).save(any());
+  }
+
+  // declineFriendRequest
+
+  @Test
+  void declineFriendRequest_deletesPendingFriendship() {
+    Friendship friendship = new Friendship(requester, addressee, Friendship.Status.PENDING);
+    when(friendshipRepository.findById(FRIENDSHIP_ID)).thenReturn(Optional.of(friendship));
+
+    friendshipService.declineFriendRequest(FRIENDSHIP_ID);
+
+    verify(friendshipRepository).delete(friendship);
+  }
+
+  @Test
+  void declineFriendRequest_nonexistent_throwsNotFound() {
+    when(friendshipRepository.findById(FRIENDSHIP_ID)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> friendshipService.declineFriendRequest(FRIENDSHIP_ID))
+        .isInstanceOf(ResponseStatusException.class)
+        .extracting(ex -> ((ResponseStatusException) ex).getStatusCode())
+        .isEqualTo(HttpStatus.NOT_FOUND);
+  }
+
+  @Test
+  void declineFriendRequest_notPending_throwsNotFound() {
+    Friendship friendship = new Friendship(requester, addressee, Friendship.Status.ACCEPTED);
+    when(friendshipRepository.findById(FRIENDSHIP_ID)).thenReturn(Optional.of(friendship));
+
+    assertThatThrownBy(() -> friendshipService.declineFriendRequest(FRIENDSHIP_ID))
+        .isInstanceOf(ResponseStatusException.class)
+        .extracting(ex -> ((ResponseStatusException) ex).getStatusCode())
+        .isEqualTo(HttpStatus.NOT_FOUND);
+    verify(friendshipRepository, never()).delete(any());
+  }
+
+  @Test
+  void declineFriendRequest_asDemoAddressee_throwsForbidden() {
+    ReflectionTestUtils.setField(addressee, "isDemo", true);
+    Friendship friendship = new Friendship(requester, addressee, Friendship.Status.PENDING);
+    when(friendshipRepository.findById(FRIENDSHIP_ID)).thenReturn(Optional.of(friendship));
+
+    assertThatThrownBy(() -> friendshipService.declineFriendRequest(FRIENDSHIP_ID))
+        .isInstanceOf(ResponseStatusException.class)
+        .extracting(ex -> ((ResponseStatusException) ex).getStatusCode())
+        .isEqualTo(HttpStatus.FORBIDDEN);
+    verify(friendshipRepository, never()).delete(any());
+  }
+
+  // removeFriend
+
+  @Test
+  void removeFriend_deletesAcceptedFriendship() {
+    when(userRepository.findByIdForUpdate(REQUESTER_ID)).thenReturn(Optional.of(requester));
+    when(userRepository.findById(ADDRESSEE_ID)).thenReturn(Optional.of(addressee));
+    Friendship friendship = new Friendship(requester, addressee, Friendship.Status.ACCEPTED);
+    when(friendshipRepository.findByUserPair(requester, addressee))
+        .thenReturn(Optional.of(friendship));
+
+    friendshipService.removeFriend(REQUESTER_ID, ADDRESSEE_ID);
+
+    verify(friendshipRepository).delete(friendship);
+  }
+
+  @Test
+  void removeFriend_nonexistentFriend_throwsNotFound() {
+    when(userRepository.findByIdForUpdate(REQUESTER_ID)).thenReturn(Optional.of(requester));
+    when(userRepository.findById(ADDRESSEE_ID)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> friendshipService.removeFriend(REQUESTER_ID, ADDRESSEE_ID))
+        .isInstanceOf(ResponseStatusException.class)
+        .extracting(ex -> ((ResponseStatusException) ex).getStatusCode())
+        .isEqualTo(HttpStatus.NOT_FOUND);
+    verifyNoInteractions(friendshipRepository);
+  }
+
+  @Test
+  void removeFriend_noExistingFriendship_throwsNotFound() {
+    when(userRepository.findByIdForUpdate(REQUESTER_ID)).thenReturn(Optional.of(requester));
+    when(userRepository.findById(ADDRESSEE_ID)).thenReturn(Optional.of(addressee));
+    when(friendshipRepository.findByUserPair(requester, addressee)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> friendshipService.removeFriend(REQUESTER_ID, ADDRESSEE_ID))
+        .isInstanceOf(ResponseStatusException.class)
+        .extracting(ex -> ((ResponseStatusException) ex).getStatusCode())
+        .isEqualTo(HttpStatus.NOT_FOUND);
+  }
+
+  @Test
+  void removeFriend_stillPending_throwsNotFound() {
+    when(userRepository.findByIdForUpdate(REQUESTER_ID)).thenReturn(Optional.of(requester));
+    when(userRepository.findById(ADDRESSEE_ID)).thenReturn(Optional.of(addressee));
+    Friendship friendship = new Friendship(requester, addressee, Friendship.Status.PENDING);
+    when(friendshipRepository.findByUserPair(requester, addressee))
+        .thenReturn(Optional.of(friendship));
+
+    assertThatThrownBy(() -> friendshipService.removeFriend(REQUESTER_ID, ADDRESSEE_ID))
+        .isInstanceOf(ResponseStatusException.class)
+        .extracting(ex -> ((ResponseStatusException) ex).getStatusCode())
+        .isEqualTo(HttpStatus.NOT_FOUND);
+    verify(friendshipRepository, never()).delete(any());
+  }
+
+  @Test
+  void removeFriend_asDemoCaller_throwsForbidden() {
+    ReflectionTestUtils.setField(requester, "isDemo", true);
+    when(userRepository.findByIdForUpdate(REQUESTER_ID)).thenReturn(Optional.of(requester));
+
+    assertThatThrownBy(() -> friendshipService.removeFriend(REQUESTER_ID, ADDRESSEE_ID))
+        .isInstanceOf(ResponseStatusException.class)
+        .extracting(ex -> ((ResponseStatusException) ex).getStatusCode())
+        .isEqualTo(HttpStatus.FORBIDDEN);
+    verifyNoInteractions(friendshipRepository);
+  }
 }

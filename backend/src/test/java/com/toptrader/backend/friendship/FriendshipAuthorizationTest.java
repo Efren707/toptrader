@@ -67,4 +67,37 @@ class FriendshipAuthorizationTest {
 
     assertThat(result).isFalse();
   }
+
+  @Test
+  void isAddressee_returnsTrue_whenFriendshipDoesNotExist() {
+    when(friendshipRepository.findById(FRIENDSHIP_ID)).thenReturn(Optional.empty());
+
+    boolean result = authorization.isAddressee(FRIENDSHIP_ID, new UserPrincipal(userWithId(1L)));
+
+    assertThat(result).isTrue();
+  }
+
+  @Test
+  void isAddressee_returnsTrue_whenPrincipalIsTheAddressee() {
+    User requester = userWithId(1L);
+    User addressee = userWithId(2L);
+    Friendship friendship = new Friendship(requester, addressee, Friendship.Status.PENDING);
+    when(friendshipRepository.findById(FRIENDSHIP_ID)).thenReturn(Optional.of(friendship));
+
+    boolean result = authorization.isAddressee(FRIENDSHIP_ID, new UserPrincipal(addressee));
+
+    assertThat(result).isTrue();
+  }
+
+  @Test
+  void isAddressee_returnsFalse_whenPrincipalIsNotTheAddressee() {
+    User requester = userWithId(1L);
+    User addressee = userWithId(2L);
+    Friendship friendship = new Friendship(requester, addressee, Friendship.Status.PENDING);
+    when(friendshipRepository.findById(FRIENDSHIP_ID)).thenReturn(Optional.of(friendship));
+
+    boolean result = authorization.isAddressee(FRIENDSHIP_ID, new UserPrincipal(requester));
+
+    assertThat(result).isFalse();
+  }
 }

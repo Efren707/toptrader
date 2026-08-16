@@ -24,8 +24,9 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * Verifies ADR 0049's two-party {@code @PreAuthorize} guards on {@link FriendshipService}: the
- * simple userId-binding on {@code sendFriendRequest} (ADR 0035's pattern), and the
- * resource-lookup-based {@code isRequester} check on {@code cancelFriendRequest} via {@link
+ * simple userId-binding on {@code sendFriendRequest}/{@code removeFriend} (ADR 0035's pattern), and
+ * the resource-lookup-based {@code isRequester}/{@code isAddressee} checks on {@code
+ * cancelFriendRequest}/{@code acceptFriendRequest}/{@code declineFriendRequest} via {@link
  * FriendshipAuthorization} - the codebase's first two-party IDOR guard that's actually reachable
  * through normal use, unlike the userId-binding checks (see ADR 0035's consequences).
  */
@@ -88,5 +89,62 @@ class FriendshipServiceAuthorizationTest {
     friendshipService.cancelFriendRequest(FRIENDSHIP_ID);
 
     verify(friendshipRepository).delete(friendship);
+  }
+
+  @Test
+  void acceptFriendRequest_deniesAcceptForNonAddressee() {
+    User actualAddressee = new User("addressee@example.com", "addressee", "hash", BigDecimal.ZERO);
+    ReflectionTestUtils.setField(actualAddressee, "id", OTHER_USER_ID);
+    Friendship friendship =
+        new Friendship(authenticatedUser, actualAddressee, Friendship.Status.PENDING);
+    when(friendshipRepository.findById(FRIENDSHIP_ID)).thenReturn(Optional.of(friendship));
+
+    assertThatThrownBy(() -> friendshipService.acceptFriendRequest(FRIENDSHIP_ID))
+        .isInstanceOf(AccessDeniedException.class);
+    verify(friendshipRepository, never()).save(friendship);
+  }
+
+  @Test
+  void acceptFriendRequest_allowsAcceptForOwnIncomingRequest() {
+    User requester = new User("requester@example.com", "requester", "hash", BigDecimal.ZERO);
+    ReflectionTestUtils.setField(requester, "id", OTHER_USER_ID);
+    Friendship friendship = new Friendship(requester, authenticatedUser, Friendship.Status.PENDING);
+    when(friendshipRepository.findById(FRIENDSHIP_ID)).thenReturn(Optional.of(friendship));
+
+    friendshipService.acceptFriendRequest(FRIENDSHIP_ID);
+
+    verify(friendshipRepository).save(friendship);
+  }
+
+  @Test
+  void declineFriendRequest_deniesDeclineForNonAddressee() {
+    User actualAddressee = new User("addressee@example.com", "addressee", "hash", BigDecimal.ZERO);
+    ReflectionTestUtils.setField(actualAddressee, "id", OTHER_USER_ID);
+    Friendship friendship =
+        new Friendship(authenticatedUser, actualAddressee, Friendship.Status.PENDING);
+    when(friendshipRepository.findById(FRIENDSHIP_ID)).thenReturn(Optional.of(friendship));
+
+    assertThatThrownBy(() -> friendshipService.declineFriendRequest(FRIENDSHIP_ID))
+        .isInstanceOf(AccessDeniedException.class);
+    verify(friendshipRepository, never()).delete(friendship);
+  }
+
+  @Test
+  void declineFriendRequest_allowsDeclineForOwnIncomingRequest() {
+    User requester = new User("requester@example.com", "requester", "hash", BigDecimal.ZERO);
+    ReflectionTestUtils.setField(requester, "id", OTHER_USER_ID);
+    Friendship friendship = new Friendship(requester, authenticatedUser, Friendship.Status.PENDING);
+    when(friendshipRepository.findById(FRIENDSHIP_ID)).thenReturn(Optional.of(friendship));
+
+    friendshipService.declineFriendRequest(FRIENDSHIP_ID);
+
+    verify(friendshipRepository).delete(friendship);
+  }
+
+  @Test
+  void removeFriend_deniesRemoveForAnotherUsersId() {
+    assertThatThrownBy(() -> friendshipService.removeFriend(OTHER_USER_ID, 3L))
+        .isInstanceOf(AccessDeniedException.class);
+    verifyNoInteractions(userRepository, friendshipRepository);
   }
 }

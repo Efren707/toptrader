@@ -18,4 +18,10 @@ public class FriendshipAuthorization {
     return friendship.isEmpty()
         || friendship.get().getRequester().getId().equals(userPrincipal.getUser().getId());
   }
+
+  public boolean isAddressee(Long friendshipId, UserPrincipal userPrincipal) {
+    Optional<Friendship> friendship = friendshipRepository.findById(friendshipId);
+    return friendship.isEmpty()
+        || friendship.get().getAddressee().getId().equals(userPrincipal.getUser().getId());
+  }
 }
