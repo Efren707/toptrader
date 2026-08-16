@@ -126,6 +126,33 @@ class RateLimitFilterTest {
         .andExpect(header().exists(HttpHeaders.RETRY_AFTER));
   }
 
+  @Test
+  void friendRequest_exceedingLimit_returns429WithRetryAfter() throws Exception {
+    seedUser("friendlimit@example.com", "friendlimit", "password123");
+    MockHttpSession session = loginAndGetSession("friendlimit@example.com", "password123");
+
+    for (int i = 0; i < 20; i++) {
+      mockMvc
+          .perform(
+              post("/friends/requests")
+                  .with(csrf())
+                  .session(session)
+                  .contentType(MediaType.APPLICATION_JSON)
+                  .content(friendRequestBody(999_999_999L)))
+          .andExpect(status().isNotFound());
+    }
+
+    mockMvc
+        .perform(
+            post("/friends/requests")
+                .with(csrf())
+                .session(session)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(friendRequestBody(999_999_999L)))
+        .andExpect(status().isTooManyRequests())
+        .andExpect(header().exists(HttpHeaders.RETRY_AFTER));
+  }
+
   private User seedUser(String email, String username, String rawPassword) {
     return userRepository.save(
         new User(email, username, passwordEncoder.encode(rawPassword), new BigDecimal("500.00")));
@@ -162,5 +189,12 @@ class RateLimitFilterTest {
         {"ticker":"AAPL","quantity":%d}
         """
         .formatted(quantity);
+  }
+
+  private String friendRequestBody(long addresseeId) {
+    return """
+        {"addresseeId":%d}
+        """
+        .formatted(addresseeId);
   }
 }

@@ -38,8 +38,8 @@
 ## Rate limiting
 
 - `bucket4j-core` + `bucket4j-caffeine` (in-process, no Redis/distributed store - matches the single-EC2-instance deployment shape, ADR 0005/0014), applied via a `RateLimitFilter` wired into `SecurityConfig`'s filter chain the same way as `CsrfCookieFilter` (ADR 0034).
-- Mixed key extraction: client IP (`X-Forwarded-For` first hop) for `POST /auth/register`, which has no session yet; authenticated user ID for `GET /quotes/{ticker}`, `POST /trades/buy`, `POST /trades/sell`.
-- Tiered thresholds: register 5/hour per IP, quotes 20/minute per user, trades (buy+sell shared) 10/minute per user.
+- Mixed key extraction: client IP (`X-Forwarded-For` first hop) for `POST /auth/register`, which has no session yet; authenticated user ID for `GET /quotes/{ticker}`, `POST /trades/buy`, `POST /trades/sell`, `POST /friends/requests`.
+- Tiered thresholds: register 5/hour per IP, quotes 20/minute per user, trades (buy+sell shared) 10/minute per user, friend requests 20/hour per user.
 - Exceeding a limit returns `429` with an RFC 7807 `ProblemDetail` body (consistent with every other error response, ADR 0012) and a `Retry-After` header.
 - Login's existing DB-tracked lockout (ADR 0004/0025) is a separate, stricter mechanism and is unaffected by this.
 

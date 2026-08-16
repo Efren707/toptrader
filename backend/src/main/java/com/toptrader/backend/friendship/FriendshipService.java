@@ -77,6 +77,31 @@ public class FriendshipService {
     return toResponse(friendship);
   }
 
+  @PreAuthorize("@friendshipAuthorization.isRequester(#friendshipId, authentication.principal)")
+  @Transactional
+  public void cancelFriendRequest(Long friendshipId) {
+    Friendship friendship =
+        this.friendshipRepository
+            .findById(friendshipId)
+            .orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Friendship not found"));
+
+    if (friendship.getRequester().isDemo()) {
+      log.atWarn()
+          .addKeyValue("friendshipId", friendshipId)
+          .addKeyValue("reason", "Demo account is read-only")
+          .log("Friend request cancellation failed");
+      throw new ResponseStatusException(
+          HttpStatus.FORBIDDEN, "Demo accounts cannot cancel friend requests");
+    }
+
+    if (friendship.getStatus() != Friendship.Status.PENDING) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Friendship cannot be cancelled");
+    }
+
+    this.friendshipRepository.delete(friendship);
+  }
+
   private FriendshipResponse toResponse(Friendship friendship) {
     return new FriendshipResponse(
         friendship.getId(),
@@ -84,5 +109,4 @@ public class FriendshipService {
         friendship.getAddressee().getId(),
         friendship.getStatus());
   }
-
 }

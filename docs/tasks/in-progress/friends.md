@@ -58,7 +58,7 @@ Following the `user-profile-management.md` precedent: this stays a Milestone + I
 - [x] `V8__create_friendships_table.sql` — `friendships` table: `requester_id`/`addressee_id` (FK → `users`, `ON DELETE CASCADE`), `status` enum (`PENDING`/`ACCEPTED`), timestamps, `CHECK (requester_id <> addressee_id)`, plus a unique index on `(LEAST(requester_id, addressee_id), GREATEST(requester_id, addressee_id))` to enforce the unordered-pair uniqueness at the DB level
 - [x] `Friendship` entity (`@ManyToOne` to `User` for both `requester`/`addressee`, `@Enumerated(EnumType.STRING)` status, plain record DTOs elsewhere per ADR 0023 — no Lombok)
 - [x] `FriendshipRepository` — needs a pair-lookup method covering both orderings (`(requester=A AND addressee=B) OR (requester=B AND addressee=A)`), used by send (duplicate/crossed-request check) and by search (status annotation)
-- [ ] `POST /friends/requests` — body `{ addresseeId }`; requester = authenticated principal
+- [x] `POST /friends/requests` — body `{ addresseeId }`; requester = authenticated principal
   - 201 + created row on success
   - 400 if `addresseeId` equals the caller's own id (self-request)
   - 404 if `addresseeId` doesn't exist
@@ -66,10 +66,10 @@ Following the `user-profile-management.md` precedent: this stays a Milestone + I
   - If a `PENDING` row already exists in the *same* direction (caller already requested this user): 409, idempotent no-op
   - If a `PENDING` row already exists in the *opposite* direction (target already requested caller): flip that row to `ACCEPTED` instead of creating a new one (crossed-request auto-accept, ADR 0049) — 200, not 201, since no new row was created
   - If already `ACCEPTED`: 409
-  - `FriendshipService.sendFriendRequest` implements all of the above; still needed: `FriendshipController` wiring (incl. the 200-vs-201 status pick in the controller, per the note in ADR 0049) and `FriendshipRequest`/`FriendshipResponse` DTOs are in place
-- [ ] `DELETE /friends/requests/{id}` — cancel own pending outgoing request; 204 on success, 404 if not found or not `PENDING`
-- [ ] New `FRIEND_REQUEST` entry in `RateLimitGroup` (per ADR 0034) — `POST /friends/requests`, user-keyed, 20/hour; update `security-architecture.md`'s rate-limiting table to match
-- [ ] Backend tests: send success, self-request (400), nonexistent target (404), demo-account guard (403), duplicate same-direction (409), crossed-request auto-accept (200 + status ACCEPTED), already-friends (409), cancel success (204), cancel someone else's request (403, via `FriendshipAuthorization.isRequester`), cancel non-pending/nonexistent (404), rate-limit exceeded (429)
+  - `FriendshipService.sendFriendRequest` implements all of the above; `FriendshipController` picks the 200-vs-201 status per the note in ADR 0049
+- [x] `DELETE /friends/requests/{id}` — cancel own pending outgoing request; 204 on success, 404 if not found or not `PENDING`
+- [x] New `FRIEND_REQUEST` entry in `RateLimitGroup` (per ADR 0034) — `POST /friends/requests`, user-keyed, 20/hour; update `security-architecture.md`'s rate-limiting table to match
+- [x] Backend tests: send success, self-request (400), nonexistent target (404), demo-account guard (403), duplicate same-direction (409), crossed-request auto-accept (200 + status ACCEPTED), already-friends (409), cancel success (204), cancel someone else's request (403, via `FriendshipAuthorization.isRequester`), cancel non-pending/nonexistent (404), rate-limit exceeded (429)
 
 GitHub Issue: [#173](https://github.com/Efren707/toptrader/issues/173)
 
