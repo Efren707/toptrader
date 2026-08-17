@@ -2,7 +2,7 @@
 
 > Status: **In progress**. Tracked under the [Friends milestone](https://github.com/Efren707/toptrader/milestone/17) (6 issues, #173-#178). Originally a high-level backlog stub, scoped into the decisions and sections below on 2026-08-14; moved to `docs/tasks/in-progress/` (per [ADR 0040](../../adr/0040-work-tracking-docs-lifecycle.md)) when work on Section 1 began.
 >
-> **Now up: Section 3** ([#175](https://github.com/Efren707/toptrader/issues/175), below) — search & list endpoints. Nothing else is blocked on a decision; every section below is ready to implement as-is.
+> **Now up: Section 4** ([#176](https://github.com/Efren707/toptrader/issues/176), below) — Navbar Friends dropdown. Nothing else is blocked on a decision; every section below is ready to implement as-is.
 
 Working agreement applies as usual: one section at a time, check in before deciding anything not already settled below.
 
@@ -89,13 +89,13 @@ Depends on section 1. GitHub Issue: [#174](https://github.com/Efren707/toptrader
 - [x] `GET /users/search?q=` — case-insensitive partial/prefix match on `username`, excludes the caller's own id **and any `isDemo=true` user**, capped at a small result count (e.g. top 10); 400 if `q` is blank/missing or exceeds a max length (Bean Validation `@NotBlank @Size(max=...)`, avoiding both an all-users query and an oversized query string)
   - `%`/`_` in the raw query are escaped before being embedded in the `LIKE` pattern (with an explicit `ESCAPE` clause), so searching for a literal wildcard character doesn't match every user
   - Each result: `{ id, username, avatarKey, relationshipStatus }` where `relationshipStatus` is one of `NONE | OUTGOING_PENDING | INCOMING_PENDING | FRIENDS` (per the search-status decision above) — computed via the same pair-lookup method from section 1
-- [ ] `GET /friends/requests/incoming` — caller's `PENDING` rows where caller is `addressee`; `{ id, requester: {id, username, avatarKey}, createdAt }` per row; this list's length is what drives the navbar badge count
-- [ ] `GET /friends/requests/outgoing` — caller's `PENDING` rows where caller is `requester`; same shape, `addressee` instead of `requester`
-- [ ] `GET /friends` — caller's `ACCEPTED` rows, returned as `{ id, username, avatarKey, friendsSince }` (the *other* user in each row, not the raw friendship rows)
-- [ ] These four are read-only — no demo-account guard needed (consistent with demo being read-only elsewhere rather than blocked from viewing)
+- [x] `GET /friends/requests/incoming` — caller's `PENDING` rows where caller is `addressee`; `{ id, requester: {id, username, avatarKey}, createdAt }` per row; this list's length is what drives the navbar badge count
+- [x] `GET /friends/requests/outgoing` — caller's `PENDING` rows where caller is `requester`; same shape, `addressee` instead of `requester`
+- [x] `GET /friends` — caller's `ACCEPTED` rows, returned as `{ id, username, avatarKey, friendsSince }` (the *other* user in each row, not the raw friendship rows); `friendsSince` is `respondedAt` (when the request was accepted), not `createdAt` (when it was first sent)
+- [x] These four are read-only — no demo-account guard needed (consistent with demo being read-only elsewhere rather than blocked from viewing)
 - [x] New `SEARCH` entry in `RateLimitGroup` (per ADR 0034) — `GET /users/search`, user-keyed, 20/minute (matches `QUOTE`); update `security-architecture.md`'s rate-limiting table to match
 - [x] Backend tests for `GET /users/search`: excludes self, excludes demo account, partial/case-insensitive match, wildcard-character query treated literally, each of the four `relationshipStatus` values, blank/oversized query (400), result cap, rate-limit exceeded (429) — `UserSearchServiceTest` (unit) + `UserSearchControllerTest` (full-stack against real Postgres) + a case added to `RateLimitFilterTest`
-- [ ] Backend tests for the three list endpoints: each scoped correctly to the caller and excludes rows that don't belong to them
+- [x] Backend tests for the three list endpoints: each scoped correctly to the caller and excludes rows that don't belong to them — `FriendshipServiceTest` (unit, mapping + query-scoping cases for `getIncomingFriendRequests`/`getOutgoingFriendRequests`/`getFriends`)
 
 Depends on section 1. GitHub Issue: [#175](https://github.com/Efren707/toptrader/issues/175)
 

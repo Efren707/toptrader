@@ -90,4 +90,8 @@ public class Friendship {
   public void setRespondedAt(LocalDateTime respondedAt) {
     this.respondedAt = respondedAt;
   }
+
+  public LocalDateTime getCreatedAt() {
+    return this.createdAt;
+  }
 }

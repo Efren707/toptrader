@@ -4,6 +4,7 @@ import com.toptrader.backend.user.User;
 import com.toptrader.backend.user.UserRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -188,6 +189,71 @@ public class FriendshipService {
     }
 
     this.friendshipRepository.delete(friendship);
+  }
+
+  @Transactional
+  public List<IncomingFriendRequest> getIncomingFriendRequests(User addressee) {
+    List<Friendship> incomingFriendRequests =
+        this.friendshipRepository.findByAddresseeAndStatusOrderByCreatedAtDesc(
+            addressee, Friendship.Status.PENDING);
+
+    return incomingFriendRequests.stream().map(this::toIncomingFriendRequest).toList();
+  }
+
+  private IncomingFriendRequest toIncomingFriendRequest(Friendship friendship) {
+    FriendSummary friendSummary =
+        new FriendSummary(
+            friendship.getRequester().getId(),
+            friendship.getRequester().getUsername(),
+            friendship.getRequester().getAvatarKey());
+
+    return new IncomingFriendRequest(friendship.getId(), friendSummary, friendship.getCreatedAt());
+  }
+
+  @Transactional
+  public List<OutgoingFriendRequest> getOutgoingFriendRequests(User requester) {
+    List<Friendship> outgoingFriendRequests =
+        this.friendshipRepository.findByRequesterAndStatusOrderByCreatedAtDesc(
+            requester, Friendship.Status.PENDING);
+
+    return outgoingFriendRequests.stream().map(this::toOutgoingFriendRequest).toList();
+  }
+
+  private OutgoingFriendRequest toOutgoingFriendRequest(Friendship friendship) {
+    FriendSummary friendSummary =
+        new FriendSummary(
+            friendship.getAddressee().getId(),
+            friendship.getAddressee().getUsername(),
+            friendship.getAddressee().getAvatarKey());
+
+    return new OutgoingFriendRequest(friendship.getId(), friendSummary, friendship.getCreatedAt());
+  }
+
+  @Transactional
+  public List<FriendResponse> getFriends(User caller) {
+    List<Friendship> friendshipList =
+        this.friendshipRepository.findByUserAndStatusOrderByRespondedAtDesc(
+            caller, Friendship.Status.ACCEPTED);
+
+    return friendshipList.stream()
+        .map(friendship -> toFriendResponse(friendship, caller.getId()))
+        .toList();
+  }
+
+  private FriendResponse toFriendResponse(Friendship friendship, Long callerId) {
+    if (friendship.getRequester().getId().equals(callerId)) {
+      return new FriendResponse(
+          friendship.getAddressee().getId(),
+          friendship.getAddressee().getUsername(),
+          friendship.getAddressee().getAvatarKey(),
+          friendship.getRespondedAt());
+    } else {
+      return new FriendResponse(
+          friendship.getRequester().getId(),
+          friendship.getRequester().getUsername(),
+          friendship.getRequester().getAvatarKey(),
+          friendship.getRespondedAt());
+    }
   }
 
   private FriendshipResponse toResponse(Friendship friendship) {

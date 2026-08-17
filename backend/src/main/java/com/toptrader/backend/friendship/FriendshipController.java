@@ -2,10 +2,12 @@ package com.toptrader.backend.friendship;
 
 import com.toptrader.backend.user.UserPrincipal;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -61,5 +63,28 @@ public class FriendshipController {
       @AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable Long userId) {
     this.friendshipService.removeFriend(userPrincipal.getUser().getId(), userId);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+  }
+
+  @GetMapping("/requests/incoming")
+  public ResponseEntity<List<IncomingFriendRequest>> getIncomingFriendRequests(
+      @AuthenticationPrincipal UserPrincipal userPrincipal) {
+    List<IncomingFriendRequest> response =
+        this.friendshipService.getIncomingFriendRequests(userPrincipal.getUser());
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @GetMapping("/requests/outgoing")
+  public ResponseEntity<List<OutgoingFriendRequest>> getOutgoingFriendRequests(
+      @AuthenticationPrincipal UserPrincipal userPrincipal) {
+    List<OutgoingFriendRequest> response =
+        this.friendshipService.getOutgoingFriendRequests(userPrincipal.getUser());
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @GetMapping
+  public ResponseEntity<List<FriendResponse>> getFriends(
+      @AuthenticationPrincipal UserPrincipal userPrincipal) {
+    List<FriendResponse> response = this.friendshipService.getFriends(userPrincipal.getUser());
+    return new ResponseEntity<>(response, HttpStatus.OK);
   }
 }

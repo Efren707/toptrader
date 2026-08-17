@@ -11,6 +11,8 @@ import static org.mockito.Mockito.when;
 import com.toptrader.backend.user.User;
 import com.toptrader.backend.user.UserRepository;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -349,5 +351,130 @@ class FriendshipServiceTest {
         .extracting(ex -> ((ResponseStatusException) ex).getStatusCode())
         .isEqualTo(HttpStatus.FORBIDDEN);
     verifyNoInteractions(friendshipRepository);
+  }
+
+  // getIncomingFriendRequests
+
+  @Test
+  void getIncomingFriendRequests_mapsRequesterAndCreatedAt() {
+    Friendship friendship = new Friendship(requester, addressee, Friendship.Status.PENDING);
+    ReflectionTestUtils.setField(friendship, "id", FRIENDSHIP_ID);
+    LocalDateTime createdAt = LocalDateTime.now();
+    ReflectionTestUtils.setField(friendship, "createdAt", createdAt);
+    when(friendshipRepository.findByAddresseeAndStatusOrderByCreatedAtDesc(
+            addressee, Friendship.Status.PENDING))
+        .thenReturn(List.of(friendship));
+
+    List<IncomingFriendRequest> results = friendshipService.getIncomingFriendRequests(addressee);
+
+    assertThat(results).hasSize(1);
+    IncomingFriendRequest result = results.get(0);
+    assertThat(result.id()).isEqualTo(FRIENDSHIP_ID);
+    assertThat(result.requester().id()).isEqualTo(REQUESTER_ID);
+    assertThat(result.requester().username()).isEqualTo(requester.getUsername());
+    assertThat(result.requester().avatarKey()).isEqualTo(requester.getAvatarKey());
+    assertThat(result.createdAt()).isEqualTo(createdAt);
+  }
+
+  @Test
+  void getIncomingFriendRequests_scopesQueryToAddressee() {
+    when(friendshipRepository.findByAddresseeAndStatusOrderByCreatedAtDesc(
+            addressee, Friendship.Status.PENDING))
+        .thenReturn(List.of());
+
+    List<IncomingFriendRequest> results = friendshipService.getIncomingFriendRequests(addressee);
+
+    assertThat(results).isEmpty();
+    verify(friendshipRepository)
+        .findByAddresseeAndStatusOrderByCreatedAtDesc(addressee, Friendship.Status.PENDING);
+  }
+
+  // getOutgoingFriendRequests
+
+  @Test
+  void getOutgoingFriendRequests_mapsAddresseeAndCreatedAt() {
+    Friendship friendship = new Friendship(requester, addressee, Friendship.Status.PENDING);
+    ReflectionTestUtils.setField(friendship, "id", FRIENDSHIP_ID);
+    LocalDateTime createdAt = LocalDateTime.now();
+    ReflectionTestUtils.setField(friendship, "createdAt", createdAt);
+    when(friendshipRepository.findByRequesterAndStatusOrderByCreatedAtDesc(
+            requester, Friendship.Status.PENDING))
+        .thenReturn(List.of(friendship));
+
+    List<OutgoingFriendRequest> results = friendshipService.getOutgoingFriendRequests(requester);
+
+    assertThat(results).hasSize(1);
+    OutgoingFriendRequest result = results.get(0);
+    assertThat(result.id()).isEqualTo(FRIENDSHIP_ID);
+    assertThat(result.addressee().id()).isEqualTo(ADDRESSEE_ID);
+    assertThat(result.addressee().username()).isEqualTo(addressee.getUsername());
+    assertThat(result.addressee().avatarKey()).isEqualTo(addressee.getAvatarKey());
+    assertThat(result.createdAt()).isEqualTo(createdAt);
+  }
+
+  @Test
+  void getOutgoingFriendRequests_scopesQueryToRequester() {
+    when(friendshipRepository.findByRequesterAndStatusOrderByCreatedAtDesc(
+            requester, Friendship.Status.PENDING))
+        .thenReturn(List.of());
+
+    List<OutgoingFriendRequest> results = friendshipService.getOutgoingFriendRequests(requester);
+
+    assertThat(results).isEmpty();
+    verify(friendshipRepository)
+        .findByRequesterAndStatusOrderByCreatedAtDesc(requester, Friendship.Status.PENDING);
+  }
+
+  // getFriends
+
+  @Test
+  void getFriends_callerIsRequester_returnsAddresseeAsOtherUser() {
+    Friendship friendship = new Friendship(requester, addressee, Friendship.Status.ACCEPTED);
+    LocalDateTime respondedAt = LocalDateTime.now();
+    ReflectionTestUtils.setField(friendship, "respondedAt", respondedAt);
+    when(friendshipRepository.findByUserAndStatusOrderByRespondedAtDesc(
+            requester, Friendship.Status.ACCEPTED))
+        .thenReturn(List.of(friendship));
+
+    List<FriendResponse> results = friendshipService.getFriends(requester);
+
+    assertThat(results).hasSize(1);
+    FriendResponse result = results.get(0);
+    assertThat(result.id()).isEqualTo(ADDRESSEE_ID);
+    assertThat(result.username()).isEqualTo(addressee.getUsername());
+    assertThat(result.avatarKey()).isEqualTo(addressee.getAvatarKey());
+    assertThat(result.friendsSince()).isEqualTo(respondedAt);
+  }
+
+  @Test
+  void getFriends_callerIsAddressee_returnsRequesterAsOtherUser() {
+    Friendship friendship = new Friendship(requester, addressee, Friendship.Status.ACCEPTED);
+    LocalDateTime respondedAt = LocalDateTime.now();
+    ReflectionTestUtils.setField(friendship, "respondedAt", respondedAt);
+    when(friendshipRepository.findByUserAndStatusOrderByRespondedAtDesc(
+            addressee, Friendship.Status.ACCEPTED))
+        .thenReturn(List.of(friendship));
+
+    List<FriendResponse> results = friendshipService.getFriends(addressee);
+
+    assertThat(results).hasSize(1);
+    FriendResponse result = results.get(0);
+    assertThat(result.id()).isEqualTo(REQUESTER_ID);
+    assertThat(result.username()).isEqualTo(requester.getUsername());
+    assertThat(result.avatarKey()).isEqualTo(requester.getAvatarKey());
+    assertThat(result.friendsSince()).isEqualTo(respondedAt);
+  }
+
+  @Test
+  void getFriends_scopesQueryToCallerOnEitherSide() {
+    when(friendshipRepository.findByUserAndStatusOrderByRespondedAtDesc(
+            requester, Friendship.Status.ACCEPTED))
+        .thenReturn(List.of());
+
+    List<FriendResponse> results = friendshipService.getFriends(requester);
+
+    assertThat(results).isEmpty();
+    verify(friendshipRepository)
+        .findByUserAndStatusOrderByRespondedAtDesc(requester, Friendship.Status.ACCEPTED);
   }
 }
