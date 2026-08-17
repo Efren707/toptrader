@@ -1,6 +1,6 @@
 # README Structure — Outline
 
-> Status: Draft outline only. Target structure for the root `README.md` once the app exists (demo link, screenshots) — see [Demo Account & Showcase Readiness](../tasks/completed/demo-account.md) for what unlocked the sections marked "later." Sections 2 (status line) and 3 (screenshots) are done as of 2026-08-13; sections 4-9 (Features, Tech stack, Documentation, Local dev quickstart, Contributing, License) remain outline-only — `README.md`'s current structure doesn't yet match this outline beyond sections 1-3.
+> Status: **Done** as of 2026-08-16 — `README.md` now covers every section below, plus three not originally scoped here: a Problem statement (expanded from `vision.md`), an Architecture section (Mermaid diagram + component notes), and a Tech decisions & trade-offs table (pulled from the relevant ADRs). Kept as a historical outline; `README.md` itself is the source of truth for actual content going forward.
 
 ## 1. Title + one-line pitch
 Project name and a single sentence: stock trading simulator, virtual cash, real/delayed market data — matches the current README opening.
