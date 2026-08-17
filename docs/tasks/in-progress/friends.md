@@ -86,15 +86,16 @@ Depends on section 1. GitHub Issue: [#174](https://github.com/Efren707/toptrader
 
 ### 3. Backend — search & list endpoints
 
-- [ ] `GET /users/search?q=` — case-insensitive partial/prefix match on `username`, excludes the caller's own id **and any `isDemo=true` user**, capped at a small result count (e.g. top 10); 400 if `q` is blank/missing or exceeds a max length (Bean Validation `@NotBlank @Size(max=...)`, avoiding both an all-users query and an oversized query string)
+- [x] `GET /users/search?q=` — case-insensitive partial/prefix match on `username`, excludes the caller's own id **and any `isDemo=true` user**, capped at a small result count (e.g. top 10); 400 if `q` is blank/missing or exceeds a max length (Bean Validation `@NotBlank @Size(max=...)`, avoiding both an all-users query and an oversized query string)
   - `%`/`_` in the raw query are escaped before being embedded in the `LIKE` pattern (with an explicit `ESCAPE` clause), so searching for a literal wildcard character doesn't match every user
   - Each result: `{ id, username, avatarKey, relationshipStatus }` where `relationshipStatus` is one of `NONE | OUTGOING_PENDING | INCOMING_PENDING | FRIENDS` (per the search-status decision above) — computed via the same pair-lookup method from section 1
 - [ ] `GET /friends/requests/incoming` — caller's `PENDING` rows where caller is `addressee`; `{ id, requester: {id, username, avatarKey}, createdAt }` per row; this list's length is what drives the navbar badge count
 - [ ] `GET /friends/requests/outgoing` — caller's `PENDING` rows where caller is `requester`; same shape, `addressee` instead of `requester`
 - [ ] `GET /friends` — caller's `ACCEPTED` rows, returned as `{ id, username, avatarKey, friendsSince }` (the *other* user in each row, not the raw friendship rows)
 - [ ] These four are read-only — no demo-account guard needed (consistent with demo being read-only elsewhere rather than blocked from viewing)
-- [ ] New `SEARCH` entry in `RateLimitGroup` (per ADR 0034) — `GET /users/search`, user-keyed, 20/minute (matches `QUOTE`); update `security-architecture.md`'s rate-limiting table to match
-- [ ] Backend tests: search excludes self, search excludes demo account, partial/case-insensitive match, wildcard-character query treated literally, each of the four `relationshipStatus` values, blank/oversized query (400), result cap, rate-limit exceeded (429); each list endpoint scoped correctly to the caller and excludes rows that don't belong to them
+- [x] New `SEARCH` entry in `RateLimitGroup` (per ADR 0034) — `GET /users/search`, user-keyed, 20/minute (matches `QUOTE`); update `security-architecture.md`'s rate-limiting table to match
+- [x] Backend tests for `GET /users/search`: excludes self, excludes demo account, partial/case-insensitive match, wildcard-character query treated literally, each of the four `relationshipStatus` values, blank/oversized query (400), result cap, rate-limit exceeded (429) — `UserSearchServiceTest` (unit) + `UserSearchControllerTest` (full-stack against real Postgres) + a case added to `RateLimitFilterTest`
+- [ ] Backend tests for the three list endpoints: each scoped correctly to the caller and excludes rows that don't belong to them
 
 Depends on section 1. GitHub Issue: [#175](https://github.com/Efren707/toptrader/issues/175)
 
