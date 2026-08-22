@@ -39,6 +39,7 @@
   --color-success-soft: color-mix(in srgb, var(--color-success) 13%, transparent);
   --color-danger: #ef5b6b;
   --color-danger-soft: color-mix(in srgb, var(--color-danger) 13%, transparent);
+  --color-accent-orange: #f50;
   --color-focus-ring: color-mix(in srgb, var(--color-text) 16%, transparent);
 
   --radius-sm: 4px;

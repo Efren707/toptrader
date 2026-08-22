@@ -1,12 +1,13 @@
-import { Component, ElementRef, HostListener, inject, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, OnInit, signal, viewChild } from '@angular/core';
 import { Quote, QuoteService } from '../../core/services/quote.service';
 import { AuthService } from '../../core/services/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiError } from '../../core/interceptors/error.interceptor';
+import { FriendService, IncomingFriendRequest } from '../../core/services/friend.service';
 
 type SearchField = 'ticker';
-type NavDestination = '/profile' | '/transactions' | '/performance';
+type NavDestination = '/profile' | '/friends' | '/transactions' | '/performance';
 
 @Component({
   selector: 'app-navbar',
@@ -14,10 +15,11 @@ type NavDestination = '/profile' | '/transactions' | '/performance';
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class Navbar {
+export class Navbar implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly quoteService = inject(QuoteService);
   private readonly authService = inject(AuthService);
+  private readonly friendService = inject(FriendService);
   protected readonly currentUser = this.authService.currentUser; 
   private readonly router = inject(Router);
   protected readonly searchForm = viewChild<ElementRef<HTMLElement>>('searchForm');
@@ -34,6 +36,22 @@ export class Navbar {
   protected readonly submitted = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly accountDropdownActive = signal(false);
+  protected readonly incomingRequestCount = signal(0);
+
+  ngOnInit(): void {
+    this.fetchIncomingFriendRequests();
+  }
+
+  protected fetchIncomingFriendRequests() {
+    this.friendService.getIncomingFriendRequests().subscribe({
+      next: (data: IncomingFriendRequest[]) => {
+        this.incomingRequestCount.set(data.length);
+      },
+      error: (error: ApiError) => {
+        this.errorMessage.set(error.detail);
+      }
+    })
+  }
 
   protected submit(): void {
     if (this.form.invalid) {

@@ -112,6 +112,10 @@
       >
         <path d="M5.5 8l4.5 4.5L14.5 8" />
       </svg>
+
+      @if (incomingRequestCount() > 0 && !accountDropdownActive()) {
+        <span class="account-badge-dot" aria-hidden="true"></span>
+      }
     </button>
 
     @if (accountDropdownActive()) {
@@ -119,6 +123,14 @@
         <ul class="account-menu-list">
           <li class="menu-item">
             <button type="button" (click)="onNavigateClick('/profile')">Profile</button>
+          </li>
+          <li class="menu-item">
+            <button type="button" class="menu-item-friends" (click)="onNavigateClick('/friends')">
+              <span>Friends</span>
+              @if (incomingRequestCount() > 0) {
+                <span class="menu-badge">{{ incomingRequestCount() }}</span>
+              }
+            </button>
           </li>
           <li class="menu-item">
             <button type="button" (click)="onNavigateClick('/transactions')">Transaction history</button>
