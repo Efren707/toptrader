@@ -4,7 +4,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiError } from '../../core/interceptors/error.interceptor';
-import { FriendService, IncomingFriendRequest } from '../../core/services/friend.service';
+import { FriendService } from '../../core/services/friend.service';
 
 type SearchField = 'ticker';
 type NavDestination = '/profile' | '/friends' | '/transactions' | '/performance';
@@ -36,7 +36,7 @@ export class Navbar implements OnInit {
   protected readonly submitted = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly accountDropdownActive = signal(false);
-  protected readonly incomingRequestCount = signal(0);
+  protected readonly incomingRequestCount = this.friendService.incomingRequestCount;
 
   ngOnInit(): void {
     this.fetchIncomingFriendRequests();
@@ -44,9 +44,6 @@ export class Navbar implements OnInit {
 
   protected fetchIncomingFriendRequests() {
     this.friendService.getIncomingFriendRequests().subscribe({
-      next: (data: IncomingFriendRequest[]) => {
-        this.incomingRequestCount.set(data.length);
-      },
       error: (error: ApiError) => {
         this.errorMessage.set(error.detail);
       }

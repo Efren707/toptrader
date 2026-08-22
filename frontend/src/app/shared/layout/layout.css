@@ -1,7 +1,17 @@
 .page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   max-width: 78rem;
   margin: 0 auto;
   padding: 0 1.5rem 4rem;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .notice-toast {

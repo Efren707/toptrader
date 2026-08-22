@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
-import { inject, Injectable } from "@angular/core";
-import { Observable } from 'rxjs';
+import { inject, Injectable, signal } from "@angular/core";
+import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 
@@ -36,15 +36,27 @@ export interface FriendSummary {
   avatarKey: string;
 }
 
+export interface Friend extends FriendSummary {
+  friendsSince: string;
+}
+
 export interface IncomingFriendRequest { 
   id: number, 
   requester: FriendSummary; 
   createdAt: string;
 }
 
+export interface OutgoingFriendRequest { 
+  id: number, 
+  addressee: FriendSummary; 
+  createdAt: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class FriendService {
   private readonly http = inject(HttpClient);
+
+  readonly incomingRequestCount = signal(0);
 
   search(q: string): Observable<UserSearchResult[]> {
     return this.http.get<UserSearchResult[]>(`${environment.apiUrl}/users/search`, {
@@ -67,9 +79,23 @@ export class FriendService {
   declineFriendRequest(id: number): Observable<void> {
     return this.http.post<void>(`${environment.apiUrl}/friends/requests/${id}/decline`, null)
   }
-
+  
   getIncomingFriendRequests(): Observable<IncomingFriendRequest[]> {
-    return this.http.get<IncomingFriendRequest[]>(`${environment.apiUrl}/friends/requests/incoming`)
+    return this.http
+      .get<IncomingFriendRequest[]>(`${environment.apiUrl}/friends/requests/incoming`)
+      .pipe(tap((data) => this.incomingRequestCount.set(data.length)));
+  }
+  
+  getOutgoingFriendRequests(): Observable<OutgoingFriendRequest[]> {
+    return this.http.get<OutgoingFriendRequest[]>(`${environment.apiUrl}/friends/requests/outgoing`)
+  }
+  
+  getFriends(): Observable<Friend[]> {
+    return this.http.get<Friend[]>(`${environment.apiUrl}/friends`)
+  }
+  
+  removeFriend(userId: number): Observable<void> {
+    return this.http.delete<void>(`${environment.apiUrl}/friends/${userId}`)
   }
 
 }

@@ -2,7 +2,7 @@
 
 > Status: **In progress**. Tracked under the [Friends milestone](https://github.com/Efren707/toptrader/milestone/17) (6 issues, #173-#178). Originally a high-level backlog stub, scoped into the decisions and sections below on 2026-08-14; moved to `docs/tasks/in-progress/` (per [ADR 0040](../../adr/0040-work-tracking-docs-lifecycle.md)) when work on Section 1 began.
 >
-> **Now up: Section 5** ([#177](https://github.com/Efren707/toptrader/issues/177), below) — Friends page (list, requests, search). Section 4 is complete, pending its PR. Nothing else is blocked on a decision; every section below is ready to implement as-is.
+> **Now up: Section 6** ([#178](https://github.com/Efren707/toptrader/issues/178), below) — seed demo account with friends. Sections 1-5 are complete (including Section 5's manual smoke test), still pending a PR. Nothing else is blocked on a decision; every section below is ready to implement as-is.
 
 Working agreement applies as usual: one section at a time, check in before deciding anything not already settled below.
 
@@ -117,14 +117,16 @@ Depends on sections 1-3. GitHub Issue: [#176](https://github.com/Efren707/toptra
 
 ### 5. Frontend — Friends page (list, requests, search)
 
-- [ ] New route (e.g. `/friends`) + page component, linked from the account-menu "Friends" item added in section 4
-- [ ] Accepted friends list (username + avatar) with a remove button that opens a confirmation modal (reuse the profile page's modal pattern: backdrop + centered panel, Escape/backdrop-click dismiss) before calling `FriendService`'s remove/`DELETE /friends/{userId}`
-- [ ] Incoming friend requests list with accept/decline actions (`FriendService.acceptFriendRequest`/`declineFriendRequest`); accepting/declining refreshes the account-menu badge count from section 4
-- [ ] Outgoing pending requests, each with a cancel action (`FriendService.cancelFriendRequest`)
-- [ ] User search (debounced, e.g. 300ms) via `FriendService.search`, showing status-aware result rows (Add / Requested-cancelable / Friends / Accept+Decline-if-incoming-pending)
+- [x] New route (e.g. `/friends`) + page component, linked from the account-menu "Friends" item added in section 4
+- [x] Accepted friends list (username + avatar) with a remove button that opens a confirmation modal (reuse the profile page's modal pattern: backdrop + centered panel, Escape/backdrop-click dismiss) before calling `FriendService`'s remove/`DELETE /friends/{userId}`
+- [x] Incoming friend requests list with accept/decline actions (`FriendService.acceptFriendRequest`/`declineFriendRequest`); accepting/declining refreshes the account-menu badge count from section 4 — implemented by hoisting `incomingRequestCount` into a signal on `FriendService` itself (updated via `tap` inside `getIncomingFriendRequests()`), so both `navbar.ts` and the Friends page read the same shared count instead of `navbar.ts` keeping its own
+- [x] Outgoing pending requests, each with a cancel action (`FriendService.cancelFriendRequest`)
+- [x] User search (debounced, 300ms) via `FriendService.search`, showing status-aware result rows (Add / Requested-cancelable / Friends / Accept+Decline-if-incoming-pending)
   - The "Add" click handler distinguishes the two possible `POST /friends/requests` outcomes: `201` (now pending — row flips to "Requested") vs. `200` (crossed request auto-accepted — row flips straight to "Friends", per ADR 0049)
-- [ ] Empty states for each list (no friends yet / no pending outgoing requests / no pending incoming requests)
-- [ ] Frontend tests + manual smoke test in a browser
+  - `GET /users/search` doesn't return a friendship id (only the other user's id), so a search row showing `OUTGOING_PENDING`/`INCOMING_PENDING` resolves its friendship id client-side by matching the row's user id against the already-fetched `outgoingFriendRequests()`/`incomingFriendRequests()` lists, rather than adding a field to the search response
+- [x] Empty states for each list (no friends yet / no pending outgoing requests / no pending incoming requests)
+- [x] Frontend tests (`friends.spec.ts`, `HttpTestingController` pattern, `vi.useFakeTimers()` for the search debounce) — 20 tests covering list rendering/empty states, the remove-confirm modal, incoming/outgoing actions, and the full search flow including all four `relationshipStatus` outcomes
+- [x] Manual smoke test in a browser — passed. Along the way, found and fixed three frontend bugs uncovered by the search flow: (1) `distinctUntilChanged()` was ordered after `debounceTime()`, letting a cleared-then-retyped identical query get silently swallowed; (2) the search subscription had no `catchError` inside the `switchMap`, so any single failed search request (rate limit, transient error) permanently killed live search until a page reload; (3) the four request-panel handlers (`onAcceptClick`, `onDeclineClick`, `onCancelClick`, `confirmRemove`) weren't syncing `searchResults`, leaving a cached search row stale after acting on that user via the Incoming/Outgoing panels instead of the search row itself. Also adjusted the page layout (full-height with bottom margin) and gave the incoming/outgoing request lists a thin, border-colored scrollbar.
 
 Depends on sections 1-4 (section 4 supplies `FriendService` and the account-menu entry point into this page). GitHub Issue: [#177](https://github.com/Efren707/toptrader/issues/177)
 
