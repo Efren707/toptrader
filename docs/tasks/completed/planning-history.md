@@ -60,6 +60,10 @@ Groundwork completed ahead of US-1, per ADR 0020's build order:
 
 5 sections adding self-service profile editing and account deletion: `PATCH /auth/me` (username/email/password/avatar, email re-verification, session invalidation, ADR 0047), `DELETE /auth/me` cascade account deletion (ADR 0048), a `/profile` page with a 16-preset DiceBear avatar picker (ADR 0046), a delete-account confirmation modal, and a reactive avatar/username display in the navbar. Merged via PR #169, closes #151-#155. Full detail: [user-profile-management.md](./user-profile-management.md).
 
+## Milestone #17 — Friends — ✅ Done
+
+6 sections adding a symmetric friends system (ADR 0049): friendship data model with DB-level unordered-pair uniqueness and crossed-request auto-accept; send/cancel/accept/decline/remove-friend endpoints with `FriendshipAuthorization`-backed `@PreAuthorize`; `GET /users/search` (partial/case-insensitive, relationship-status-aware, demo-account excluded) plus incoming/outgoing/friends list endpoints; two new rate-limit groups (`FRIEND_REQUEST`, `SEARCH`, ADR 0034); a navbar account-menu "Friends" entry with a pending-request dot/badge; a dedicated `/friends` page (accepted list with remove-confirm modal, incoming/outgoing requests, debounced username search); and a demo-account friends seed (`V9__seed_demo_friends.sql`) for the showcase. Merged via PR #186, closes #173-#178. Full detail: [friends.md](./friends.md).
+
 ## Phase 0 — Repo & Working Agreement Setup — ✅ Done
 
 - [x] GitHub repo (public, `Efren707/toptrader`), README, `.gitignore`, MIT LICENSE
