@@ -1,8 +1,8 @@
 # Friends
 
-> Status: **In progress**. Tracked under the [Friends milestone](https://github.com/Efren707/toptrader/milestone/17) (6 issues, #173-#178). Originally a high-level backlog stub, scoped into the decisions and sections below on 2026-08-14; moved to `docs/tasks/in-progress/` (per [ADR 0040](../../adr/0040-work-tracking-docs-lifecycle.md)) when work on Section 1 began.
+> Status: **Done** as of 2026-08-22. Tracked under the [Friends milestone](https://github.com/Efren707/toptrader/milestone/17) (closed) (6 issues, #173-#178, all closed). Originally a high-level backlog stub, scoped into the decisions and sections below on 2026-08-14; moved to `docs/tasks/in-progress/` (per [ADR 0040](../../adr/0040-work-tracking-docs-lifecycle.md)) when work on Section 1 began, and to `docs/tasks/completed/` once all 6 sections merged.
 >
-> **Now up:** all 6 sections are complete, still pending a PR. Nothing else is blocked on a decision.
+> All 6 sections complete and merged via [PR #186](https://github.com/Efren707/toptrader/pull/186) (closed #173-#178), plus a follow-up doc backfill for the API contract/OpenAPI spec.
 
 Working agreement applies as usual: one section at a time, check in before deciding anything not already settled below.
 
@@ -145,4 +145,4 @@ Each section also updates `docs/architecture/api-contract.md` and `docs/architec
 
 ## Related
 
-The [Leaderboard](./leaderboard.md) feature's friends variant depends on this feature shipping first.
+The [Leaderboard](../planning/leaderboard.md) feature's friends variant depends on this feature shipping first.
