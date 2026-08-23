@@ -24,6 +24,17 @@
 | `GET /trades/holdings/{ticker}` | US-6 | Yes |
 | `GET /trades/holdings` | US-7 | Yes |
 | `GET /trades/transactions` | US-8 | Yes |
+| `GET /users/search` | Friends (ADR 0049) | Yes |
+| `POST /friends/requests` | Friends (ADR 0049) | Yes |
+| `DELETE /friends/requests/{friendshipId}` | Friends (ADR 0049) | Yes |
+| `POST /friends/requests/{friendshipId}/accept` | Friends (ADR 0049) | Yes |
+| `POST /friends/requests/{friendshipId}/decline` | Friends (ADR 0049) | Yes |
+| `DELETE /friends/{userId}` | Friends (ADR 0049) | Yes |
+| `GET /friends/requests/incoming` | Friends (ADR 0049) | Yes |
+| `GET /friends/requests/outgoing` | Friends (ADR 0049) | Yes |
+| `GET /friends` | Friends (ADR 0049) | Yes |
+
+Friends predates any formal user story (see `friends.md`'s "No new formal User Story" decision), so it's referenced by ADR instead of a US-code. `POST /friends/requests` returns `201` for a newly-created `PENDING` row, or `200` when it instead resolves a crossed request straight to `ACCEPTED` (ADR 0049) — no new row is created in that case. `DELETE /friends/requests/{friendshipId}` cancels the caller's own pending outgoing request; `DELETE /friends/{userId}` removes an existing friendship, addressed by the other user's id rather than the friendship row's id (either party may call it). All friend-mutating endpoints (send/cancel/accept/decline/remove) reject the shared demo account with `403`, mirroring ADR 0045/0047's read-only demo guard; `GET /users/search` additionally excludes the demo account from its results entirely, since a request sent to it could never be resolved. `POST /friends/requests` and `GET /users/search` are also rate-limited (20/hour and 20/minute respectively, per ADR 0034) — see `security-architecture.md`'s rate-limiting table.
 
 US-7 ended up not needing the unified `/portfolio` endpoint originally planned here. Holdings (with per-position market value/unrealized P&L already computed server-side) come from `GET /trades/holdings`; cash balance is already available from the existing `GET /auth/session` response (`UserSummary.cashBalance`) — the frontend combines the two client-side on the dashboard rather than round-tripping to a combined endpoint. `GET /trades/holdings/{ticker}` (added for US-6) covers the single-ticker lookup used to conditionally show the Sell form. US-9 (overall profit/loss) hasn't been built yet — revisit then whether it needs its own endpoint or can extend one of these.
 

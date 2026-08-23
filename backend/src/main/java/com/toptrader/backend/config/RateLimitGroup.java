@@ -47,6 +47,16 @@ public enum RateLimitGroup {
           PathPatternRequestMatcher.pathPattern(HttpMethod.POST, "/trades/sell")),
       RateLimitGroup::authenticatedUserId,
       10,
+      Duration.ofMinutes(1)),
+  FRIEND_REQUEST(
+      List.of(PathPatternRequestMatcher.pathPattern(HttpMethod.POST, "/friends/requests")),
+      RateLimitGroup::authenticatedUserId,
+      20,
+      Duration.ofHours(1)),
+  SEARCH(
+      List.of(PathPatternRequestMatcher.pathPattern(HttpMethod.GET, "/users/search")),
+      RateLimitGroup::authenticatedUserId,
+      20,
       Duration.ofMinutes(1));
 
   private final List<PathPatternRequestMatcher> matchers;
