@@ -1,6 +1,6 @@
 # Leaderboards (Global & Friends)
 
-> Status: **Scoped, not yet started**. Originally a high-level backlog stub; scoped into the decisions and sections below on 2026-08-22, once the Friends milestone (which the friends-scoped variant depends on) shipped. Will move to `docs/tasks/in-progress/` (per [ADR 0040](../../adr/0040-work-tracking-docs-lifecycle.md)) when work on Section 1 begins.
+> Status: **In progress**. Originally a high-level backlog stub; scoped into the decisions and sections below on 2026-08-22, once the Friends milestone (which the friends-scoped variant depends on) shipped; moved to `docs/tasks/in-progress/` (per [ADR 0040](../../adr/0040-work-tracking-docs-lifecycle.md)) when work on Section 1 began.
 
 Working agreement applies as usual: one section at a time, check in before deciding anything not already settled below.
 

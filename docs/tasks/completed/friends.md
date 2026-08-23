@@ -145,4 +145,4 @@ Each section also updates `docs/architecture/api-contract.md` and `docs/architec
 
 ## Related
 
-The [Leaderboard](../planning/leaderboard.md) feature's friends variant depends on this feature shipping first.
+The [Leaderboard](../in-progress/leaderboard.md) feature's friends variant depends on this feature shipping first.
