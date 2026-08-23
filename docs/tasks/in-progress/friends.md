@@ -2,7 +2,7 @@
 
 > Status: **In progress**. Tracked under the [Friends milestone](https://github.com/Efren707/toptrader/milestone/17) (6 issues, #173-#178). Originally a high-level backlog stub, scoped into the decisions and sections below on 2026-08-14; moved to `docs/tasks/in-progress/` (per [ADR 0040](../../adr/0040-work-tracking-docs-lifecycle.md)) when work on Section 1 began.
 >
-> **Now up: Section 6** ([#178](https://github.com/Efren707/toptrader/issues/178), below) — seed demo account with friends. Sections 1-5 are complete (including Section 5's manual smoke test), still pending a PR. Nothing else is blocked on a decision; every section below is ready to implement as-is.
+> **Now up:** all 6 sections are complete, still pending a PR. Nothing else is blocked on a decision.
 
 Working agreement applies as usual: one section at a time, check in before deciding anything not already settled below.
 
@@ -134,10 +134,10 @@ Depends on sections 1-4 (section 4 supplies `FriendService` and the account-menu
 
 So a recruiter logging into the read-only demo account sees a populated Friends page, not an empty one — same motivation as `V6__seed_demo_account.sql`'s existing holdings/transactions seed (`docs/tasks/completed/demo-account.md`).
 
-- [ ] `V9__seed_demo_friends.sql` — idempotent (`ON CONFLICT DO NOTHING`, keyed on fixed seed emails, same pattern as `V6`): 3 plain (non-demo) seed user accounts with realistic usernames/avatars, each an `ACCEPTED` `friendships` row with the demo account, backdated `created_at`/`responded_at` so it reads as an established friendship rather than "created seconds ago"
-- [ ] These 3 seed accounts are otherwise ordinary users — **not** `isDemo=true` — so they're unaffected by the demo account's search exclusion (they still show up normally in search for any real user), and they don't need seeded holdings/transactions of their own (out of scope — this seed is only for populating demo's friends list, not a second demo-style showcase account)
-- [ ] No new tests — this is seed data, verified via the manual smoke test below rather than an automated test (consistent with `V6`'s seed migration, which also added no dedicated test)
-- [ ] Manual smoke test: log into the demo account, confirm the Friends page shows the 3 seeded friends
+- [x] `V9__seed_demo_friends.sql` — idempotent (`ON CONFLICT DO NOTHING`, keyed on fixed seed emails, same pattern as `V6`): 3 plain (non-demo) seed user accounts (Monsters Inc.-themed: JP_Sullivan, Mike_Wazowski, Randall_Boggs) with realistic usernames/avatars, each an `ACCEPTED` `friendships` row with the demo account, backdated `created_at`/`responded_at` (spread March-May 2026) so it reads as an established friendship rather than "created seconds ago"
+- [x] These 3 seed accounts are otherwise ordinary users — **not** `isDemo=true` — so they're unaffected by the demo account's search exclusion (they still show up normally in search for any real user), and they don't need seeded holdings/transactions of their own (out of scope — this seed is only for populating demo's friends list, not a second demo-style showcase account)
+- [x] No new tests — this is seed data, verified via the manual smoke test below rather than an automated test (consistent with `V6`'s seed migration, which also added no dedicated test)
+- [x] Manual smoke test: log into the demo account, confirm the Friends page shows the 3 seeded friends — passed; also confirmed the demo-account guard still correctly blocks add/remove-friend actions with the new seeded data in place
 
 Depends on sections 1, 2 (needs the `friendships` table and `ACCEPTED` status to exist), and 5 (Friends page, to actually verify the seed visually) — sequenced last since it's a finishing touch on the completed feature, not core functionality. GitHub Issue: [#178](https://github.com/Efren707/toptrader/issues/178)
 
