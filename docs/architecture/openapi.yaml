@@ -254,6 +254,239 @@ paths:
                 items:
                   $ref: "#/components/schemas/Transaction"
 
+  /users/search:
+    get:
+      summary: Search for other users by username (Friends, ADR 0049)
+      description: >
+        Case-insensitive partial/prefix match on username, excluding the
+        caller's own account and the shared demo account (a request sent to
+        demo could never be resolved). Capped at a small result count.
+        Rate-limited to 20/minute per user (ADR 0034).
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+            maxLength: 50
+          example: nova
+      responses:
+        "200":
+          description: Matching users, each annotated with the caller's relationship to them
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserSearchResult"
+        "400":
+          description: Blank or over-length query
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+
+  /friends/requests:
+    post:
+      summary: Send a friend request (Friends, ADR 0049)
+      description: >
+        If the target has already sent the caller a pending request, that
+        request is accepted immediately instead of creating a second row
+        (crossed-request auto-accept) — the response is 200 in that case,
+        201 when a new PENDING row is created. Rate-limited to 20/hour per
+        user (ADR 0034).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FriendshipRequest"
+      responses:
+        "201":
+          description: New pending friend request created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendshipResponse"
+        "200":
+          description: Crossed request resolved straight to ACCEPTED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendshipResponse"
+        "400":
+          description: addresseeId equals the caller's own id
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "403":
+          description: Caller is the shared demo account
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "404":
+          description: addresseeId does not exist
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "409":
+          description: A PENDING request already exists in the same direction, or the two are already friends
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+
+  /friends/requests/{friendshipId}:
+    delete:
+      summary: Cancel the caller's own pending outgoing request (Friends, ADR 0049)
+      parameters:
+        - name: friendshipId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "204":
+          description: Request cancelled
+        "403":
+          description: Caller is not the requester on this friendship, or is the shared demo account
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "404":
+          description: Friendship does not exist, or is not PENDING
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+
+  /friends/requests/{friendshipId}/accept:
+    post:
+      summary: Accept an incoming friend request (Friends, ADR 0049)
+      parameters:
+        - name: friendshipId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Request accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendshipResponse"
+        "403":
+          description: Caller is not the addressee on this friendship, or is the shared demo account
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "404":
+          description: Friendship does not exist, or is not PENDING
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+
+  /friends/requests/{friendshipId}/decline:
+    post:
+      summary: Decline an incoming friend request (Friends, ADR 0049)
+      parameters:
+        - name: friendshipId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "204":
+          description: Request declined
+        "403":
+          description: Caller is not the addressee on this friendship, or is the shared demo account
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "404":
+          description: Friendship does not exist, or is not PENDING
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+
+  /friends/{userId}:
+    delete:
+      summary: Remove an accepted friend (Friends, ADR 0049)
+      description: Addressed by the other user's id rather than the friendship row's id; either party may call it.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "204":
+          description: Friendship removed
+        "403":
+          description: Caller is the shared demo account
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "404":
+          description: No ACCEPTED friendship exists between the caller and userId
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+
+  /friends/requests/incoming:
+    get:
+      summary: List the caller's pending incoming friend requests (Friends, ADR 0049)
+      responses:
+        "200":
+          description: Incoming requests, most recently sent first
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/IncomingFriendRequest"
+
+  /friends/requests/outgoing:
+    get:
+      summary: List the caller's pending outgoing friend requests (Friends, ADR 0049)
+      responses:
+        "200":
+          description: Outgoing requests, most recently sent first
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OutgoingFriendRequest"
+
+  /friends:
+    get:
+      summary: List the caller's accepted friends (Friends, ADR 0049)
+      responses:
+        "200":
+          description: Accepted friends, most recently accepted first
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Friend"
+
 components:
   securitySchemes:
     sessionAuth:
@@ -398,4 +631,97 @@ components:
           $ref: "#/components/schemas/Holding"
           nullable: true
           description: Null when a sell fully liquidates the position
+
+    FriendSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        avatarKey:
+          type: string
+          nullable: true
+
+    UserSearchResult:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        avatarKey:
+          type: string
+          nullable: true
+        relationshipStatus:
+          type: string
+          enum: [NONE, OUTGOING_PENDING, INCOMING_PENDING, FRIENDS]
+
+    FriendshipRequest:
+      type: object
+      required: [addresseeId]
+      properties:
+        addresseeId:
+          type: integer
+          format: int64
+
+    FriendshipResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        requesterId:
+          type: integer
+          format: int64
+        addresseeId:
+          type: integer
+          format: int64
+        status:
+          type: string
+          enum: [PENDING, ACCEPTED]
+
+    IncomingFriendRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Friendship row id (used to accept/decline)
+        requester:
+          $ref: "#/components/schemas/FriendSummary"
+        createdAt:
+          type: string
+          format: date-time
+
+    OutgoingFriendRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Friendship row id (used to cancel)
+        addressee:
+          $ref: "#/components/schemas/FriendSummary"
+        createdAt:
+          type: string
+          format: date-time
+
+    Friend:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The other user's id (used to remove the friendship)
+        username:
+          type: string
+        avatarKey:
+          type: string
+          nullable: true
+        friendsSince:
+          type: string
+          format: date-time
 
