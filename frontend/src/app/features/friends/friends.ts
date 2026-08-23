@@ -140,22 +140,6 @@ export class Friends implements OnInit {
     });
   }
 
-  protected onSearchCancelClick(result: UserSearchResult): void {
-    const outgoing = this.outgoingFriendRequests().find(
-      (request) => request.addressee.id === result.id,
-    );
-    if (!outgoing) {
-      return;
-    }
-    this.friendService.cancelFriendRequest(outgoing.id).subscribe({
-      next: () => {
-        this.updateSearchResultStatus(result.id, RelationshipStatus.NONE);
-        this.fetchOutgoingFriendRequests();
-      },
-      error: (error: ApiError) => this.errorMessage.set(error.detail),
-    });
-  }
-
   protected onSearchAcceptClick(result: UserSearchResult): void {
     const incoming = this.incomingFriendRequests().find(
       (request) => request.requester.id === result.id,
