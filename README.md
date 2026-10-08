@@ -5,7 +5,7 @@ A stock trading simulator that lets you practice buying and selling with virtual
 [![CI](https://github.com/Efren707/toptrader/actions/workflows/ci.yml/badge.svg)](https://github.com/Efren707/toptrader/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-**Live at [app.toptrader.dev](https://app.toptrader.dev)** — click **Try Demo** on the login page for an instant, read-only walkthrough (seeded portfolio, no signup), or register your own account and start with $500 in virtual cash.
+**Live deployment currently paused** to save hosting costs — the full AWS stack (EC2, RDS, S3 + CloudFront, CI/CD deploy pipeline) is snapshotted and can be restored on request ([why](./docs/adr/0051-pause-aws-infrastructure.md)). When live, it runs at [app.toptrader.dev](https://app.toptrader.dev) with a one-click **Try Demo** read-only walkthrough (seeded portfolio, no signup), or you can register your own account and start with $500 in virtual cash.
 
 Built in public with the full requirements → architecture → decision-making process documented in [`/docs`](./docs), including 49 [ADRs](./docs/adr) recording *why*, not just *what*.
 
