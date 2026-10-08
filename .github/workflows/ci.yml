@@ -109,7 +109,7 @@ jobs:
 
   deploy-frontend:
     needs: [changes, frontend-ci]
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && needs.frontend-ci.result == 'success'
+    if: vars.DEPLOY_ENABLED == 'true' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && needs.frontend-ci.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -130,7 +130,7 @@ jobs:
 
   deploy-backend:
     needs: [changes, backend-ci]
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && needs.backend-ci.result == 'success'
+    if: vars.DEPLOY_ENABLED == 'true' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && needs.backend-ci.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v8
